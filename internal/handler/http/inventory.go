@@ -23,10 +23,10 @@ func (h *InventoryHandler) AddLot(c *fiber.Ctx) error {
 	}
 
 	type Request struct {
-		Date     string  `json:"date"`
-		Quantity float64 `json:"quantity_kg"`
-		UnitCost float64 `json:"unit_cost"`
-		Grade    string  `json:"grade"`
+		Date     string    `json:"date"`
+		Quantity float64   `json:"quantity_kg"`
+		UnitCost float64   `json:"unit_cost"`
+		GradeID  uuid.UUID `json:"grade_id"`
 	}
 	var req Request
 	if err := c.BodyParser(&req); err != nil {
@@ -38,7 +38,7 @@ func (h *InventoryHandler) AddLot(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid date format (YYYY-MM-DD)"})
 	}
 
-	if err := h.inventoryService.AddPurchaseLot(c.Context(), userID, date, req.Grade, req.Quantity, req.UnitCost); err != nil {
+	if err := h.inventoryService.AddPurchaseLot(c.Context(), userID, date, req.GradeID, req.Quantity, req.UnitCost); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -52,10 +52,10 @@ func (h *InventoryHandler) AddSale(c *fiber.Ctx) error {
 	}
 
 	type Request struct {
-		Date      string  `json:"date"`
-		Quantity  float64 `json:"quantity_kg"`
-		UnitPrice float64 `json:"unit_price"`
-		Grade     string  `json:"grade"`
+		Date      string    `json:"date"`
+		Quantity  float64   `json:"quantity_kg"`
+		UnitPrice float64   `json:"unit_price"`
+		GradeID   uuid.UUID `json:"grade_id"`
 	}
 	var req Request
 	if err := c.BodyParser(&req); err != nil {
@@ -67,7 +67,7 @@ func (h *InventoryHandler) AddSale(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid date format (YYYY-MM-DD)"})
 	}
 
-	if err := h.inventoryService.AddSale(c.Context(), userID, date, req.Grade, req.Quantity, req.UnitPrice); err != nil {
+	if err := h.inventoryService.AddSale(c.Context(), userID, date, req.GradeID, req.Quantity, req.UnitPrice); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 

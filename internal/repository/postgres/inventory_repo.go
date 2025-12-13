@@ -67,6 +67,7 @@ func (r *inventoryRepository) GetHistory(ctx context.Context, userID uuid.UUID, 
 
 	// Get all lots <= date
 	err := r.db.WithContext(ctx).
+		Preload("Grade").
 		Where("user_id = ? AND date <= ?", userID, date).
 		Order("date asc, created_at asc").
 		Find(&lots).Error
@@ -76,6 +77,7 @@ func (r *inventoryRepository) GetHistory(ctx context.Context, userID uuid.UUID, 
 
 	// Get all sales <= date
 	err = r.db.WithContext(ctx).
+		Preload("Grade").
 		Where("user_id = ? AND date <= ?", userID, date).
 		Order("date asc, created_at asc").
 		Find(&sales).Error

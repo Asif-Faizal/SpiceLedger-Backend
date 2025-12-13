@@ -17,7 +17,8 @@ type User struct {
 }
 
 type Grade struct {
-	Name        string    `gorm:"primaryKey;type:varchar(50)" json:"name"`
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	Name        string    `gorm:"type:varchar(50);unique" json:"name"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 }
@@ -28,7 +29,8 @@ type PurchaseLot struct {
 	Date      time.Time `gorm:"type:date;not null;index" json:"date"`
 	Quantity  float64   `gorm:"type:decimal(10,2);not null" json:"quantity_kg"`
 	UnitCost  float64   `gorm:"type:decimal(10,2);not null" json:"unit_cost"`
-	Grade     string    `gorm:"type:varchar(50);not null;index" json:"grade"`
+	GradeID   uuid.UUID `gorm:"type:uuid;not null;index" json:"grade_id"`
+	Grade     Grade     `gorm:"foreignKey:GradeID" json:"grade,omitempty"` // Optional association
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -39,7 +41,8 @@ type SaleTransaction struct {
 	Date      time.Time `gorm:"type:date;not null;index" json:"date"`
 	Quantity  float64   `gorm:"type:decimal(10,2);not null" json:"quantity_kg"`
 	UnitPrice float64   `gorm:"type:decimal(10,2);not null" json:"unit_price"`
-	Grade     string    `gorm:"type:varchar(50);not null;index" json:"grade"`
+	GradeID   uuid.UUID `gorm:"type:uuid;not null;index" json:"grade_id"`
+	Grade     Grade     `gorm:"foreignKey:GradeID" json:"grade,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

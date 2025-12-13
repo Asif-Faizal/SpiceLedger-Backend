@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/saravanan/spice_backend/internal/domain"
 )
 
@@ -17,6 +18,7 @@ func NewGradeService(gradeRepo domain.GradeRepository) *GradeService {
 
 func (s *GradeService) CreateGrade(ctx context.Context, name, description string) error {
 	grade := &domain.Grade{
+		ID:          uuid.New(),
 		Name:        name,
 		Description: description,
 		CreatedAt:   time.Now(),

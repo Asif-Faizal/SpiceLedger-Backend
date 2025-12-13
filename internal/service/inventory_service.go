@@ -21,31 +21,22 @@ func NewInventoryService(inventoryRepo domain.InventoryRepository, priceRepo dom
 	}
 }
 
-func (s *InventoryService) AddPurchaseLot(ctx context.Context, userID uuid.UUID, date time.Time, grade string, quantity, unitCost float64) error {
+func (s *InventoryService) AddPurchaseLot(ctx context.Context, userID uuid.UUID, date time.Time, gradeID uuid.UUID, quantity, unitCost float64) error {
 	lot := &domain.PurchaseLot{
 		UserID:   userID,
 		Date:     date,
-		Grade:    grade,
+		GradeID:  gradeID,
 		Quantity: quantity,
 		UnitCost: unitCost,
 	}
 	return s.inventoryRepo.CreateLot(ctx, lot)
 }
 
-func (s *InventoryService) AddSale(ctx context.Context, userID uuid.UUID, date time.Time, grade string, quantity, unitPrice float64) error {
-	// Optional: Check stock before selling to prevent negative stock (simple check)
-	// For now, allowing negative stock to keep it simple, or we can enforce it.
-	// Let's enforce it by calculating stock on that date.
-
-	// Check stock on date might be expensive if we do it for every sale insert.
-	// For this exercise, let's skip strict pre-validation to allow faster inserts,
-	// or assume the user knows what they are doing.
-	// But the prompt says "Sales reduce inventory".
-
+func (s *InventoryService) AddSale(ctx context.Context, userID uuid.UUID, date time.Time, gradeID uuid.UUID, quantity, unitPrice float64) error {
 	sale := &domain.SaleTransaction{
 		UserID:    userID,
 		Date:      date,
-		Grade:     grade,
+		GradeID:   gradeID,
 		Quantity:  quantity,
 		UnitPrice: unitPrice,
 	}
@@ -61,9 +52,6 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 	}
 
 	// 2. Group by Grade
-	// We need to process events in chronological order.
-	// Let's create a unified event stream per grade.
-
 	type Event struct {
 		Date      time.Time
 		Type      string // "BUY" or "SELL"
@@ -74,7 +62,11 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 	eventsByGrade := make(map[string][]Event)
 
 	for _, lot := range lots {
-		eventsByGrade[lot.Grade] = append(eventsByGrade[lot.Grade], Event{
+		gradeName := lot.Grade.Name
+		if gradeName == "" {
+			gradeName = "Unknown" // Should ideally be preloaded
+		}
+		eventsByGrade[gradeName] = append(eventsByGrade[gradeName], Event{
 			Date:      lot.Date,
 			Type:      "BUY",
 			Quantity:  lot.Quantity,
@@ -83,7 +75,11 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 	}
 
 	for _, sale := range sales {
-		eventsByGrade[sale.Grade] = append(eventsByGrade[sale.Grade], Event{
+		gradeName := sale.Grade.Name
+		if gradeName == "" {
+			gradeName = "Unknown"
+		}
+		eventsByGrade[gradeName] = append(eventsByGrade[gradeName], Event{
 			Date:      sale.Date,
 			Type:      "SELL",
 			Quantity:  sale.Quantity,
@@ -120,11 +116,8 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 					currentQty -= event.Quantity
 					currentTotalCost -= event.Quantity * avgCost
 				} else {
-					// Handle negative stock if it happens (data error or short selling)
+					// Handle negative stock if it happens
 					currentQty -= event.Quantity
-					// Cost basis for negative stock? Let's keep it simple and assume 0 cost if empty,
-					// effectively creating negative cost basis or just ignoring.
-					// For robust app, we'd block this.
 				}
 			}
 		}
