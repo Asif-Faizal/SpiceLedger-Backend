@@ -42,21 +42,85 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 	return s.userRepo.Create(ctx, user)
 }
 
-func (s *AuthService) Login(ctx context.Context, email, password string) (string, error) {
+func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, error) {
 	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
-		return "", domain.ErrInvalidCredentials
+		return "", "", domain.ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
-		return "", domain.ErrInvalidCredentials
+		return "", "", domain.ErrInvalidCredentials
 	}
 
-	// Generate JWT
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID.String(),
-		"role":    user.Role,
-		"exp":     time.Now().Add(time.Hour * 72).Unix(),
+	// Generate Token Pair
+	accessToken, refreshToken, err := s.GenerateTokenPair(user.ID.String(), user.Role)
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessToken, refreshToken, nil
+}
+
+func (s *AuthService) GenerateTokenPair(userID, role string) (string, string, error) {
+	// 1. Access Token (15 min)
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": userID,
+		"role":    role,
+		"type":    "access",
+		"exp":     time.Now().Add(time.Minute * 15).Unix(),
 	})
-	return token.SignedString([]byte(s.config.JWTSecret))
+	accessTokenString, err := accessToken.SignedString([]byte(s.config.JWTSecret))
+	if err != nil {
+		return "", "", err
+	}
+
+	// 2. Refresh Token (7 days)
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": userID,
+		"role":    role,
+		"type":    "refresh",
+		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(),
+	})
+	refreshTokenString, err := refreshToken.SignedString([]byte(s.config.JWTSecret))
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessTokenString, refreshTokenString, nil
+}
+
+func (s *AuthService) RefreshToken(ctx context.Context, refreshTokenStr string) (string, string, error) {
+	token, err := jwt.Parse(refreshTokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, domain.ErrInvalidCredentials // Reusing invalid credentials for signature error
+		}
+		return []byte(s.config.JWTSecret), nil
+	})
+
+	if err != nil || !token.Valid {
+		return "", "", domain.ErrInvalidCredentials
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", "", domain.ErrInvalidCredentials
+	}
+
+	// Validate token type
+	if claims["type"] != "refresh" {
+		return "", "", domain.ErrInvalidCredentials
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		return "", "", domain.ErrInvalidCredentials
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok {
+		role = "user"
+	}
+
+	// Rotate tokens: Issue new pair
+	return s.GenerateTokenPair(userID, role)
 }

@@ -28,6 +28,7 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthServic
 	auth := api.Group("/auth")
 	auth.Post("/register", authHandler.Register)
 	auth.Post("/login", authHandler.Login)
+	auth.Post("/refresh", authHandler.RefreshToken)
 
 	// Protected Routes
 	api.Use(authMiddleware(cfg.JWTSecret))
