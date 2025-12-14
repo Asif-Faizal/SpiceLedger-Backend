@@ -42,23 +42,23 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 	return s.userRepo.Create(ctx, user)
 }
 
-func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, error) {
+func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, bool, error) {
 	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
-		return "", "", domain.ErrInvalidCredentials
+		return "", "", false, domain.ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
-		return "", "", domain.ErrInvalidCredentials
+		return "", "", false, domain.ErrInvalidCredentials
 	}
 
 	// Generate Token Pair
 	accessToken, refreshToken, err := s.GenerateTokenPair(user.ID.String(), user.Role)
 	if err != nil {
-		return "", "", err
+		return "", "", false, err
 	}
 
-	return accessToken, refreshToken, nil
+	return accessToken, refreshToken, user.Role == "admin", nil
 }
 
 func (s *AuthService) GenerateTokenPair(userID, role string) (string, string, error) {

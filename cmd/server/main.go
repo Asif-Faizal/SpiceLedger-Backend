@@ -25,19 +25,21 @@ func main() {
 	userRepo := postgres.NewUserRepository(database)
 	inventoryRepo := postgres.NewInventoryRepository(database)
 	priceRepo := redis.NewPriceRepository(redisClient)
-	gradeRepo := postgres.NewGradeRepository(database)
+    gradeRepo := postgres.NewGradeRepository(database)
+    productRepo := postgres.NewProductRepository(database)
 
 	// 4. Init Services
 	authService := service.NewAuthService(userRepo, cfg)
-	inventoryService := service.NewInventoryService(inventoryRepo, priceRepo)
-	priceService := service.NewPriceService(priceRepo)
-	gradeService := service.NewGradeService(gradeRepo)
+    inventoryService := service.NewInventoryService(inventoryRepo, priceRepo, gradeRepo)
+    priceService := service.NewPriceService(priceRepo)
+    gradeService := service.NewGradeService(gradeRepo)
+    productService := service.NewProductService(productRepo)
 
 	// 5. Setup Fiber
 	app := fiber.New()
 
 	// 7. Setup Routes
-	http.SetupRoutes(app, cfg, authService, inventoryService, priceService, gradeService, userRepo)
+    http.SetupRoutes(app, cfg, authService, inventoryService, priceService, gradeService, productService, userRepo)
 
 	// 8. Start Server
 	log.Printf("Server starting on port %s", cfg.Port)

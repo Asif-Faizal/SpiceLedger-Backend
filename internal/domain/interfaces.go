@@ -17,6 +17,13 @@ type UserRepository interface {
 type GradeRepository interface {
 	Create(ctx context.Context, grade *Grade) error
 	FindAll(ctx context.Context) ([]Grade, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*Grade, error)
+}
+
+type ProductRepository interface {
+	Create(ctx context.Context, product *Product) error
+	FindAll(ctx context.Context) ([]Product, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*Product, error)
 }
 
 type InventoryRepository interface {
@@ -33,7 +40,7 @@ type InventoryRepository interface {
 }
 
 type PriceRepository interface {
-	SetPrice(ctx context.Context, date string, grade string, price float64) error
-	GetPrice(ctx context.Context, date string, grade string) (float64, error)
+	SetPrice(ctx context.Context, date string, productID uuid.UUID, gradeID uuid.UUID, price float64) error
+	GetPrice(ctx context.Context, date string, productID uuid.UUID, gradeID uuid.UUID) (float64, error)
 	GetPricesForDate(ctx context.Context, date string) ([]DailyPrice, error)
 }

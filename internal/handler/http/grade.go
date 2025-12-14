@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/saravanan/spice_backend/internal/service"
 )
 
@@ -15,6 +16,7 @@ func NewGradeHandler(gradeSvc *service.GradeService) *GradeHandler {
 
 func (h *GradeHandler) CreateGrade(c *fiber.Ctx) error {
 	type Request struct {
+		ProductID   string `json:"product_id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`
 	}
@@ -28,7 +30,13 @@ func (h *GradeHandler) CreateGrade(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Grade name is required"})
 	}
 
-	if err := h.gradeSvc.CreateGrade(c.Context(), req.Name, req.Description); err != nil {
+	// Validate product_id
+	pid, err := uuid.Parse(req.ProductID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product_id"})
+	}
+
+	if err := h.gradeSvc.CreateGrade(c.Context(), pid, req.Name, req.Description); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 

@@ -16,10 +16,19 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type Product struct {
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	Name        string    `gorm:"type:varchar(100);unique" json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
 type Grade struct {
 	ID          uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 	Name        string    `gorm:"type:varchar(50);unique" json:"name"`
 	Description string    `json:"description"`
+	ProductID   uuid.UUID `gorm:"type:uuid;index" json:"product_id"`
+	Product     Product   `gorm:"foreignKey:ProductID" json:"product,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
@@ -29,8 +38,10 @@ type PurchaseLot struct {
 	Date      time.Time `gorm:"type:date;not null;index" json:"date"`
 	Quantity  float64   `gorm:"type:decimal(10,2);not null" json:"quantity_kg"`
 	UnitCost  float64   `gorm:"type:decimal(10,2);not null" json:"unit_cost"`
+	ProductID uuid.UUID `gorm:"type:uuid;not null;index" json:"product_id"`
 	GradeID   uuid.UUID `gorm:"type:uuid;not null;index" json:"grade_id"`
-	Grade     Grade     `gorm:"foreignKey:GradeID" json:"grade,omitempty"` // Optional association
+	Product   Product   `gorm:"foreignKey:ProductID" json:"product,omitempty"`
+	Grade     Grade     `gorm:"foreignKey:GradeID" json:"grade,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -41,7 +52,9 @@ type SaleTransaction struct {
 	Date      time.Time `gorm:"type:date;not null;index" json:"date"`
 	Quantity  float64   `gorm:"type:decimal(10,2);not null" json:"quantity_kg"`
 	UnitPrice float64   `gorm:"type:decimal(10,2);not null" json:"unit_price"`
+	ProductID uuid.UUID `gorm:"type:uuid;not null;index" json:"product_id"`
 	GradeID   uuid.UUID `gorm:"type:uuid;not null;index" json:"grade_id"`
+	Product   Product   `gorm:"foreignKey:ProductID" json:"product,omitempty"`
 	Grade     Grade     `gorm:"foreignKey:GradeID" json:"grade,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -50,26 +63,42 @@ type SaleTransaction struct {
 // DTOs for Logic & API
 
 type DailyPrice struct {
-	Date       string  `json:"date"`
-	Grade      string  `json:"grade"`
-	PricePerKg float64 `json:"price_per_kg"`
+	Date       string    `json:"date"`
+	ProductID  uuid.UUID `json:"product_id"`
+	GradeID    uuid.UUID `json:"grade_id"`
+	PricePerKg float64   `json:"price_per_kg"`
 }
 
 type InventorySnapshot struct {
-	Grade          string  `json:"grade"`
-	TotalQuantity  float64 `json:"total_quantity_kg"`
-	AverageCost    float64 `json:"average_cost_per_kg"`
-	TotalCostBasis float64 `json:"total_cost_basis"`
-	MarketPrice    float64 `json:"market_price_per_kg,omitempty"`
-	MarketValue    float64 `json:"market_value,omitempty"`
-	UnrealizedPnL  float64 `json:"unrealized_pnl,omitempty"`
-	RealizedPnL    float64 `json:"realized_pnl,omitempty"` // For history, maybe?
+	ProductID      uuid.UUID `json:"product_id"`
+	Product        string    `json:"product"`
+	Grade          string    `json:"grade"`
+	TotalQuantity  float64   `json:"total_quantity_kg"`
+	AverageCost    float64   `json:"average_cost_per_kg"`
+	TotalCostBasis float64   `json:"total_cost_basis"`
+	MarketPrice    float64   `json:"market_price_per_kg,omitempty"`
+	MarketValue    float64   `json:"market_value,omitempty"`
+	UnrealizedPnL  float64   `json:"unrealized_pnl,omitempty"`
+	RealizedPnL    float64   `json:"realized_pnl,omitempty"`
 }
 
-type OverallInventory struct {
-	Snapshots     []InventorySnapshot `json:"grades"`
+type ProductInventory struct {
+	ProductID     uuid.UUID           `json:"product_id"`
+	Product       string              `json:"product"`
+	Grades        []InventorySnapshot `json:"grades"`
 	TotalQuantity float64             `json:"total_quantity_kg"`
 	TotalValue    float64             `json:"total_value"`
 	TotalCost     float64             `json:"total_cost"`
 	TotalPnL      float64             `json:"total_pnl"`
+	TotalPnLPct   float64             `json:"total_pnl_pct"`
+}
+
+type OverallInventory struct {
+	Snapshots     []InventorySnapshot `json:"grades"`
+	Products      []ProductInventory  `json:"products"`
+	TotalQuantity float64             `json:"total_quantity_kg"`
+	TotalValue    float64             `json:"total_value"`
+	TotalCost     float64             `json:"total_cost"`
+	TotalPnL      float64             `json:"total_pnl"`
+	TotalPnLPct   float64             `json:"total_pnl_pct"`
 }

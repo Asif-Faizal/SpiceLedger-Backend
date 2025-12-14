@@ -57,7 +57,7 @@ curl -X POST http://localhost:8080/api/auth/register \
 
 ### Login
 *Role: Any*
-Returns a JWT token. Use this token in the `Authorization` header for subsequent requests.
+Returns a JWT token pair and an admin flag. Use the `token` in the `Authorization` header for subsequent requests.
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
@@ -69,7 +69,25 @@ curl -X POST http://localhost:8080/api/auth/login \
 **Response:**
 ```json
 {
-  "token": "eyJhbGciOiJIUz..."
+  "token": "eyJhbGciOiJIUz...",
+  "refresh_token": "eyJhbGciOiJIUz...",
+  "is_admin": false
+}
+```
+
+### Refresh Token
+```bash
+curl -X POST http://localhost:8080/api/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refresh_token": "<REFRESH_TOKEN>"
+  }'
+```
+**Response:**
+```json
+{
+  "token": "<NEW_ACCESS_TOKEN>",
+  "refresh_token": "<NEW_REFRESH_TOKEN>"
 }
 ```
 
@@ -86,28 +104,54 @@ curl -X GET http://localhost:8080/api/admin/stats \
   -H "Authorization: Bearer <ADMIN_TOKEN>"
 ```
 
-### 2. Create Grade
-Add a new spice grade to the system.
+### 2. Create Product
+Create a product (e.g., Cardamom).
 ```bash
+curl -X POST http://localhost:8080/api/products \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Cardamom",
+    "description": "Default product"
+  }'
+```
+
+### 3. List Products
+```bash
+curl -X GET http://localhost:8080/api/products \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+
+### 4. Create Grade (for a Product)
+Add a new grade under a specific product.
+```bash
+PRODUCT_ID="<UUID-FROM-LIST-PRODUCTS>"
+
 curl -X POST http://localhost:8080/api/grades \
   -H "Authorization: Bearer <ADMIN_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
+    "product_id": "'$PRODUCT_ID'",
     "name": "Cardamom Extra Bold",
     "description": "8mm+ pods, green color"
   }'
 ```
 
-### 3. Set Daily Price
-Set the market price for a specific grade on a specific date.
+### 5. Set Daily Price (Product + Grade)
+Set the market price for a specific product grade on a specific date.
 ```bash
+DATE="2025-12-14"
+PRODUCT_ID="<UUID-FROM-LIST-PRODUCTS>"
+GRADE_ID="<UUID-FROM-LIST-GRADES>"
+
 curl -X POST http://localhost:8080/api/prices \
   -H "Authorization: Bearer <ADMIN_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
-    "date": "2023-10-27",
-    "grade": "Cardamom Extra Bold",
-    "price": 1500.50
+    "date": "'$DATE'",
+    "product_id": "'$PRODUCT_ID'",
+    "grade_id": "'$GRADE_ID'",
+    "price_per_kg": 1500.50
   }'
 ```
 
@@ -126,7 +170,8 @@ curl -X GET http://localhost:8080/api/grades \
 ### 2. Add Purchase Lot (Stock In)
 Record a purchase of stock.
 ```bash
-# First, you need a Grade ID (get from /api/grades)
+# First, you need a Product ID and a Grade ID
+PRODUCT_ID="<UUID-FROM-LIST-PRODUCTS>"
 GRADE_ID="<UUID-FROM-LIST-GRADES>"
 
 curl -X POST http://localhost:8080/api/lots \
@@ -134,6 +179,7 @@ curl -X POST http://localhost:8080/api/lots \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2023-10-25",
+    "product_id": "'$PRODUCT_ID'",
     "grade_id": "'$GRADE_ID'",
     "quantity_kg": 100.0,
     "unit_cost": 1200.0
@@ -148,6 +194,7 @@ curl -X POST http://localhost:8080/api/sales \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2023-10-27",
+    "product_id": "'$PRODUCT_ID'",
     "grade_id": "'$GRADE_ID'",
     "quantity_kg": 50.0,
     "unit_price": 1600.0
@@ -159,6 +206,40 @@ Get the current stock status, valuation, and P&L based on today's market price.
 ```bash
 curl -X GET http://localhost:8080/api/inventory/current \
   -H "Authorization: Bearer <USER_TOKEN>"
+```
+**Response shape (example):**
+```json
+{
+  "products": [
+    {
+      "product_id": "<UUID>",
+      "product": "Cardamom",
+      "grades": [
+        {
+          "product_id": "<UUID>",
+          "product": "Cardamom",
+          "grade": "Cardamom Extra Bold",
+          "total_quantity_kg": 50,
+          "average_cost_per_kg": 1200,
+          "market_price_per_kg": 1500.5,
+          "market_value": 75025,
+          "total_cost_basis": 60000,
+          "unrealized_pnl": 15025
+        }
+      ],
+      "total_quantity_kg": 50,
+      "total_value": 75025,
+      "total_cost": 60000,
+      "total_pnl": 15025,
+      "total_pnl_pct": 25.04
+    }
+  ],
+  "total_quantity_kg": 50,
+  "total_value": 75025,
+  "total_cost": 60000,
+  "total_pnl": 15025,
+  "total_pnl_pct": 25.04
+}
 ```
 
 ### 5. Get Inventory History
@@ -173,4 +254,28 @@ View market prices for a specific date.
 ```bash
 curl -X GET http://localhost:8080/api/prices/2023-10-27 \
   -H "Authorization: Bearer <USER_TOKEN>"
+```
+Returns:
+```json
+{
+  "date": "2023-10-27",
+  "prices": [
+    { "date": "2023-10-27", "product_id": "<UUID>", "grade_id": "<UUID>", "price_per_kg": 1500.5 }
+  ]
+}
+```
+
+### 7. Get Single Price (by Product + Grade)
+```bash
+curl -X GET http://localhost:8080/api/prices/2023-10-27/<PRODUCT_ID>/<GRADE_ID> \
+  -H "Authorization: Bearer <USER_TOKEN>"
+```
+Returns:
+```json
+{
+  "date": "2023-10-27",
+  "product_id": "<PRODUCT_ID>",
+  "grade_id": "<GRADE_ID>",
+  "price_per_kg": 1500.5
+}
 ```

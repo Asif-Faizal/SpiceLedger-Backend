@@ -41,15 +41,16 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
-	accessToken, refreshToken, err := h.authService.Login(c.Context(), req.Email, req.Password)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
-	}
+    accessToken, refreshToken, isAdmin, err := h.authService.Login(c.Context(), req.Email, req.Password)
+    if err != nil {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+    }
 
-	return c.JSON(fiber.Map{
-		"token":         accessToken,
-		"refresh_token": refreshToken,
-	})
+    return c.JSON(fiber.Map{
+        "token":         accessToken,
+        "refresh_token": refreshToken,
+        "is_admin":      isAdmin,
+    })
 }
 
 func (h *AuthHandler) RefreshToken(c *fiber.Ctx) error {

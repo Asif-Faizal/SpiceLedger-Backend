@@ -9,21 +9,22 @@ import (
 )
 
 type GradeService struct {
-	gradeRepo domain.GradeRepository
+    gradeRepo domain.GradeRepository
 }
 
 func NewGradeService(gradeRepo domain.GradeRepository) *GradeService {
 	return &GradeService{gradeRepo: gradeRepo}
 }
 
-func (s *GradeService) CreateGrade(ctx context.Context, name, description string) error {
-	grade := &domain.Grade{
-		ID:          uuid.New(),
-		Name:        name,
-		Description: description,
-		CreatedAt:   time.Now(),
-	}
-	return s.gradeRepo.Create(ctx, grade)
+func (s *GradeService) CreateGrade(ctx context.Context, productID uuid.UUID, name, description string) error {
+    grade := &domain.Grade{
+        ID:          uuid.New(),
+        ProductID:   productID,
+        Name:        name,
+        Description: description,
+        CreatedAt:   time.Now(),
+    }
+    return s.gradeRepo.Create(ctx, grade)
 }
 
 func (s *GradeService) ListGrades(ctx context.Context) ([]domain.Grade, error) {

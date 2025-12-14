@@ -12,30 +12,48 @@ import (
 type InventoryService struct {
 	inventoryRepo domain.InventoryRepository
 	priceRepo     domain.PriceRepository
+	gradeRepo     domain.GradeRepository
 }
 
-func NewInventoryService(inventoryRepo domain.InventoryRepository, priceRepo domain.PriceRepository) *InventoryService {
+func NewInventoryService(inventoryRepo domain.InventoryRepository, priceRepo domain.PriceRepository, gradeRepo domain.GradeRepository) *InventoryService {
 	return &InventoryService{
 		inventoryRepo: inventoryRepo,
 		priceRepo:     priceRepo,
+		gradeRepo:     gradeRepo,
 	}
 }
 
-func (s *InventoryService) AddPurchaseLot(ctx context.Context, userID uuid.UUID, date time.Time, gradeID uuid.UUID, quantity, unitCost float64) error {
+func (s *InventoryService) AddPurchaseLot(ctx context.Context, userID uuid.UUID, date time.Time, productID uuid.UUID, gradeID uuid.UUID, quantity, unitCost float64) error {
+	grade, err := s.gradeRepo.FindByID(ctx, gradeID)
+	if err != nil {
+		return err
+	}
+	if grade.ProductID != productID {
+		return domain.ErrInvalidGradeForProduct
+	}
 	lot := &domain.PurchaseLot{
-		UserID:   userID,
-		Date:     date,
-		GradeID:  gradeID,
-		Quantity: quantity,
-		UnitCost: unitCost,
+		UserID:    userID,
+		Date:      date,
+		ProductID: productID,
+		GradeID:   gradeID,
+		Quantity:  quantity,
+		UnitCost:  unitCost,
 	}
 	return s.inventoryRepo.CreateLot(ctx, lot)
 }
 
-func (s *InventoryService) AddSale(ctx context.Context, userID uuid.UUID, date time.Time, gradeID uuid.UUID, quantity, unitPrice float64) error {
+func (s *InventoryService) AddSale(ctx context.Context, userID uuid.UUID, date time.Time, productID uuid.UUID, gradeID uuid.UUID, quantity, unitPrice float64) error {
+	grade, err := s.gradeRepo.FindByID(ctx, gradeID)
+	if err != nil {
+		return err
+	}
+	if grade.ProductID != productID {
+		return domain.ErrInvalidGradeForProduct
+	}
 	sale := &domain.SaleTransaction{
 		UserID:    userID,
 		Date:      date,
+		ProductID: productID,
 		GradeID:   gradeID,
 		Quantity:  quantity,
 		UnitPrice: unitPrice,
@@ -51,7 +69,7 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 		return nil, err
 	}
 
-	// 2. Group by Grade
+	// 2. Group by Product and Grade
 	type Event struct {
 		Date      time.Time
 		Type      string // "BUY" or "SELL"
@@ -59,46 +77,38 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 		UnitPrice float64 // Cost for Buy, Price for Sell
 	}
 
-	eventsByGrade := make(map[string][]Event)
+	type Key struct {
+		ProductID uuid.UUID
+		Product   string
+		GradeID   uuid.UUID
+		Grade     string
+	}
+
+	eventsByKey := make(map[Key][]Event)
 
 	for _, lot := range lots {
-		gradeName := lot.Grade.Name
-		if gradeName == "" {
-			gradeName = "Unknown" // Should ideally be preloaded
-		}
-		eventsByGrade[gradeName] = append(eventsByGrade[gradeName], Event{
-			Date:      lot.Date,
-			Type:      "BUY",
-			Quantity:  lot.Quantity,
-			UnitPrice: lot.UnitCost,
-		})
+		k := Key{ProductID: lot.ProductID, Product: lot.Product.Name, GradeID: lot.GradeID, Grade: lot.Grade.Name}
+		eventsByKey[k] = append(eventsByKey[k], Event{Date: lot.Date, Type: "BUY", Quantity: lot.Quantity, UnitPrice: lot.UnitCost})
 	}
 
 	for _, sale := range sales {
-		gradeName := sale.Grade.Name
-		if gradeName == "" {
-			gradeName = "Unknown"
-		}
-		eventsByGrade[gradeName] = append(eventsByGrade[gradeName], Event{
-			Date:      sale.Date,
-			Type:      "SELL",
-			Quantity:  sale.Quantity,
-			UnitPrice: sale.UnitPrice,
-		})
+		k := Key{ProductID: sale.ProductID, Product: sale.Product.Name, GradeID: sale.GradeID, Grade: sale.Grade.Name}
+		eventsByKey[k] = append(eventsByKey[k], Event{Date: sale.Date, Type: "SELL", Quantity: sale.Quantity, UnitPrice: sale.UnitPrice})
 	}
 
 	// 3. Process each grade
 	var snapshots []domain.InventorySnapshot
+	var productsMap = make(map[uuid.UUID]*domain.ProductInventory)
 	var totalQty, totalValuation, totalCostBasis, totalPnL float64
 
 	dateStr := date.Format("2006-01-02")
 	marketPrices, _ := s.priceRepo.GetPricesForDate(ctx, dateStr)
-	marketPriceMap := make(map[string]float64)
+	priceByGradeID := make(map[uuid.UUID]float64)
 	for _, p := range marketPrices {
-		marketPriceMap[p.Grade] = p.PricePerKg
+		priceByGradeID[p.GradeID] = p.PricePerKg
 	}
 
-	for grade, events := range eventsByGrade {
+	for key, events := range eventsByKey {
 		// Sort events by date
 		sort.Slice(events, func(i, j int) bool {
 			return events[i].Date.Before(events[j].Date)
@@ -134,12 +144,14 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 		}
 
 		// Validation with market price
-		marketPrice := marketPriceMap[grade]
+		marketPrice := priceByGradeID[key.GradeID]
 		marketValue := currentQty * marketPrice
 		unrealizedPnL := marketValue - currentTotalCost
 
 		snapshot := domain.InventorySnapshot{
-			Grade:          grade,
+			ProductID:      key.ProductID,
+			Product:        key.Product,
+			Grade:          key.Grade,
 			TotalQuantity:  currentQty,
 			AverageCost:    avgCost,
 			TotalCostBasis: currentTotalCost,
@@ -149,18 +161,42 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 		}
 		snapshots = append(snapshots, snapshot)
 
+		pi, ok := productsMap[key.ProductID]
+		if !ok {
+			pi = &domain.ProductInventory{ProductID: key.ProductID, Product: key.Product}
+			productsMap[key.ProductID] = pi
+		}
+		pi.Grades = append(pi.Grades, snapshot)
+		pi.TotalQuantity += currentQty
+		pi.TotalValue += marketValue
+		pi.TotalCost += currentTotalCost
+		pi.TotalPnL += unrealizedPnL
+
 		totalQty += currentQty
 		totalValuation += marketValue
 		totalCostBasis += currentTotalCost
 		totalPnL += unrealizedPnL
 	}
 
+	products := make([]domain.ProductInventory, 0, len(productsMap))
+	for _, pi := range productsMap {
+		if pi.TotalCost != 0 {
+			pi.TotalPnLPct = (pi.TotalPnL / pi.TotalCost) * 100
+		}
+		products = append(products, *pi)
+	}
+	totalPnLPct := 0.0
+	if totalCostBasis != 0 {
+		totalPnLPct = (totalPnL / totalCostBasis) * 100
+	}
 	return &domain.OverallInventory{
 		Snapshots:     snapshots,
+		Products:      products,
 		TotalQuantity: totalQty,
 		TotalValue:    totalValuation,
 		TotalCost:     totalCostBasis,
 		TotalPnL:      totalPnL,
+		TotalPnLPct:   totalPnLPct,
 	}, nil
 }
 

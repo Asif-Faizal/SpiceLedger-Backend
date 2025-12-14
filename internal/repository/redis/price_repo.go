@@ -1,12 +1,13 @@
 package redis
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
+    "context"
+    "encoding/json"
+    "fmt"
 
-	"github.com/redis/go-redis/v9"
-	"github.com/saravanan/spice_backend/internal/domain"
+    "github.com/google/uuid"
+    "github.com/redis/go-redis/v9"
+    "github.com/saravanan/spice_backend/internal/domain"
 )
 
 type priceRepository struct {
@@ -17,18 +18,18 @@ func NewPriceRepository(rdb *redis.Client) domain.PriceRepository {
 	return &priceRepository{rdb: rdb}
 }
 
-// Key format: price:cardamom:<yyyy-mm-dd>:<grade>
-func (r *priceRepository) getKey(date string, grade string) string {
-	return fmt.Sprintf("price:cardamom:%s:%s", date, grade)
+func (r *priceRepository) getKey(date string, productID uuid.UUID, gradeID uuid.UUID) string {
+    return fmt.Sprintf("price:%s:%s:%s", date, productID.String(), gradeID.String())
 }
 
-func (r *priceRepository) SetPrice(ctx context.Context, date string, grade string, price float64) error {
-	key := r.getKey(date, grade)
-	priceData := domain.DailyPrice{
-		Date:       date,
-		Grade:      grade,
-		PricePerKg: price,
-	}
+func (r *priceRepository) SetPrice(ctx context.Context, date string, productID uuid.UUID, gradeID uuid.UUID, price float64) error {
+    key := r.getKey(date, productID, gradeID)
+    priceData := domain.DailyPrice{
+        Date:       date,
+        ProductID:  productID,
+        GradeID:    gradeID,
+        PricePerKg: price,
+    }
 
 	data, err := json.Marshal(priceData)
 	if err != nil {
@@ -38,8 +39,8 @@ func (r *priceRepository) SetPrice(ctx context.Context, date string, grade strin
 	return r.rdb.Set(ctx, key, data, 0).Err()
 }
 
-func (r *priceRepository) GetPrice(ctx context.Context, date string, grade string) (float64, error) {
-	key := r.getKey(date, grade)
+func (r *priceRepository) GetPrice(ctx context.Context, date string, productID uuid.UUID, gradeID uuid.UUID) (float64, error) {
+    key := r.getKey(date, productID, gradeID)
 	val, err := r.rdb.Get(ctx, key).Result()
 	if err == redis.Nil {
 		return 0, domain.ErrPriceNotFound
@@ -57,8 +58,7 @@ func (r *priceRepository) GetPrice(ctx context.Context, date string, grade strin
 }
 
 func (r *priceRepository) GetPricesForDate(ctx context.Context, date string) ([]domain.DailyPrice, error) {
-	// Pattern: price:cardamom:<date>:*
-	pattern := fmt.Sprintf("price:cardamom:%s:*", date)
+    pattern := fmt.Sprintf("price:%s:*", date)
 
 	var prices []domain.DailyPrice
 

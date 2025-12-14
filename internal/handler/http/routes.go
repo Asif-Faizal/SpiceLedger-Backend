@@ -12,14 +12,15 @@ import (
 	"github.com/saravanan/spice_backend/internal/service"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthService, invSvc *service.InventoryService, priceSvc *service.PriceService, gradeSvc *service.GradeService, userRepo domain.UserRepository) {
+func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthService, invSvc *service.InventoryService, priceSvc *service.PriceService, gradeSvc *service.GradeService, productSvc *service.ProductService, userRepo domain.UserRepository) {
 	app.Use(logger.New())
 	app.Use(cors.New())
 
 	authHandler := NewAuthHandler(authSvc)
 	inventoryHandler := NewInventoryHandler(invSvc)
-	priceHandler := NewPriceHandler(priceSvc)
-	gradeHandler := NewGradeHandler(gradeSvc)
+    priceHandler := NewPriceHandler(priceSvc)
+    gradeHandler := NewGradeHandler(gradeSvc)
+    productHandler := NewProductHandler(productSvc)
 	adminHandler := NewAdminHandler(userRepo)
 
 	api := app.Group("/api")
@@ -38,10 +39,15 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthServic
 	admin.Use(adminMiddleware())
 	admin.Get("/stats", adminHandler.GetUserStats)
 
-	// Grades
-	grades := api.Group("/grades")
-	grades.Get("/", gradeHandler.ListGrades)
-	grades.Post("/", adminMiddleware(), gradeHandler.CreateGrade) // Only admin can create grades
+    // Grades
+    grades := api.Group("/grades")
+    grades.Get("/", gradeHandler.ListGrades)
+    grades.Post("/", adminMiddleware(), gradeHandler.CreateGrade) // Only admin can create grades
+
+    // Products
+    products := api.Group("/products")
+    products.Get("/", productHandler.ListProducts)
+    products.Post("/", adminMiddleware(), productHandler.CreateProduct)
 
 	// Inventory (Lots & Sales)
 	api.Post("/lots", inventoryHandler.AddLot)
@@ -53,10 +59,10 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthServic
 	inventory.Get("/on-date", inventoryHandler.GetInventoryOnDate) // ?date=YYYY-MM-DD
 
 	// Prices
-	prices := api.Group("/prices")
-	prices.Post("/", adminMiddleware(), priceHandler.SetPrice) // Admin only
-	prices.Get("/:date/:grade", priceHandler.GetPrice)
-	prices.Get("/:date", priceHandler.GetPricesForDate)
+    prices := api.Group("/prices")
+    prices.Post("/", adminMiddleware(), priceHandler.SetPrice)
+    prices.Get("/:date/:product_id/:grade_id", priceHandler.GetPrice)
+    prices.Get("/:date", priceHandler.GetPricesForDate)
 }
 
 func authMiddleware(secret string) fiber.Handler {
