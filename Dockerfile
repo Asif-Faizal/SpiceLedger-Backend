@@ -11,10 +11,13 @@ COPY --from=deps /src/go.mod /src/go.sum ./
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=linux go build -o /out/server ./cmd/server
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -o /out/migrate ./cmd/migrate
 
 FROM gcr.io/distroless/base-debian12 AS release
 WORKDIR /app
 COPY --from=builder /out/server /app/server
+COPY --from=builder /out/migrate /app/migrate
 EXPOSE 8080
 USER nonroot:nonroot
 ENTRYPOINT ["/app/server"]

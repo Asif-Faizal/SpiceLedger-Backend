@@ -15,6 +15,25 @@ import (
 
 func main() {
 	cfg := config.LoadConfig()
+	mode := "up"
+	if len(os.Args) > 1 {
+		mode = os.Args[1]
+	}
+	if mode == "--down" || mode == "down" {
+		defaultDSN := strings.Replace(cfg.DBDSN, "dbname=spice_db", "dbname=postgres", 1)
+		dbAdmin, err := sql.Open("pgx", defaultDSN)
+		if err != nil {
+			log.Fatalf("Failed to open admin DB connection: %v", err)
+		}
+		defer dbAdmin.Close()
+		_, _ = dbAdmin.ExecContext(context.Background(), "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'spice_db'")
+		_, err = dbAdmin.ExecContext(context.Background(), "DROP DATABASE IF EXISTS spice_db")
+		if err != nil {
+			log.Fatalf("Failed to drop database: %v", err)
+		}
+		log.Println("Database spice_db dropped.")
+		return
+	}
 
 	// 1. Create DB if not exists
 	// Connect to default 'postgres' database

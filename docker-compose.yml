@@ -52,6 +52,21 @@ services:
       - "8081:8080"
       - "2345:2345"
 
+  migrate:
+    build:
+      context: .
+      target: release
+    env_file:
+      - .env
+    environment:
+      DB_DSN: "host=postgres user=postgres password=postgres dbname=spice_db port=5432 sslmode=disable"
+      REDIS_ADDR: "redis:6379"
+    depends_on:
+      - postgres
+      - redis
+    entrypoint: ["/app/migrate"]
+    command: ["up"]
+
 volumes:
   postgres_data:
   redis_data:
