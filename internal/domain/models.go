@@ -102,3 +102,41 @@ type OverallInventory struct {
 	TotalPnL      float64             `json:"total_pnl"`
 	TotalPnLPct   float64             `json:"total_pnl_pct"`
 }
+
+type DashboardUsersSummary struct {
+	Total            int64   `json:"total"`
+	WeeklyNew        int64   `json:"weekly_new"`
+	WeeklyChangePct  float64 `json:"weekly_change_pct"`
+	MonthlyChangePct float64 `json:"monthly_change_pct"`
+}
+
+type DashboardProductsSummary struct {
+	Total            int64   `json:"total"`
+	MonthlyChangePct float64 `json:"monthly_change_pct"`
+}
+
+type DashboardGradesSummary struct {
+	Total int64 `json:"total"`
+}
+
+type DashboardPriceUpdate struct {
+	Date               string    `json:"date"`
+	ProductID          uuid.UUID `json:"product_id"`
+	Product            string    `json:"product"`
+	GradeID            uuid.UUID `json:"grade_id"`
+	Grade              string    `json:"grade"`
+	Price              float64   `json:"price"`
+	PreviousDate       string    `json:"previous_date"`
+	PreviousPrice      float64   `json:"previous_price"`
+	ChangeDelta        float64   `json:"change_delta"`
+	ChangePercent      float64   `json:"change_percent"`
+}
+
+type DashboardResponse struct {
+	Date          string                    `json:"date"`
+	Users         DashboardUsersSummary     `json:"users"`
+	Products      DashboardProductsSummary  `json:"products"`
+	Grades        DashboardGradesSummary    `json:"grades"`
+	TotalItems    int64                     `json:"total_items"`
+	PriceUpdates  []DashboardPriceUpdate    `json:"price_updates"`
+}

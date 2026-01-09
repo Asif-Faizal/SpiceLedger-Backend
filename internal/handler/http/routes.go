@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,19 +10,20 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/saravanan/spice_backend/internal/config"
 	"github.com/saravanan/spice_backend/internal/domain"
+	graphqlschema "github.com/saravanan/spice_backend/internal/graphql"
 	"github.com/saravanan/spice_backend/internal/service"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthService, invSvc *service.InventoryService, priceSvc *service.PriceService, gradeSvc *service.GradeService, productSvc *service.ProductService, userRepo domain.UserRepository) {
+func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthService, invSvc *service.InventoryService, priceSvc *service.PriceService, gradeSvc *service.GradeService, productSvc *service.ProductService, userRepo domain.UserRepository, dashboardSvc *service.DashboardService) {
 	app.Use(logger.New())
 	app.Use(cors.New())
 
 	authHandler := NewAuthHandler(authSvc)
 	inventoryHandler := NewInventoryHandler(invSvc)
-    priceHandler := NewPriceHandler(priceSvc)
-    gradeHandler := NewGradeHandler(gradeSvc)
-    productHandler := NewProductHandler(productSvc)
-	adminHandler := NewAdminHandler(userRepo)
+	priceHandler := NewPriceHandler(priceSvc)
+	gradeHandler := NewGradeHandler(gradeSvc)
+	productHandler := NewProductHandler(productSvc)
+	adminHandler := NewAdminHandler(userRepo, dashboardSvc)
 
 	api := app.Group("/api")
 
@@ -34,20 +36,47 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthServic
 	// Protected Routes
 	api.Use(authMiddleware(cfg.JWTSecret))
 
+	// GraphQL
+	engine, _ := graphqlschema.NewEngine(dashboardSvc, productSvc, gradeSvc, invSvc, priceSvc)
+	api.Post("/graphql", func(c *fiber.Ctx) error {
+		type GraphQLRequest struct {
+			Query     string                 `json:"query"`
+			Variables map[string]interface{} `json:"variables"`
+		}
+		var req GraphQLRequest
+		if err := c.BodyParser(&req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
+		}
+		ctx := context.Background()
+		if v := c.Locals("user_id"); v != nil {
+			if s, ok := v.(string); ok {
+				ctx = context.WithValue(ctx, "user_id", s)
+			}
+		}
+		if v := c.Locals("role"); v != nil {
+			if s, ok := v.(string); ok {
+				ctx = context.WithValue(ctx, "role", s)
+			}
+		}
+		result := engine.Exec(ctx, req.Query, req.Variables)
+		return c.JSON(result)
+	})
+
 	// Admin Routes
 	admin := api.Group("/admin")
 	admin.Use(adminMiddleware())
 	admin.Get("/stats", adminHandler.GetUserStats)
+	admin.Get("/dashboard", adminHandler.GetDashboard)
 
-    // Grades
-    grades := api.Group("/grades")
-    grades.Get("/", gradeHandler.ListGrades)
-    grades.Post("/", adminMiddleware(), gradeHandler.CreateGrade) // Only admin can create grades
+	// Grades
+	grades := api.Group("/grades")
+	grades.Get("/", gradeHandler.ListGrades)
+	grades.Post("/", adminMiddleware(), gradeHandler.CreateGrade) // Only admin can create grades
 
-    // Products
-    products := api.Group("/products")
-    products.Get("/", productHandler.ListProducts)
-    products.Post("/", adminMiddleware(), productHandler.CreateProduct)
+	// Products
+	products := api.Group("/products")
+	products.Get("/", productHandler.ListProducts)
+	products.Post("/", adminMiddleware(), productHandler.CreateProduct)
 
 	// Inventory (Lots & Sales)
 	api.Post("/lots", inventoryHandler.AddLot)
@@ -59,10 +88,10 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthServic
 	inventory.Get("/on-date", inventoryHandler.GetInventoryOnDate) // ?date=YYYY-MM-DD
 
 	// Prices
-    prices := api.Group("/prices")
-    prices.Post("/", adminMiddleware(), priceHandler.SetPrice)
-    prices.Get("/:date/:product_id/:grade_id", priceHandler.GetPrice)
-    prices.Get("/:date", priceHandler.GetPricesForDate)
+	prices := api.Group("/prices")
+	prices.Post("/", adminMiddleware(), priceHandler.SetPrice)
+	prices.Get("/:date/:product_id/:grade_id", priceHandler.GetPrice)
+	prices.Get("/:date", priceHandler.GetPricesForDate)
 }
 
 func authMiddleware(secret string) fiber.Handler {

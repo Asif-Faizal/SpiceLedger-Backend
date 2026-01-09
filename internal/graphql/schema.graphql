@@ -1,0 +1,113 @@
+""" GraphQL schema for Spice Ledger Backend """
+
+type DashboardUsersSummary {
+  Total: Int!
+  WeeklyNew: Int!
+  WeeklyChangePct: Float!
+  MonthlyChangePct: Float!
+}
+
+type DashboardProductsSummary {
+  Total: Int!
+  MonthlyChangePct: Float!
+}
+
+type DashboardGradesSummary {
+  Total: Int!
+}
+
+type DashboardPriceUpdate {
+  Date: String!
+  ProductID: String!
+  Product: String!
+  GradeID: String!
+  Grade: String!
+  Price: Float!
+  PreviousDate: String!
+  PreviousPrice: Float!
+  ChangeDelta: Float!
+  ChangePercent: Float!
+}
+
+type DashboardResponse {
+  Date: String!
+  Users: DashboardUsersSummary!
+  Products: DashboardProductsSummary!
+  Grades: DashboardGradesSummary!
+  TotalItems: Int!
+  PriceUpdates: [DashboardPriceUpdate!]!
+}
+
+type Product {
+  ID: String!
+  Name: String!
+  Description: String
+  CreatedAt: String!
+}
+
+type Grade {
+  ID: String!
+  Name: String!
+  Description: String
+  ProductID: String!
+  CreatedAt: String!
+}
+
+type InventorySnapshot {
+  ProductID: String!
+  Product: String!
+  Grade: String!
+  TotalQuantity: Float!
+  AverageCost: Float!
+  TotalCostBasis: Float!
+  MarketPrice: Float!
+  MarketValue: Float!
+  UnrealizedPnL: Float!
+  RealizedPnL: Float
+}
+
+type ProductInventory {
+  ProductID: String!
+  Product: String!
+  Grades: [InventorySnapshot!]!
+  TotalQuantity: Float!
+  TotalValue: Float!
+  TotalCost: Float!
+  TotalPnL: Float!
+  TotalPnLPct: Float!
+}
+
+type OverallInventory {
+  Snapshots: [InventorySnapshot!]!
+  Products: [ProductInventory!]!
+  TotalQuantity: Float!
+  TotalValue: Float!
+  TotalCost: Float!
+  TotalPnL: Float!
+  TotalPnLPct: Float!
+}
+
+type DailyPrice {
+  Date: String!
+  ProductID: String!
+  GradeID: String!
+  PricePerKg: Float!
+}
+
+type Query {
+  dashboard(date: String): DashboardResponse!
+  products: [Product!]!
+  grades: [Grade!]!
+  inventoryCurrent: OverallInventory!
+  inventoryOnDate(date: String!): OverallInventory!
+  prices(date: String!): [DailyPrice!]!
+  price(date: String!, productId: String!, gradeId: String!): Float
+}
+
+type Mutation {
+  createProduct(name: String!, description: String): Boolean!
+  createGrade(productId: String!, name: String!, description: String): Boolean!
+  setPrice(date: String!, productId: String!, gradeId: String!, price: Float!): Boolean!
+  addLot(date: String!, productId: String!, gradeId: String!, quantityKg: Float!, unitCost: Float!): Boolean!
+  addSale(date: String!, productId: String!, gradeId: String!, quantityKg: Float!, unitPrice: Float!): Boolean!
+}

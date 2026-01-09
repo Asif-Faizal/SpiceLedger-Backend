@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/saravanan/spice_backend/internal/domain"
@@ -46,6 +47,18 @@ func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Us
 func (r *userRepository) Count(ctx context.Context) (int64, error) {
 	var count int64
 	if err := r.db.WithContext(ctx).Model(&domain.User{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *userRepository) CountCreatedBetween(ctx context.Context, start time.Time, end time.Time) (int64, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.User{}).
+		Where("created_at >= ? AND created_at < ?", start, end).
+		Count(&count).Error
+	if err != nil {
 		return 0, err
 	}
 	return count, nil

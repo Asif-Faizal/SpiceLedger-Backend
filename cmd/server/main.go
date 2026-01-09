@@ -34,12 +34,13 @@ func main() {
     priceService := service.NewPriceService(priceRepo)
     gradeService := service.NewGradeService(gradeRepo)
     productService := service.NewProductService(productRepo)
+    dashboardService := service.NewDashboardService(userRepo, productRepo, gradeRepo, priceRepo)
 
 	// 5. Setup Fiber
 	app := fiber.New()
 
 	// 7. Setup Routes
-    http.SetupRoutes(app, cfg, authService, inventoryService, priceService, gradeService, productService, userRepo)
+    http.SetupRoutes(app, cfg, authService, inventoryService, priceService, gradeService, productService, userRepo, dashboardService)
 
 	// 8. Start Server
 	log.Printf("Server starting on port %s", cfg.Port)

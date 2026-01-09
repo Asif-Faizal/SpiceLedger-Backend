@@ -35,3 +35,11 @@ func (r *gradeRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.G
     }
     return &grade, nil
 }
+
+func (r *gradeRepository) Count(ctx context.Context) (int64, error) {
+    var count int64
+    if err := r.db.WithContext(ctx).Model(&domain.Grade{}).Count(&count).Error; err != nil {
+        return 0, err
+    }
+    return count, nil
+}

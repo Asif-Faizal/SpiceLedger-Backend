@@ -12,18 +12,22 @@ type UserRepository interface {
 	FindByEmail(ctx context.Context, email string) (*User, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*User, error)
 	Count(ctx context.Context) (int64, error)
+	CountCreatedBetween(ctx context.Context, start time.Time, end time.Time) (int64, error)
 }
 
 type GradeRepository interface {
 	Create(ctx context.Context, grade *Grade) error
 	FindAll(ctx context.Context) ([]Grade, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*Grade, error)
+	Count(ctx context.Context) (int64, error)
 }
 
 type ProductRepository interface {
 	Create(ctx context.Context, product *Product) error
 	FindAll(ctx context.Context) ([]Product, error)
 	FindByID(ctx context.Context, id uuid.UUID) (*Product, error)
+	Count(ctx context.Context) (int64, error)
+	CountCreatedBetween(ctx context.Context, start time.Time, end time.Time) (int64, error)
 }
 
 type InventoryRepository interface {
