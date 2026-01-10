@@ -2,7 +2,7 @@ package http
 
 import (
     "github.com/gofiber/fiber/v2"
-    "github.com/saravanan/spice_backend/internal/service"
+    "github.com/Asif-Faizal/SpiceLedger/internal/service"
 )
 
 type ProductHandler struct {

@@ -8,10 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/saravanan/spice_backend/internal/config"
-	"github.com/saravanan/spice_backend/internal/domain"
-	graphqlschema "github.com/saravanan/spice_backend/internal/graphql"
-	"github.com/saravanan/spice_backend/internal/service"
+	"github.com/Asif-Faizal/SpiceLedger/internal/config"
+	"github.com/Asif-Faizal/SpiceLedger/internal/domain"
+	graphqlschema "github.com/Asif-Faizal/SpiceLedger/internal/graphql"
+	"github.com/Asif-Faizal/SpiceLedger/internal/service"
 )
 
 func SetupRoutes(app *fiber.App, cfg *config.Config, authSvc *service.AuthService, invSvc *service.InventoryService, priceSvc *service.PriceService, gradeSvc *service.GradeService, productSvc *service.ProductService, userRepo domain.UserRepository, dashboardSvc *service.DashboardService) {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/Asif-Faizal/SpiceLedger/internal/domain"
 	"github.com/google/uuid"
-	"github.com/saravanan/spice_backend/internal/domain"
 )
 
 type DashboardService struct {

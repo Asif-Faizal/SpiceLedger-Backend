@@ -7,7 +7,7 @@ import (
 
     "github.com/google/uuid"
     "github.com/redis/go-redis/v9"
-    "github.com/saravanan/spice_backend/internal/domain"
+    "github.com/Asif-Faizal/SpiceLedger/internal/domain"
 )
 
 type priceRepository struct {

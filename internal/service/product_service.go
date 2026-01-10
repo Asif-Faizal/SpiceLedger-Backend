@@ -5,7 +5,7 @@ import (
     "time"
 
     "github.com/google/uuid"
-    "github.com/saravanan/spice_backend/internal/domain"
+    "github.com/Asif-Faizal/SpiceLedger/internal/domain"
 )
 
 type ProductService struct {

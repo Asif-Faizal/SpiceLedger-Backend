@@ -4,13 +4,13 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/saravanan/spice_backend/internal/config"
-	"github.com/saravanan/spice_backend/internal/handler/http"
-	"github.com/saravanan/spice_backend/internal/repository/postgres"
-	"github.com/saravanan/spice_backend/internal/repository/redis"
-	"github.com/saravanan/spice_backend/internal/service"
-	"github.com/saravanan/spice_backend/pkg/db"
-	pkgRedis "github.com/saravanan/spice_backend/pkg/redis"
+	"github.com/Asif-Faizal/SpiceLedger/internal/config"
+	"github.com/Asif-Faizal/SpiceLedger/internal/handler/http"
+	"github.com/Asif-Faizal/SpiceLedger/internal/repository/postgres"
+	"github.com/Asif-Faizal/SpiceLedger/internal/repository/redis"
+	"github.com/Asif-Faizal/SpiceLedger/internal/service"
+	"github.com/Asif-Faizal/SpiceLedger/pkg/db"
+	pkgRedis "github.com/Asif-Faizal/SpiceLedger/pkg/redis"
 )
 
 func main() {

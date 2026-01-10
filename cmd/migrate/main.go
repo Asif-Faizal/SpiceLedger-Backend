@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/saravanan/spice_backend/internal/config"
+	"github.com/Asif-Faizal/SpiceLedger/internal/config"
 )
 
 func main() {

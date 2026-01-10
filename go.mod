@@ -1,4 +1,4 @@
-module github.com/saravanan/spice_backend
+module github.com/Asif-Faizal/SpiceLedger
 
 go 1.25.1
 

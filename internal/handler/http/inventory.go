@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/saravanan/spice_backend/internal/service"
+	"github.com/Asif-Faizal/SpiceLedger/internal/service"
 )
 
 type InventoryHandler struct {

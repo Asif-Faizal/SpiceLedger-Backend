@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/saravanan/spice_backend/internal/domain"
-	"github.com/saravanan/spice_backend/internal/service"
+	"github.com/Asif-Faizal/SpiceLedger/internal/domain"
+	"github.com/Asif-Faizal/SpiceLedger/internal/service"
 )
 
 type AdminHandler struct {

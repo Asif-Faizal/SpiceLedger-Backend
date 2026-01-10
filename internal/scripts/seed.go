@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/saravanan/spice_backend/internal/config"
-	"github.com/saravanan/spice_backend/internal/domain"
+	"github.com/Asif-Faizal/SpiceLedger/internal/config"
+	"github.com/Asif-Faizal/SpiceLedger/internal/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 

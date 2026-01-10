@@ -4,7 +4,7 @@ import (
     "context"
 
     "github.com/google/uuid"
-    "github.com/saravanan/spice_backend/internal/domain"
+    "github.com/Asif-Faizal/SpiceLedger/internal/domain"
     "gorm.io/gorm"
 )
 

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Asif-Faizal/SpiceLedger/internal/service"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
-	"github.com/saravanan/spice_backend/internal/service"
 )
 
 type Engine struct {
