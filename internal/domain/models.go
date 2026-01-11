@@ -103,11 +103,32 @@ type OverallInventory struct {
 	TotalPnLPct   float64             `json:"total_pnl_pct"`
 }
 
+type DayGradeDetail struct {
+	ProductID     uuid.UUID `json:"product_id"`
+	Product       string    `json:"product"`
+	GradeID       uuid.UUID `json:"grade_id"`
+	Grade         string    `json:"grade"`
+	BoughtQty     float64   `json:"bought_qty"`
+	BoughtAvgCost float64   `json:"bought_avg_cost"`
+	SoldQty       float64   `json:"sold_qty"`
+	SoldAvgPrice  float64   `json:"sold_avg_price"`
+	DayPnL        float64   `json:"day_pnl"`
+}
+
+type DayInventory struct {
+	Date        string           `json:"date"`
+	Grades      []DayGradeDetail `json:"grades"`
+	TotalBought float64          `json:"total_bought_qty"`
+	TotalSold   float64          `json:"total_sold_qty"`
+	TotalDayPnL float64          `json:"total_day_pnl"`
+}
+
 type DashboardUsersSummary struct {
 	Total            int64   `json:"total"`
 	WeeklyNew        int64   `json:"weekly_new"`
 	WeeklyChangePct  float64 `json:"weekly_change_pct"`
 	MonthlyChangePct float64 `json:"monthly_change_pct"`
+	Last24hNew       int64   `json:"last_24h_new"`
 }
 
 type DashboardProductsSummary struct {
@@ -120,23 +141,23 @@ type DashboardGradesSummary struct {
 }
 
 type DashboardPriceUpdate struct {
-	Date               string    `json:"date"`
-	ProductID          uuid.UUID `json:"product_id"`
-	Product            string    `json:"product"`
-	GradeID            uuid.UUID `json:"grade_id"`
-	Grade              string    `json:"grade"`
-	Price              float64   `json:"price"`
-	PreviousDate       string    `json:"previous_date"`
-	PreviousPrice      float64   `json:"previous_price"`
-	ChangeDelta        float64   `json:"change_delta"`
-	ChangePercent      float64   `json:"change_percent"`
+	Date          string    `json:"date"`
+	ProductID     uuid.UUID `json:"product_id"`
+	Product       string    `json:"product"`
+	GradeID       uuid.UUID `json:"grade_id"`
+	Grade         string    `json:"grade"`
+	Price         float64   `json:"price"`
+	PreviousDate  string    `json:"previous_date"`
+	PreviousPrice float64   `json:"previous_price"`
+	ChangeDelta   float64   `json:"change_delta"`
+	ChangePercent float64   `json:"change_percent"`
 }
 
 type DashboardResponse struct {
-	Date          string                    `json:"date"`
-	Users         DashboardUsersSummary     `json:"users"`
-	Products      DashboardProductsSummary  `json:"products"`
-	Grades        DashboardGradesSummary    `json:"grades"`
-	TotalItems    int64                     `json:"total_items"`
-	PriceUpdates  []DashboardPriceUpdate    `json:"price_updates"`
+	Date         string                   `json:"date"`
+	Users        DashboardUsersSummary    `json:"users"`
+	Products     DashboardProductsSummary `json:"products"`
+	Grades       DashboardGradesSummary   `json:"grades"`
+	TotalItems   int64                    `json:"total_items"`
+	PriceUpdates []DashboardPriceUpdate   `json:"price_updates"`
 }

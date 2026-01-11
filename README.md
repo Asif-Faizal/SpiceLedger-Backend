@@ -160,6 +160,50 @@ curl -X POST http://localhost:8080/api/prices \
 ## User / Inventory Endpoints
 **Requires:** `Authorization: Bearer <USER_TOKEN>` (Admins can also access these)
 
+### GraphQL: Consumer Login and Single-Call Data Fetch
+Use GraphQL to fetch products, grades, and inventory for a specific date in a single call.
+
+```bash
+# Login as consumer
+curl -X POST http://localhost:8080/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "consumer@example.com",
+    "password": "admin123"
+  }'
+```
+
+Example response:
+```json
+{
+  "is_admin": false,
+  "refresh_token": "<REFRESH_TOKEN>",
+  "token": "<ACCESS_TOKEN>"
+}
+```
+
+```bash
+# GraphQL combined query
+curl -s -X POST http://localhost:8080/api/graphql \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query($date:String!){ products{ID Name Description CreatedAt} grades{ID Name Description ProductID CreatedAt} inventoryOnDate(date:$date){ TotalQuantity TotalCost TotalPnL TotalPnLPct Products{ ProductID Product TotalQuantity TotalValue TotalCost TotalPnL TotalPnLPct Grades{ ProductID Product Grade TotalQuantity AverageCost TotalCostBasis MarketPrice MarketValue UnrealizedPnL } } } }",
+    "variables": { "date": "2026-01-11" }
+  }'
+```
+
+```bash
+# GraphQL day-only transactions with per-grade PnL
+curl -s -X POST http://localhost:8080/api/graphql \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "query($date:String!){ inventory(date:$date){ Date TotalBought TotalSold TotalDayPnL Grades{ ProductID Product GradeID Grade BoughtQty BoughtAvgCost SoldQty SoldAvgPrice DayPnL } } }",
+    "variables": { "date": "2026-01-11" }
+  }'
+```
+
 ### 1. List Grades
 View all available spice grades.
 ```bash

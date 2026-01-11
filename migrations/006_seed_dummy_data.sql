@@ -44,16 +44,4 @@ BEGIN
         SELECT id INTO grade_super_id FROM grades WHERE name = 'Super Bold';
         UPDATE grades SET product_id = cardamom_id WHERE id = grade_super_id;
     END IF;
-
-    INSERT INTO purchase_lots (id, user_id, date, quantity, unit_cost, product_id, grade_id, created_at, updated_at)
-    VALUES
-        (gen_random_uuid(), admin_id, CURRENT_DATE - INTERVAL '2 days', 120.00, 950.00, cardamom_id, grade_bold_id, NOW(), NOW()),
-        (gen_random_uuid(), admin_id, CURRENT_DATE - INTERVAL '2 days', 80.00, 900.00, cardamom_id, grade_green_id, NOW(), NOW()),
-        (gen_random_uuid(), admin_id, CURRENT_DATE - INTERVAL '1 day', 100.00, 980.00, cardamom_id, grade_super_id, NOW(), NOW()),
-        (gen_random_uuid(), admin_id, CURRENT_DATE, 90.00, 990.00, cardamom_id, grade_bold_id, NOW(), NOW());
-
-    INSERT INTO sale_transactions (id, user_id, date, quantity, unit_price, product_id, grade_id, created_at, updated_at)
-    VALUES
-        (gen_random_uuid(), admin_id, CURRENT_DATE - INTERVAL '1 day', 40.00, 1100.00, cardamom_id, grade_bold_id, NOW(), NOW()),
-        (gen_random_uuid(), admin_id, CURRENT_DATE, 60.00, 1120.00, cardamom_id, grade_super_id, NOW(), NOW());
 END $$;

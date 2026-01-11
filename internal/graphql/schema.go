@@ -28,6 +28,7 @@ func NewEngine(
 			"WeeklyNew":        &graphql.Field{Type: graphql.Int},
 			"WeeklyChangePct":  &graphql.Field{Type: graphql.Float},
 			"MonthlyChangePct": &graphql.Field{Type: graphql.Float},
+			"Last24hNew":       &graphql.Field{Type: graphql.Int},
 		},
 	})
 	dashboardProducts := graphql.NewObject(graphql.ObjectConfig{
@@ -58,20 +59,6 @@ func NewEngine(
 			"ChangePercent": &graphql.Field{Type: graphql.Float},
 		},
 	})
-	dashboardResponse := graphql.NewObject(graphql.ObjectConfig{
-		Name: "DashboardResponse",
-		Fields: graphql.Fields{
-			"Date":       &graphql.Field{Type: graphql.String},
-			"Users":      &graphql.Field{Type: dashboardUsers},
-			"Products":   &graphql.Field{Type: dashboardProducts},
-			"Grades":     &graphql.Field{Type: dashboardGrades},
-			"TotalItems": &graphql.Field{Type: graphql.Int},
-			"PriceUpdates": &graphql.Field{
-				Type: graphql.NewList(dashboardPriceUpdate),
-			},
-		},
-	})
-
 	productType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Product",
 		Fields: graphql.Fields{
@@ -88,7 +75,26 @@ func NewEngine(
 			"Name":        &graphql.Field{Type: graphql.String},
 			"Description": &graphql.Field{Type: graphql.String},
 			"ProductID":   &graphql.Field{Type: graphql.String},
+			"Product":     &graphql.Field{Type: productType},
 			"CreatedAt":   &graphql.Field{Type: graphql.String},
+		},
+	})
+	dashboardResponse := graphql.NewObject(graphql.ObjectConfig{
+		Name: "DashboardResponse",
+		Fields: graphql.Fields{
+			"Date":       &graphql.Field{Type: graphql.String},
+			"Users":      &graphql.Field{Type: dashboardUsers},
+			"Products":   &graphql.Field{Type: dashboardProducts},
+			"Grades":     &graphql.Field{Type: dashboardGrades},
+			"TotalItems": &graphql.Field{Type: graphql.Int},
+			"PriceUpdates": &graphql.Field{
+				Type: graphql.NewList(dashboardPriceUpdate),
+			},
+			"TotalPnL":     &graphql.Field{Type: graphql.Float},
+			"TotalPnLPct":  &graphql.Field{Type: graphql.Float},
+			"TotalCost":    &graphql.Field{Type: graphql.Float},
+			"ProductList":  &graphql.Field{Type: graphql.NewList(productType)},
+			"GradeDetails": &graphql.Field{Type: graphql.NewList(gradeType)},
 		},
 	})
 	inventorySnapshotType := graphql.NewObject(graphql.ObjectConfig{
@@ -140,29 +146,77 @@ func NewEngine(
 		},
 	})
 
+	dayGradeDetailType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "DayGradeDetail",
+		Fields: graphql.Fields{
+			"ProductID":     &graphql.Field{Type: graphql.String},
+			"Product":       &graphql.Field{Type: graphql.String},
+			"GradeID":       &graphql.Field{Type: graphql.String},
+			"Grade":         &graphql.Field{Type: graphql.String},
+			"BoughtQty":     &graphql.Field{Type: graphql.Float},
+			"BoughtAvgCost": &graphql.Field{Type: graphql.Float},
+			"SoldQty":       &graphql.Field{Type: graphql.Float},
+			"SoldAvgPrice":  &graphql.Field{Type: graphql.Float},
+			"DayPnL":        &graphql.Field{Type: graphql.Float},
+		},
+	})
+	dayInventoryType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "DayInventory",
+		Fields: graphql.Fields{
+			"Date":        &graphql.Field{Type: graphql.String},
+			"Grades":      &graphql.Field{Type: graphql.NewList(dayGradeDetailType)},
+			"TotalBought": &graphql.Field{Type: graphql.Float},
+			"TotalSold":   &graphql.Field{Type: graphql.Float},
+			"TotalDayPnL": &graphql.Field{Type: graphql.Float},
+		},
+	})
+
 	rootQuery := graphql.ObjectConfig{Name: "Query", Fields: graphql.Fields{
 		"dashboard": &graphql.Field{
 			Type: dashboardResponse,
-			Args: graphql.FieldConfigArgument{
-				"date": &graphql.ArgumentConfig{Type: graphql.String},
-			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				role, _ := p.Context.Value("role").(string)
 				if role != "admin" {
 					return nil, errors.New("forbidden")
 				}
-				dateStr, _ := p.Args["date"].(string)
-				var dateVal time.Time
-				if dateStr == "" {
-					dateVal = time.Now()
-				} else {
-					t, err := time.Parse("2006-01-02", dateStr)
-					if err != nil {
-						return nil, err
-					}
-					dateVal = t
+				now := time.Now()
+				resp, err := dashboardSvc.GetDashboard(p.Context, now)
+				if err != nil {
+					return nil, err
 				}
-				return dashboardSvc.GetDashboard(p.Context, dateVal)
+				userStr, _ := p.Context.Value("user_id").(string)
+				uid, err := uuid.Parse(userStr)
+				if err == nil {
+					inv, _ := inventorySvc.GetCurrentInventory(p.Context, uid)
+					out := map[string]interface{}{
+						"Date":         resp.Date,
+						"Users":        resp.Users,
+						"Products":     resp.Products,
+						"Grades":       resp.Grades,
+						"TotalItems":   resp.TotalItems,
+						"PriceUpdates": resp.PriceUpdates,
+						"TotalPnL":     inv.TotalPnL,
+						"TotalPnLPct":  inv.TotalPnLPct,
+						"TotalCost":    inv.TotalCost,
+					}
+					plist, _ := productSvc.ListProducts(p.Context)
+					glist, _ := gradeSvc.ListGrades(p.Context)
+					out["ProductList"] = plist
+					out["GradeDetails"] = glist
+					return out, nil
+				}
+				plist, _ := productSvc.ListProducts(p.Context)
+				glist, _ := gradeSvc.ListGrades(p.Context)
+				return map[string]interface{}{
+					"Date":         resp.Date,
+					"Users":        resp.Users,
+					"Products":     resp.Products,
+					"Grades":       resp.Grades,
+					"TotalItems":   resp.TotalItems,
+					"PriceUpdates": resp.PriceUpdates,
+					"ProductList":  plist,
+					"GradeDetails": glist,
+				}, nil
 			},
 		},
 		"products": &graphql.Field{
@@ -205,6 +259,25 @@ func NewEngine(
 					return nil, err
 				}
 				return inventorySvc.GetInventoryOnDate(p.Context, uid, t)
+			},
+		},
+		"inventory": &graphql.Field{
+			Type: dayInventoryType,
+			Args: graphql.FieldConfigArgument{
+				"date": &graphql.ArgumentConfig{Type: graphql.NewNonNull(graphql.String)},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				userStr, _ := p.Context.Value("user_id").(string)
+				uid, err := uuid.Parse(userStr)
+				if err != nil {
+					return nil, errors.New("unauthorized")
+				}
+				dateStr := p.Args["date"].(string)
+				t, err := time.Parse("2006-01-02", dateStr)
+				if err != nil {
+					return nil, err
+				}
+				return inventorySvc.GetDayDetails(p.Context, uid, t)
 			},
 		},
 		"prices": &graphql.Field{

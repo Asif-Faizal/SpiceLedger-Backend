@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/Asif-Faizal/SpiceLedger/internal/domain"
+	"github.com/google/uuid"
 )
 
 type InventoryService struct {
@@ -202,4 +202,93 @@ func (s *InventoryService) GetInventoryOnDate(ctx context.Context, userID uuid.U
 
 func (s *InventoryService) GetCurrentInventory(ctx context.Context, userID uuid.UUID) (*domain.OverallInventory, error) {
 	return s.GetInventoryOnDate(ctx, userID, time.Now())
+}
+
+func (s *InventoryService) GetDayDetails(ctx context.Context, userID uuid.UUID, date time.Time) (*domain.DayInventory, error) {
+	lots, err := s.inventoryRepo.GetLots(ctx, userID, map[string]interface{}{})
+	if err != nil {
+		return nil, err
+	}
+	sales, err := s.inventoryRepo.GetSales(ctx, userID, map[string]interface{}{})
+	if err != nil {
+		return nil, err
+	}
+	dateOnly := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
+	type agg struct {
+		productID uuid.UUID
+		product   string
+		gradeID   uuid.UUID
+		grade     string
+		bQty      float64
+		bCostSum  float64
+		sQty      float64
+		sPriceSum float64
+	}
+	m := make(map[uuid.UUID]map[uuid.UUID]*agg)
+	for _, lot := range lots {
+		ld := time.Date(lot.Date.Year(), lot.Date.Month(), lot.Date.Day(), 0, 0, 0, 0, lot.Date.Location())
+		if ld.Equal(dateOnly) {
+			if _, ok := m[lot.ProductID]; !ok {
+				m[lot.ProductID] = map[uuid.UUID]*agg{}
+			}
+			a := m[lot.ProductID][lot.GradeID]
+			if a == nil {
+				a = &agg{productID: lot.ProductID, product: lot.Product.Name, gradeID: lot.GradeID, grade: lot.Grade.Name}
+				m[lot.ProductID][lot.GradeID] = a
+			}
+			a.bQty += lot.Quantity
+			a.bCostSum += lot.Quantity * lot.UnitCost
+		}
+	}
+	for _, sale := range sales {
+		sd := time.Date(sale.Date.Year(), sale.Date.Month(), sale.Date.Day(), 0, 0, 0, 0, sale.Date.Location())
+		if sd.Equal(dateOnly) {
+			if _, ok := m[sale.ProductID]; !ok {
+				m[sale.ProductID] = map[uuid.UUID]*agg{}
+			}
+			a := m[sale.ProductID][sale.GradeID]
+			if a == nil {
+				a = &agg{productID: sale.ProductID, product: sale.Product.Name, gradeID: sale.GradeID, grade: sale.Grade.Name}
+				m[sale.ProductID][sale.GradeID] = a
+			}
+			a.sQty += sale.Quantity
+			a.sPriceSum += sale.Quantity * sale.UnitPrice
+		}
+	}
+	var grades []domain.DayGradeDetail
+	var totalBought, totalSold, totalPnL float64
+	for _, byGrade := range m {
+		for _, a := range byGrade {
+			bAvg := 0.0
+			if a.bQty > 0 {
+				bAvg = a.bCostSum / a.bQty
+			}
+			sAvg := 0.0
+			if a.sQty > 0 {
+				sAvg = a.sPriceSum / a.sQty
+			}
+			dayPnL := a.sQty * (sAvg - bAvg)
+			grades = append(grades, domain.DayGradeDetail{
+				ProductID:     a.productID,
+				Product:       a.product,
+				GradeID:       a.gradeID,
+				Grade:         a.grade,
+				BoughtQty:     a.bQty,
+				BoughtAvgCost: bAvg,
+				SoldQty:       a.sQty,
+				SoldAvgPrice:  sAvg,
+				DayPnL:        dayPnL,
+			})
+			totalBought += a.bQty
+			totalSold += a.sQty
+			totalPnL += dayPnL
+		}
+	}
+	return &domain.DayInventory{
+		Date:        dateOnly.Format("2006-01-02"),
+		Grades:      grades,
+		TotalBought: totalBought,
+		TotalSold:   totalSold,
+		TotalDayPnL: totalPnL,
+	}, nil
 }

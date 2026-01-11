@@ -5,6 +5,7 @@ type DashboardUsersSummary {
   WeeklyNew: Int!
   WeeklyChangePct: Float!
   MonthlyChangePct: Float!
+  Last24hNew: Int!
 }
 
 type DashboardProductsSummary {
@@ -36,6 +37,11 @@ type DashboardResponse {
   Grades: DashboardGradesSummary!
   TotalItems: Int!
   PriceUpdates: [DashboardPriceUpdate!]!
+  TotalPnL: Float
+  TotalPnLPct: Float
+  TotalCost: Float
+  ProductList: [Product!]!
+  GradeDetails: [Grade!]!
 }
 
 type Product {
@@ -50,6 +56,7 @@ type Grade {
   Name: String!
   Description: String
   ProductID: String!
+  Product: Product
   CreatedAt: String!
 }
 
@@ -95,15 +102,35 @@ type DailyPrice {
 }
 
 type Query {
-  dashboard(date: String): DashboardResponse!
+  dashboard: DashboardResponse!
   products: [Product!]!
   grades: [Grade!]!
   inventoryCurrent: OverallInventory!
   inventoryOnDate(date: String!): OverallInventory!
+  inventory(date: String!): DayInventory!
   prices(date: String!): [DailyPrice!]!
   price(date: String!, productId: String!, gradeId: String!): Float
 }
 
+type DayGradeDetail {
+  ProductID: String!
+  Product: String!
+  GradeID: String!
+  Grade: String!
+  BoughtQty: Float!
+  BoughtAvgCost: Float!
+  SoldQty: Float!
+  SoldAvgPrice: Float!
+  DayPnL: Float!
+}
+
+type DayInventory {
+  Date: String!
+  Grades: [DayGradeDetail!]!
+  TotalBought: Float!
+  TotalSold: Float!
+  TotalDayPnL: Float!
+}
 type Mutation {
   createProduct(name: String!, description: String): Boolean!
   createGrade(productId: String!, name: String!, description: String): Boolean!

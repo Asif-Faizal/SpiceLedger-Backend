@@ -45,6 +45,7 @@ func startOfMonth(t time.Time) time.Time {
 
 func (s *DashboardService) GetDashboard(ctx context.Context, date time.Time) (*domain.DashboardResponse, error) {
 	now := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
+	nowExact := time.Now()
 
 	totalUsers, err := s.userRepo.Count(ctx)
 	if err != nil {
@@ -59,6 +60,10 @@ func (s *DashboardService) GetDashboard(ctx context.Context, date time.Time) (*d
 		return nil, err
 	}
 	prevWeeklyNew, err := s.userRepo.CountCreatedBetween(ctx, prevWeekStart, prevWeekEnd)
+	if err != nil {
+		return nil, err
+	}
+	last24hNew, err := s.userRepo.CountCreatedBetween(ctx, nowExact.Add(-24*time.Hour), nowExact)
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +171,7 @@ func (s *DashboardService) GetDashboard(ctx context.Context, date time.Time) (*d
 			WeeklyNew:        weeklyNew,
 			WeeklyChangePct:  weeklyChangePct,
 			MonthlyChangePct: monthlyUserChangePct,
+			Last24hNew:       last24hNew,
 		},
 		Products: domain.DashboardProductsSummary{
 			Total:            totalProducts,
