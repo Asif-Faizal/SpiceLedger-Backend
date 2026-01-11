@@ -22,13 +22,19 @@ EXPOSE 8080
 USER nonroot:nonroot
 ENTRYPOINT ["/app/server"]
 
-FROM golang:1.25-alpine AS debug
-WORKDIR /src
-RUN apk add --no-cache git
+FROM golang:1.25-alpine AS dlv-builder
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+FROM golang:1.25-alpine AS debug-builder
+WORKDIR /src
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/go-build \
     go mod download && \
-    go build -gcflags "all=-N -l" -o /src/server ./cmd/server
+    go build -gcflags "all=-N -l" -o /out/server ./cmd/server
+
+FROM alpine:3.19 AS debug
+WORKDIR /src
+COPY --from=debug-builder /out/server /src/server
+COPY --from=dlv-builder /go/bin/dlv /usr/local/bin/dlv
 EXPOSE 8080 2345
 CMD ["dlv","exec","/src/server","--listen=:2345","--headless","--api-version=2","--log","--accept-multiclient","--continue"]

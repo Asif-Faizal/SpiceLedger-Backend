@@ -66,6 +66,8 @@ services:
       - redis
     entrypoint: ["/app/migrate"]
     command: ["up"]
+    volumes:
+      - ./migrations:/app/migrations:ro
 
 volumes:
   postgres_data:
