@@ -9,5 +9,7 @@ func NewHandler(server *Server) http.Handler {
 	mux.HandleFunc("/accounts/login", server.handleLogin)
 	mux.HandleFunc("/accounts/logout", server.handleLogout)
 	mux.HandleFunc("/accounts/refresh", server.handleRefreshToken)
+	mux.HandleFunc("/accounts", server.handleAccounts)
+	mux.HandleFunc("/accounts/", server.handleAccountByID)
 	return mux
 }

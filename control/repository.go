@@ -72,7 +72,10 @@ func (repository *MysqlRepository) CreateOrUpdateAccount(ctx context.Context, ac
 	start := time.Now()
 	query := "INSERT INTO accounts (id, name, user_type, email, password) VALUES (?, NULLIF(?,''), ?, ?, ?) ON DUPLICATE KEY UPDATE name = NULLIF(?,''), user_type = ?, email = ?, password = ?"
 
-	_, err := repository.db.ExecContext(ctx, query, account.ID, account.Name, account.UserType, account.Email, account.Password)
+	_, err := repository.db.ExecContext(ctx, query,
+		account.ID, account.Name, account.UserType, account.Email, account.Password,
+		account.Name, account.UserType, account.Email, account.Password,
+	)
 
 	repository.logger.Database().Debug().
 		Str("query", query).

@@ -1,12 +1,25 @@
 package rest
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	pb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
+	"google.golang.org/grpc/metadata"
 )
+
+func (s *Server) withAuth(r *http.Request) context.Context {
+	ctx := r.Context()
+	auth := r.Header.Get("Authorization")
+	if auth != "" {
+		return metadata.AppendToOutgoingContext(ctx, "authorization", auth)
+	}
+	// Fallback to internal basic auth if no header provided
+	return s.authCtx(ctx)
+}
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	util.WriteJSONResponse(w, http.StatusOK, true, "", map[string]string{
@@ -21,7 +34,7 @@ func (s *Server) handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.CheckEmailExists(r.Context(), email)
+	resp, err := s.accountClient.CheckEmailExists(s.withAuth(r), email)
 	if err != nil {
 		s.logger.Service().Error().Err(err).Msg("failed to check if email exists")
 		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
@@ -52,7 +65,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.Login(r.Context(), req.Email, req.Password, req.DeviceID)
+	resp, err := s.accountClient.Login(s.withAuth(r), req.Email, req.Password, req.DeviceID)
 	if err != nil {
 		util.WriteJSONResponse(w, http.StatusUnauthorized, false, err.Error(), nil)
 		return
@@ -80,7 +93,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := s.accountClient.Logout(r.Context(), accessToken, req.DeviceID); err != nil {
+	if _, err := s.accountClient.Logout(s.withAuth(r), accessToken, req.DeviceID); err != nil {
 		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
 		return
 	}
@@ -100,13 +113,81 @@ func (s *Server) handleRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.RefreshToken(r.Context(), req.RefreshToken, req.DeviceID)
+	resp, err := s.accountClient.RefreshToken(s.withAuth(r), req.RefreshToken, req.DeviceID)
 	if err != nil {
 		util.WriteJSONResponse(w, http.StatusUnauthorized, false, err.Error(), nil)
 		return
 	}
 
 	util.WriteJSONResponse(w, http.StatusOK, true, "Token refreshed successfully", toAuthenticatedResponse(resp))
+}
+
+func (s *Server) handleAccounts(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		s.handleCreateOrUpdateAccount(w, r)
+	case http.MethodGet:
+		s.handleListAccounts(w, r)
+	default:
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) handleCreateOrUpdateAccount(w http.ResponseWriter, r *http.Request) {
+	var req CreateOrUpdateAccountRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
+		return
+	}
+
+	resp, err := s.accountClient.CreateOrUpdateAccount(s.withAuth(r), req.ID, req.Name, req.UserType, req.Email, req.Password)
+	if err != nil {
+		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Account created/updated successfully", toAccount(resp.Account))
+}
+
+func (s *Server) handleListAccounts(w http.ResponseWriter, r *http.Request) {
+	resp, err := s.accountClient.ListAccounts(s.withAuth(r), 0, 100)
+	if err != nil {
+		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Accounts listed successfully", ListAccountsResponse{
+		Accounts: toAccounts(resp.Accounts),
+	})
+}
+
+func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := strings.TrimPrefix(r.URL.Path, "/accounts/")
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := s.accountClient.GetAccountByID(s.withAuth(r), id)
+	if err != nil {
+		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Account retrieved successfully", toAccount(resp.Account))
+}
+
+func toAccounts(pbAccounts []*pb.Account) []*Account {
+	accounts := make([]*Account, len(pbAccounts))
+	for i, a := range pbAccounts {
+		accounts[i] = toAccount(a)
+	}
+	return accounts
 }
 
 func toAuthenticatedResponse(resp interface{}) *AuthenticatedResponse {

@@ -44,7 +44,7 @@ services:
       - PORT=8082
       - LOG_LEVEL=debug
       - BASIC_AUTH_USER=admin
-      - BASIC_AUTH_PASS=admin
+      - BASIC_AUTH_PASS=secret123
     ports:
       - "8082:8082"
 

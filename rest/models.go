@@ -31,6 +31,18 @@ type AuthenticatedResponse struct {
 	RefreshToken string   `json:"refresh_token"`
 }
 
+type CreateOrUpdateAccountRequest struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	UserType string `json:"user_type"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type ListAccountsResponse struct {
+	Accounts []*Account `json:"accounts"`
+}
+
 func toAccount(a *pb.Account) *Account {
 	if a == nil {
 		return nil
