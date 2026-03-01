@@ -2,69 +2,31 @@ package util
 
 import (
 	"log"
-	"os"
-	"strconv"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
 type Config struct {
-	DBHost               string
-	DBPort               string
-	DBUser               string
-	DBPass               string
-	DBName               string
-	JWTSecret            string
-	AccessTokenDuration  time.Duration
-	RefreshTokenDuration time.Duration
-	BasicAuthUser        string
-	BasicAuthPass        string
-	Port                 int
-	LogLevel             string
+	DBHost               string        `envconfig:"DB_HOST" default:"db"`
+	DBPort               string        `envconfig:"DB_PORT" default:"3306"`
+	DBUser               string        `envconfig:"DB_USER" default:"root"`
+	DBPass               string        `envconfig:"DB_PASSWORD" default:"1234"`
+	DBName               string        `envconfig:"DB_NAME" default:"spice_ledger"`
+	JWTSecret            string        `envconfig:"JWT_SECRET" default:"supersecretjwtkey123!"`
+	AccessTokenDuration  time.Duration `envconfig:"ACCESS_TOKEN_DURATION" default:"15m"`
+	RefreshTokenDuration time.Duration `envconfig:"REFRESH_TOKEN_DURATION" default:"168h"`
+	BasicAuthUser        string        `envconfig:"BASIC_AUTH_USER" default:"admin"`
+	BasicAuthPass        string        `envconfig:"BASIC_AUTH_PASS" default:"secret123"`
+	Port                 int           `envconfig:"PORT" default:"50051"`
+	LogLevel             string        `envconfig:"LOG_LEVEL" default:"debug"`
 }
 
 func LoadConfig() *Config {
-	// Load .env file if it exists
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables")
+	var cfg Config
+	if err := envconfig.Process("", &cfg); err != nil {
+		log.Fatalf("Failed to process config: %v", err)
 	}
 
-	return &Config{
-		DBHost:               getEnv("DB_HOST", "db"),
-		DBPort:               getEnv("DB_PORT", "3306"),
-		DBUser:               getEnv("DB_USER", "root"),
-		DBPass:               getEnv("DB_PASSWORD", "1234"),
-		DBName:               getEnv("DB_NAME", "spice_ledger"),
-		JWTSecret:            getEnv("JWT_SECRET", "supersecretjwtkey123!"),
-		AccessTokenDuration:  getDurationEnv("ACCESS_TOKEN_DURATION", 15*time.Minute),
-		RefreshTokenDuration: getDurationEnv("REFRESH_TOKEN_DURATION", 168*time.Hour),
-		BasicAuthUser:        getEnv("BASIC_AUTH_USER", "admin"),
-		BasicAuthPass:        getEnv("BASIC_AUTH_PASS", "secret123"),
-		Port:                 getIntEnv("PORT", 50051),
-		LogLevel:             getEnv("LOG_LEVEL", "debug"),
-	}
-}
-
-func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
-}
-
-func getIntEnv(key string, defaultValue int) int {
-	valueStr := getEnv(key, "")
-	if value, err := strconv.Atoi(valueStr); err == nil {
-		return value
-	}
-	return defaultValue
-}
-
-func getDurationEnv(key string, defaultValue time.Duration) time.Duration {
-	valueStr := getEnv(key, "")
-	if value, err := time.ParseDuration(valueStr); err == nil {
-		return value
-	}
-	return defaultValue
+	return &cfg
 }
