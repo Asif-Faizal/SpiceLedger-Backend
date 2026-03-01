@@ -3,6 +3,8 @@ module github.com/Asif-Faizal/SpiceLedger-Backend
 go 1.25.1
 
 require (
+	github.com/segmentio/ksuid v1.0.4
+	golang.org/x/crypto v0.46.0
 	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11
 )

@@ -20,3 +20,9 @@ type Session struct {
 	CreatedAt    time.Time `json:"created_at"`
 	IsRevoked    bool      `json:"is_revoked"`
 }
+
+type AuthenticatedResponse struct {
+	Account      *Account `json:"account"`
+	AccessToken  string   `json:"access_token"`
+	RefreshToken string   `json:"refresh_token"`
+}

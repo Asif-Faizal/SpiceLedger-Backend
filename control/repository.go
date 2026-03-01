@@ -13,7 +13,15 @@ type Repository interface {
 	CheckEmailExists(ctx context.Context, email string) (bool, error)
 	CreateOrUpdateAccount(ctx context.Context, account *Account) (*Account, error)
 	GetAccountById(ctx context.Context, id string) (*Account, error)
+	GetAccountByEmail(ctx context.Context, email string) (*Account, error)
 	ListAccounts(ctx context.Context, skip uint, take uint) ([]*Account, error)
+
+	// Session Management
+	CreateOrUpdateSession(ctx context.Context, session *Session) error
+	GetSession(ctx context.Context, id string) (*Session, error)
+	GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*Session, error)
+	GetSessionByAccessToken(ctx context.Context, accessToken string) (*Session, error)
+	RevokeSessionByAccessToken(ctx context.Context, accessToken string) error
 }
 
 type MysqlRepository struct {
@@ -86,6 +94,28 @@ func (repository *MysqlRepository) GetAccountById(ctx context.Context, id string
 	account := &Account{}
 	var name sql.NullString
 	err := row.Scan(&account.ID, &name, &account.UserType, &account.Email)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Row")
+
+	if err != nil {
+		return nil, err
+	}
+	account.Name = name.String
+	return account, nil
+}
+
+func (repository *MysqlRepository) GetAccountByEmail(ctx context.Context, email string) (*Account, error) {
+	start := time.Now()
+	query := "SELECT id, name, user_type, email, password FROM accounts WHERE email = ?"
+
+	row := repository.db.QueryRowContext(ctx, query, email)
+	account := &Account{}
+	var name sql.NullString
+	err := row.Scan(&account.ID, &name, &account.UserType, &account.Email, &account.Password)
 
 	repository.logger.Database().Debug().
 		Str("query", query).
