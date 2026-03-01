@@ -1,0 +1,94 @@
+// protoc --go_out=./pb --go-grpc_out=./pb control.proto
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./";
+
+message Account {
+  string id = 1;
+  string name = 2;
+  string usertype = 3;
+  string email = 4;
+  string password = 5;
+}
+
+message CheckEmailExistsRequest {
+  string email = 1;
+}
+
+message CheckEmailExistsResponse {
+  bool exists = 1;
+}
+
+message CreateOrUpdateAccountRequest {
+  string id = 1;
+  string name = 2;
+  string usertype = 3;
+  string email = 4;
+  string password = 5;
+}
+
+message CreateOrUpdateAccountResponse {
+  Account account = 1;
+}
+
+
+message GetAccountByIDRequest {
+  string id = 1;
+}
+
+message GetAccountByIDResponse {
+  Account account = 1;
+}
+
+message ListAccountsRequest {
+  uint32 skip = 1;
+  uint32 take = 2;
+}
+ 
+message ListAccountsResponse {
+  repeated Account accounts = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+  string device_id = 3;
+}
+
+message LoginResponse {
+  Account account = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message LogoutRequest {
+  string access_token = 1;
+  string device_id = 2;
+}
+
+message LogoutResponse {
+  bool success = 1;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+  string device_id = 2;
+}
+
+message RefreshTokenResponse {
+  Account account = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+service ControlService {
+  rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
+  rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
+  rpc GetAccountByID(GetAccountByIDRequest) returns (GetAccountByIDResponse);
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+}

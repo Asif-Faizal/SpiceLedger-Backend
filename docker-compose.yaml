@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  db:
+    build:
+      context: ./control
+      dockerfile: db.dockerfile
+    image: spice-ledger-db
+    container_name: spice-ledger-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: spice_ledger
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: ./control/app.dockerfile
+    image: spice-ledger-app
+    container_name: spice-ledger-app
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "50051:50051"
+
+volumes:
+  mysql_data:
