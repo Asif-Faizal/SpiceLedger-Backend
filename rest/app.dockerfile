@@ -1,16 +1,15 @@
-FROM golang:1.24-alpine AS builder
-
-WORKDIR /build
+FROM golang:1.25-alpine AS builder
 
 RUN apk add --no-cache git
 
-COPY go.mod go.sum ./
+WORKDIR /build
+
+# Copy entire project for internal dependencies
+COPY . .
+
 RUN go mod download
 
-COPY rest ./rest
-COPY util ./util
-COPY account ./account
-
+# Build rest gateway
 RUN CGO_ENABLED=0 GOOS=linux go build -o /build/rest-server ./rest/cmd/rest
 
 FROM alpine:3.19

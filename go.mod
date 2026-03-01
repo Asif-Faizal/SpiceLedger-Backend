@@ -3,6 +3,9 @@ module github.com/Asif-Faizal/SpiceLedger-Backend
 go 1.25.1
 
 require (
+	github.com/go-sql-driver/mysql v1.9.3
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/segmentio/ksuid v1.0.4
 	golang.org/x/crypto v0.46.0
 	google.golang.org/grpc v1.79.1
@@ -10,6 +13,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 )

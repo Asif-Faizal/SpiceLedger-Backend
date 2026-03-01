@@ -1,16 +1,15 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
+
+RUN apk add --no-cache git
 
 WORKDIR /build
 
-# Copy go mod files (proxy uses standard library only, but go build needs go.mod)
-COPY go.mod go.sum* ./
-RUN go mod download || true
+# Copy entire project for internal dependencies
+COPY . .
 
-# Copy source code
-COPY proxy ./proxy
-COPY util ./util
+RUN go mod download
 
-# Build
+# Build proxy server
 RUN CGO_ENABLED=0 GOOS=linux go build -o /build/proxy-server ./proxy/main.go
 
 # Runtime stage

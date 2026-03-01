@@ -1,26 +1,25 @@
 # Build stage
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
-WORKDIR /app
+RUN apk add --no-cache git
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
-RUN go mod download
+WORKDIR /build
 
-# Copy the source code
+# Copy entire project for internal dependencies
 COPY . .
 
-# Build the application
+RUN go mod download
+
+# Build the control microservice
 RUN CGO_ENABLED=0 GOOS=linux go build -o control-server ./control/cmd/control/main.go
 
 # Run stage
-FROM alpine:latest
+FROM alpine:3.19
 
 WORKDIR /root/
 
 # Copy the binary from the builder stage
-COPY --from=builder /app/control-server .
-COPY --from=builder /app/.env .
+COPY --from=builder /build/control-server .
 
 # Expose the port the app runs on
 EXPOSE 50051

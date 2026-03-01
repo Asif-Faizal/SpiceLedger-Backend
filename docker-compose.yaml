@@ -1,10 +1,8 @@
-version: "3.9"
-
 services:
   db:
     build:
-      context: ./control
-      dockerfile: db.dockerfile
+      context: .
+      dockerfile: control/db.dockerfile
     image: spice-ledger-db
     container_name: spice-ledger-db
     environment:
@@ -52,8 +50,8 @@ services:
 
   proxy:
     build:
-      context: ./proxy
-      dockerfile: app.dockerfile
+      context: .
+      dockerfile: proxy/app.dockerfile
     image: spice-ledger-proxy
     container_name: spice-ledger-proxy
     depends_on:
