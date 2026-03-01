@@ -8,7 +8,9 @@ const (
 	UserTypeMerchant   = "merchant"
 	UserTypeCustomer   = "customer"
 
-	AccountIDKey ContextKey = "account_id"
-	UserTypeKey  ContextKey = "user_type"
-	EmailKey     ContextKey = "email"
+	AccountIDKey       ContextKey = "account_id"
+	UserTypeKey        ContextKey = "user_type"
+	EmailKey           ContextKey = "email"
+	IsAdminKey         ContextKey = "is_admin"
+	IsAuthenticatedKey ContextKey = "is_authenticated"
 )

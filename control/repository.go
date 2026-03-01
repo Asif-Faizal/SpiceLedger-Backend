@@ -168,16 +168,14 @@ func (repository *MysqlRepository) CreateOrUpdateSession(ctx context.Context, se
 	query := `
 		INSERT INTO sessions (id, account_id, device_id, access_token, refresh_token, expires_at, created_at, is_revoked)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT (account_id, device_id) 
-		DO UPDATE SET 
-			access_token = EXCLUDED.access_token,
-			refresh_token = EXCLUDED.refresh_token,
-			expires_at = EXCLUDED.expires_at,
-			is_revoked = EXCLUDED.is_revoked
-		RETURNING id
+		ON DUPLICATE KEY UPDATE 
+			access_token = VALUES(access_token),
+			refresh_token = VALUES(refresh_token),
+			expires_at = VALUES(expires_at),
+			is_revoked = VALUES(is_revoked)
 	`
 
-	err := repository.db.QueryRowContext(ctx, query,
+	_, err := repository.db.ExecContext(ctx, query,
 		session.ID,
 		session.AccountID,
 		session.DeviceID,
@@ -186,7 +184,7 @@ func (repository *MysqlRepository) CreateOrUpdateSession(ctx context.Context, se
 		session.ExpiresAt,
 		session.CreatedAt,
 		session.IsRevoked,
-	).Scan(&session.ID)
+	)
 
 	repository.logger.Database().Debug().
 		Str("query", query).
@@ -219,7 +217,7 @@ func (repository *MysqlRepository) GetSession(ctx context.Context, id string) (*
 
 func (repository *MysqlRepository) GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*Session, error) {
 	start := time.Now()
-	query := "SELECT id, account_id, device_id, access_token, refresh_token, expires_at, created_at, is_revoked FROM sessions WHERE refresh_token = ? AND is_revoked = false"
+	query := "SELECT id, account_id, device_id, access_token, refresh_token, expires_at, created_at, is_revoked FROM sessions WHERE refresh_token = ? AND is_revoked = 0"
 
 	row := repository.db.QueryRowContext(ctx, query, refreshToken)
 	session := &Session{}

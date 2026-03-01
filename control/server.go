@@ -7,7 +7,9 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
@@ -16,11 +18,12 @@ import (
 type GrpcServer struct {
 	accountService Service
 	logger         util.Logger
+	config         *util.Config
 	pb.UnimplementedControlServiceServer
 }
 
-func ListenGrpcServer(service Service, logger util.Logger, port int, jwtSecret string) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) error {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
 		return err
 	}
@@ -28,22 +31,42 @@ func ListenGrpcServer(service Service, logger util.Logger, port int, jwtSecret s
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			util.UnaryServerInterceptor(logger),
-			util.AuthInterceptor(jwtSecret),
+			util.AuthInterceptor(config.JWTSecret, config.BasicAuthUser, config.BasicAuthPass),
 		)),
 	)
 
 	server := &GrpcServer{
 		accountService: service,
 		logger:         logger,
+		config:         config,
 	}
 	pb.RegisterControlServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	logger.Transport().Info().Int("port", port).Msg("gRPC server listening")
+	logger.Transport().Info().Int("port", config.Port).Msg("gRPC server listening")
 	return grpcServer.Serve(lis)
 }
 
+func (server *GrpcServer) checkAdmin(ctx context.Context) error {
+	isAdmin, ok := ctx.Value(util.IsAdminKey).(bool)
+	if !ok || !isAdmin {
+		return status.Error(codes.PermissionDenied, "admin access required")
+	}
+	return nil
+}
+
+func (server *GrpcServer) checkAuthenticated(ctx context.Context) error {
+	isAuthenticated, ok := ctx.Value(util.IsAuthenticatedKey).(bool)
+	if !ok || !isAuthenticated {
+		return status.Error(codes.Unauthenticated, "authentication required")
+	}
+	return nil
+}
+
 func (server *GrpcServer) CheckEmailExists(ctx context.Context, request *pb.CheckEmailExistsRequest) (*pb.CheckEmailExistsResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	exists, err := server.accountService.CheckEmailExists(ctx, request.Email)
 	if err != nil {
 		return nil, err
@@ -52,6 +75,9 @@ func (server *GrpcServer) CheckEmailExists(ctx context.Context, request *pb.Chec
 }
 
 func (server *GrpcServer) CreateOrUpdateAccount(ctx context.Context, request *pb.CreateOrUpdateAccountRequest) (*pb.CreateOrUpdateAccountResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	if request.Usertype == "" {
 		return nil, fmt.Errorf("usertype is required")
 	}
@@ -80,6 +106,9 @@ func (server *GrpcServer) CreateOrUpdateAccount(ctx context.Context, request *pb
 }
 
 func (server *GrpcServer) GetAccountByID(ctx context.Context, request *pb.GetAccountByIDRequest) (*pb.GetAccountByIDResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
 	account, err := server.accountService.GetAccountByID(ctx, request.Id)
 	if err != nil {
 		return nil, err
@@ -95,6 +124,9 @@ func (server *GrpcServer) GetAccountByID(ctx context.Context, request *pb.GetAcc
 }
 
 func (server *GrpcServer) ListAccounts(ctx context.Context, request *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
 	domainAccounts, err := server.accountService.ListAccounts(ctx, uint(request.Skip), uint(request.Take))
 	if err != nil {
 		return nil, err
@@ -112,6 +144,9 @@ func (server *GrpcServer) ListAccounts(ctx context.Context, request *pb.ListAcco
 }
 
 func (server *GrpcServer) Login(ctx context.Context, request *pb.LoginRequest) (*pb.LoginResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	resp, err := server.accountService.Login(ctx, request.Email, request.Password, request.DeviceId)
 	if err != nil {
 		return nil, err
@@ -135,6 +170,9 @@ func (server *GrpcServer) Login(ctx context.Context, request *pb.LoginRequest) (
 }
 
 func (server *GrpcServer) Logout(ctx context.Context, request *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	if err := server.accountService.Logout(ctx, request.AccessToken, request.DeviceId); err != nil {
 		return nil, err
 	}
@@ -142,6 +180,9 @@ func (server *GrpcServer) Logout(ctx context.Context, request *pb.LogoutRequest)
 }
 
 func (server *GrpcServer) RefreshToken(ctx context.Context, request *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	resp, err := server.accountService.RefreshToken(ctx, request.RefreshToken, request.DeviceId)
 	if err != nil {
 		return nil, err
