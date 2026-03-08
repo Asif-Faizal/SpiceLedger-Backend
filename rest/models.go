@@ -1,7 +1,5 @@
 package rest
 
-import pb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
-
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -63,14 +61,40 @@ type ListAccountsResponse struct {
 	Accounts []*Account `json:"accounts"`
 }
 
-func toAccount(a *pb.Account) *Account {
-	if a == nil {
-		return nil
-	}
-	return &Account{
-		ID:       a.Id,
-		Name:     a.Name,
-		UserType: a.Usertype,
-		Email:    a.Email,
-	}
+type Product struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Category    string `json:"category"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+}
+
+type CreateOrUpdateProductRequest struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Category    string `json:"category"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+}
+
+type ListProductsResponse struct {
+	Products []*Product `json:"products"`
+}
+
+type Grade struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+}
+
+type CreateOrUpdateGradeRequest struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+}
+
+type ListGradesByProductIdResponse struct {
+	Grades []*Grade `json:"grades"`
 }

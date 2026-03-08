@@ -1709,7 +1709,7 @@ func (x *CreateOrUpdateGradeResponse) GetGrade() *Grade {
 	return nil
 }
 
-type ListGradesRequest struct {
+type ListGradesByProductIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Skip          uint32                 `protobuf:"varint,2,opt,name=skip,proto3" json:"skip,omitempty"`
@@ -1718,20 +1718,20 @@ type ListGradesRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListGradesRequest) Reset() {
-	*x = ListGradesRequest{}
+func (x *ListGradesByProductIdRequest) Reset() {
+	*x = ListGradesByProductIdRequest{}
 	mi := &file_control_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListGradesRequest) String() string {
+func (x *ListGradesByProductIdRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListGradesRequest) ProtoMessage() {}
+func (*ListGradesByProductIdRequest) ProtoMessage() {}
 
-func (x *ListGradesRequest) ProtoReflect() protoreflect.Message {
+func (x *ListGradesByProductIdRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_control_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1743,53 +1743,53 @@ func (x *ListGradesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListGradesRequest.ProtoReflect.Descriptor instead.
-func (*ListGradesRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListGradesByProductIdRequest.ProtoReflect.Descriptor instead.
+func (*ListGradesByProductIdRequest) Descriptor() ([]byte, []int) {
 	return file_control_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *ListGradesRequest) GetProductId() string {
+func (x *ListGradesByProductIdRequest) GetProductId() string {
 	if x != nil {
 		return x.ProductId
 	}
 	return ""
 }
 
-func (x *ListGradesRequest) GetSkip() uint32 {
+func (x *ListGradesByProductIdRequest) GetSkip() uint32 {
 	if x != nil {
 		return x.Skip
 	}
 	return 0
 }
 
-func (x *ListGradesRequest) GetTake() uint32 {
+func (x *ListGradesByProductIdRequest) GetTake() uint32 {
 	if x != nil {
 		return x.Take
 	}
 	return 0
 }
 
-type ListGradesResponse struct {
+type ListGradesByProductIdResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Grades        []*Grade               `protobuf:"bytes,1,rep,name=grades,proto3" json:"grades,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListGradesResponse) Reset() {
-	*x = ListGradesResponse{}
+func (x *ListGradesByProductIdResponse) Reset() {
+	*x = ListGradesByProductIdResponse{}
 	mi := &file_control_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListGradesResponse) String() string {
+func (x *ListGradesByProductIdResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListGradesResponse) ProtoMessage() {}
+func (*ListGradesByProductIdResponse) ProtoMessage() {}
 
-func (x *ListGradesResponse) ProtoReflect() protoreflect.Message {
+func (x *ListGradesByProductIdResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_control_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1801,12 +1801,12 @@ func (x *ListGradesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListGradesResponse.ProtoReflect.Descriptor instead.
-func (*ListGradesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListGradesByProductIdResponse.ProtoReflect.Descriptor instead.
+func (*ListGradesByProductIdResponse) Descriptor() ([]byte, []int) {
 	return file_control_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *ListGradesResponse) GetGrades() []*Grade {
+func (x *ListGradesByProductIdResponse) GetGrades() []*Grade {
 	if x != nil {
 		return x.Grades
 	}
@@ -2262,13 +2262,13 @@ const file_control_proto_rawDesc = "" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06status\x18\x05 \x01(\tR\x06status\">\n" +
 	"\x1bCreateOrUpdateGradeResponse\x12\x1f\n" +
-	"\x05grade\x18\x01 \x01(\v2\t.pb.GradeR\x05grade\"Z\n" +
-	"\x11ListGradesRequest\x12\x1d\n" +
+	"\x05grade\x18\x01 \x01(\v2\t.pb.GradeR\x05grade\"e\n" +
+	"\x1cListGradesByProductIdRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x12\n" +
 	"\x04skip\x18\x02 \x01(\rR\x04skip\x12\x12\n" +
-	"\x04take\x18\x03 \x01(\rR\x04take\"7\n" +
-	"\x12ListGradesResponse\x12!\n" +
+	"\x04take\x18\x03 \x01(\rR\x04take\"B\n" +
+	"\x1dListGradesByProductIdResponse\x12!\n" +
 	"\x06grades\x18\x01 \x03(\v2\t.pb.GradeR\x06grades\"\xa9\x01\n" +
 	"\x1fCreateOrUpdateDailyPriceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
@@ -2291,7 +2291,8 @@ const file_control_proto_rawDesc = "" +
 	"\bgrade_id\x18\x01 \x01(\tR\agradeId\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\tR\x04date\"K\n" +
 	"\x16GetTodaysPriceResponse\x121\n" +
-	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices2\xe8\t\n" +
+	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices2\x89\n" +
+	"\n" +
 	"\x0eControlService\x12M\n" +
 	"\x10CheckEmailExists\x12\x1b.pb.CheckEmailExistsRequest\x1a\x1c.pb.CheckEmailExistsResponse\x12\\\n" +
 	"\x15CreateOrUpdateAccount\x12 .pb.CreateOrUpdateAccountRequest\x1a!.pb.CreateOrUpdateAccountResponse\x12G\n" +
@@ -2304,9 +2305,8 @@ const file_control_proto_rawDesc = "" +
 	"\x12GetMerchantDetails\x12\x1d.pb.GetMerchantDetailsRequest\x1a\x1e.pb.GetMerchantDetailsResponse\x12\\\n" +
 	"\x15CreateOrUpdateProduct\x12 .pb.CreateOrUpdateProductRequest\x1a!.pb.CreateOrUpdateProductResponse\x12A\n" +
 	"\fListProducts\x12\x17.pb.ListProductsRequest\x1a\x18.pb.ListProductsResponse\x12V\n" +
-	"\x13CreateOrUpdateGrade\x12\x1e.pb.CreateOrUpdateGradeRequest\x1a\x1f.pb.CreateOrUpdateGradeResponse\x12;\n" +
-	"\n" +
-	"ListGrades\x12\x15.pb.ListGradesRequest\x1a\x16.pb.ListGradesResponse\x12e\n" +
+	"\x13CreateOrUpdateGrade\x12\x1e.pb.CreateOrUpdateGradeRequest\x1a\x1f.pb.CreateOrUpdateGradeResponse\x12\\\n" +
+	"\x15ListGradesByProductId\x12 .pb.ListGradesByProductIdRequest\x1a!.pb.ListGradesByProductIdResponse\x12e\n" +
 	"\x18CreateOrUpdateDailyPrice\x12#.pb.CreateOrUpdateDailyPriceRequest\x1a$.pb.CreateOrUpdateDailyPriceResponse\x12J\n" +
 	"\x0fListDailyPrices\x12\x1a.pb.ListDailyPricesRequest\x1a\x1b.pb.ListDailyPricesResponse\x12G\n" +
 	"\x0eGetTodaysPrice\x12\x19.pb.GetTodaysPriceRequest\x1a\x1a.pb.GetTodaysPriceResponseB\x04Z\x02./b\x06proto3"
@@ -2354,8 +2354,8 @@ var file_control_proto_goTypes = []any{
 	(*ListProductsResponse)(nil),                  // 26: pb.ListProductsResponse
 	(*CreateOrUpdateGradeRequest)(nil),            // 27: pb.CreateOrUpdateGradeRequest
 	(*CreateOrUpdateGradeResponse)(nil),           // 28: pb.CreateOrUpdateGradeResponse
-	(*ListGradesRequest)(nil),                     // 29: pb.ListGradesRequest
-	(*ListGradesResponse)(nil),                    // 30: pb.ListGradesResponse
+	(*ListGradesByProductIdRequest)(nil),          // 29: pb.ListGradesByProductIdRequest
+	(*ListGradesByProductIdResponse)(nil),         // 30: pb.ListGradesByProductIdResponse
 	(*CreateOrUpdateDailyPriceRequest)(nil),       // 31: pb.CreateOrUpdateDailyPriceRequest
 	(*CreateOrUpdateDailyPriceResponse)(nil),      // 32: pb.CreateOrUpdateDailyPriceResponse
 	(*ListDailyPricesRequest)(nil),                // 33: pb.ListDailyPricesRequest
@@ -2374,7 +2374,7 @@ var file_control_proto_depIdxs = []int32{
 	2,  // 7: pb.CreateOrUpdateProductResponse.product:type_name -> pb.Product
 	2,  // 8: pb.ListProductsResponse.products:type_name -> pb.Product
 	3,  // 9: pb.CreateOrUpdateGradeResponse.grade:type_name -> pb.Grade
-	3,  // 10: pb.ListGradesResponse.grades:type_name -> pb.Grade
+	3,  // 10: pb.ListGradesByProductIdResponse.grades:type_name -> pb.Grade
 	4,  // 11: pb.CreateOrUpdateDailyPriceResponse.daily_price:type_name -> pb.DailyPrice
 	4,  // 12: pb.ListDailyPricesResponse.daily_prices:type_name -> pb.DailyPrice
 	4,  // 13: pb.GetTodaysPriceResponse.daily_prices:type_name -> pb.DailyPrice
@@ -2390,7 +2390,7 @@ var file_control_proto_depIdxs = []int32{
 	23, // 23: pb.ControlService.CreateOrUpdateProduct:input_type -> pb.CreateOrUpdateProductRequest
 	25, // 24: pb.ControlService.ListProducts:input_type -> pb.ListProductsRequest
 	27, // 25: pb.ControlService.CreateOrUpdateGrade:input_type -> pb.CreateOrUpdateGradeRequest
-	29, // 26: pb.ControlService.ListGrades:input_type -> pb.ListGradesRequest
+	29, // 26: pb.ControlService.ListGradesByProductId:input_type -> pb.ListGradesByProductIdRequest
 	31, // 27: pb.ControlService.CreateOrUpdateDailyPrice:input_type -> pb.CreateOrUpdateDailyPriceRequest
 	33, // 28: pb.ControlService.ListDailyPrices:input_type -> pb.ListDailyPricesRequest
 	35, // 29: pb.ControlService.GetTodaysPrice:input_type -> pb.GetTodaysPriceRequest
@@ -2406,7 +2406,7 @@ var file_control_proto_depIdxs = []int32{
 	24, // 39: pb.ControlService.CreateOrUpdateProduct:output_type -> pb.CreateOrUpdateProductResponse
 	26, // 40: pb.ControlService.ListProducts:output_type -> pb.ListProductsResponse
 	28, // 41: pb.ControlService.CreateOrUpdateGrade:output_type -> pb.CreateOrUpdateGradeResponse
-	30, // 42: pb.ControlService.ListGrades:output_type -> pb.ListGradesResponse
+	30, // 42: pb.ControlService.ListGradesByProductId:output_type -> pb.ListGradesByProductIdResponse
 	32, // 43: pb.ControlService.CreateOrUpdateDailyPrice:output_type -> pb.CreateOrUpdateDailyPriceResponse
 	34, // 44: pb.ControlService.ListDailyPrices:output_type -> pb.ListDailyPricesResponse
 	36, // 45: pb.ControlService.GetTodaysPrice:output_type -> pb.GetTodaysPriceResponse

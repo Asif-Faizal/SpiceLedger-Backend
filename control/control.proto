@@ -175,13 +175,13 @@ message CreateOrUpdateGradeResponse {
     Grade grade = 1;
 }
 
-message ListGradesRequest {
+message ListGradesByProductIdRequest {
     string product_id = 1;
     uint32 skip = 2;
     uint32 take = 3;
 }
 
-message ListGradesResponse {
+message ListGradesByProductIdResponse {
     repeated Grade grades = 1;
 }
 
@@ -235,7 +235,7 @@ service ControlService {
   
   // Grade Management
   rpc CreateOrUpdateGrade(CreateOrUpdateGradeRequest) returns (CreateOrUpdateGradeResponse);
-  rpc ListGrades(ListGradesRequest) returns (ListGradesResponse);
+  rpc ListGradesByProductId(ListGradesByProductIdRequest) returns (ListGradesByProductIdResponse);
 
   // Daily Price Management
   rpc CreateOrUpdateDailyPrice(CreateOrUpdateDailyPriceRequest) returns (CreateOrUpdateDailyPriceResponse);

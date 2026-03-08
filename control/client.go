@@ -134,3 +134,91 @@ func (client *ControlClient) GetMerchantDetails(ctx context.Context, accountID s
 	}
 	return response, nil
 }
+
+func (client *ControlClient) CreateOrUpdateProduct(ctx context.Context, id, name, category, description, status string) (*pb.CreateOrUpdateProductResponse, error) {
+	response, err := client.client.CreateOrUpdateProduct(ctx, &pb.CreateOrUpdateProductRequest{
+		Id:          id,
+		Name:        name,
+		Category:    category,
+		Description: description,
+		Status:      status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) ListProducts(ctx context.Context, skip uint32, take uint32) (*pb.ListProductsResponse, error) {
+	response, err := client.client.ListProducts(ctx, &pb.ListProductsRequest{
+		Skip: skip,
+		Take: take,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) CreateOrUpdateGrade(ctx context.Context, id, name, description, status string) (*pb.CreateOrUpdateGradeResponse, error) {
+	response, err := client.client.CreateOrUpdateGrade(ctx, &pb.CreateOrUpdateGradeRequest{
+		Id:          id,
+		Name:        name,
+		Description: description,
+		Status:      status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) ListGradesByProductId(ctx context.Context, productId string, skip uint32, take uint32) (*pb.ListGradesByProductIdResponse, error) {
+	response, err := client.client.ListGradesByProductId(ctx, &pb.ListGradesByProductIdRequest{
+		ProductId: productId,
+		Skip:      skip,
+		Take:      take,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) CreateOrUpdateDailyPrice(ctx context.Context, id, productID, gradeID string, price float64, date, time string) (*pb.CreateOrUpdateDailyPriceResponse, error) {
+	response, err := client.client.CreateOrUpdateDailyPrice(ctx, &pb.CreateOrUpdateDailyPriceRequest{
+		Id:        id,
+		ProductId: productID,
+		GradeId:   gradeID,
+		Price:     price,
+		Date:      date,
+		Time:      time,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) ListDailyPrices(ctx context.Context, gradeID string, today string, duration int32) (*pb.ListDailyPricesResponse, error) {
+	response, err := client.client.ListDailyPrices(ctx, &pb.ListDailyPricesRequest{
+		GradeId:  gradeID,
+		Today:    today,
+		Duration: duration,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) GetTodaysPrice(ctx context.Context, gradeID string, date string) (*pb.GetTodaysPriceResponse, error) {
+	response, err := client.client.GetTodaysPrice(ctx, &pb.GetTodaysPriceRequest{
+		GradeId: gradeID,
+		Date:    date,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}

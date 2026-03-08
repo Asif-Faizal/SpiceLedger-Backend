@@ -33,7 +33,7 @@ const (
 	ControlService_CreateOrUpdateProduct_FullMethodName         = "/pb.ControlService/CreateOrUpdateProduct"
 	ControlService_ListProducts_FullMethodName                  = "/pb.ControlService/ListProducts"
 	ControlService_CreateOrUpdateGrade_FullMethodName           = "/pb.ControlService/CreateOrUpdateGrade"
-	ControlService_ListGrades_FullMethodName                    = "/pb.ControlService/ListGrades"
+	ControlService_ListGradesByProductId_FullMethodName         = "/pb.ControlService/ListGradesByProductId"
 	ControlService_CreateOrUpdateDailyPrice_FullMethodName      = "/pb.ControlService/CreateOrUpdateDailyPrice"
 	ControlService_ListDailyPrices_FullMethodName               = "/pb.ControlService/ListDailyPrices"
 	ControlService_GetTodaysPrice_FullMethodName                = "/pb.ControlService/GetTodaysPrice"
@@ -57,7 +57,7 @@ type ControlServiceClient interface {
 	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
 	// Grade Management
 	CreateOrUpdateGrade(ctx context.Context, in *CreateOrUpdateGradeRequest, opts ...grpc.CallOption) (*CreateOrUpdateGradeResponse, error)
-	ListGrades(ctx context.Context, in *ListGradesRequest, opts ...grpc.CallOption) (*ListGradesResponse, error)
+	ListGradesByProductId(ctx context.Context, in *ListGradesByProductIdRequest, opts ...grpc.CallOption) (*ListGradesByProductIdResponse, error)
 	// Daily Price Management
 	CreateOrUpdateDailyPrice(ctx context.Context, in *CreateOrUpdateDailyPriceRequest, opts ...grpc.CallOption) (*CreateOrUpdateDailyPriceResponse, error)
 	ListDailyPrices(ctx context.Context, in *ListDailyPricesRequest, opts ...grpc.CallOption) (*ListDailyPricesResponse, error)
@@ -192,10 +192,10 @@ func (c *controlServiceClient) CreateOrUpdateGrade(ctx context.Context, in *Crea
 	return out, nil
 }
 
-func (c *controlServiceClient) ListGrades(ctx context.Context, in *ListGradesRequest, opts ...grpc.CallOption) (*ListGradesResponse, error) {
+func (c *controlServiceClient) ListGradesByProductId(ctx context.Context, in *ListGradesByProductIdRequest, opts ...grpc.CallOption) (*ListGradesByProductIdResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListGradesResponse)
-	err := c.cc.Invoke(ctx, ControlService_ListGrades_FullMethodName, in, out, cOpts...)
+	out := new(ListGradesByProductIdResponse)
+	err := c.cc.Invoke(ctx, ControlService_ListGradesByProductId_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +250,7 @@ type ControlServiceServer interface {
 	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
 	// Grade Management
 	CreateOrUpdateGrade(context.Context, *CreateOrUpdateGradeRequest) (*CreateOrUpdateGradeResponse, error)
-	ListGrades(context.Context, *ListGradesRequest) (*ListGradesResponse, error)
+	ListGradesByProductId(context.Context, *ListGradesByProductIdRequest) (*ListGradesByProductIdResponse, error)
 	// Daily Price Management
 	CreateOrUpdateDailyPrice(context.Context, *CreateOrUpdateDailyPriceRequest) (*CreateOrUpdateDailyPriceResponse, error)
 	ListDailyPrices(context.Context, *ListDailyPricesRequest) (*ListDailyPricesResponse, error)
@@ -301,8 +301,8 @@ func (UnimplementedControlServiceServer) ListProducts(context.Context, *ListProd
 func (UnimplementedControlServiceServer) CreateOrUpdateGrade(context.Context, *CreateOrUpdateGradeRequest) (*CreateOrUpdateGradeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateGrade not implemented")
 }
-func (UnimplementedControlServiceServer) ListGrades(context.Context, *ListGradesRequest) (*ListGradesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListGrades not implemented")
+func (UnimplementedControlServiceServer) ListGradesByProductId(context.Context, *ListGradesByProductIdRequest) (*ListGradesByProductIdResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListGradesByProductId not implemented")
 }
 func (UnimplementedControlServiceServer) CreateOrUpdateDailyPrice(context.Context, *CreateOrUpdateDailyPriceRequest) (*CreateOrUpdateDailyPriceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateDailyPrice not implemented")
@@ -550,20 +550,20 @@ func _ControlService_CreateOrUpdateGrade_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ControlService_ListGrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListGradesRequest)
+func _ControlService_ListGradesByProductId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGradesByProductIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ControlServiceServer).ListGrades(ctx, in)
+		return srv.(ControlServiceServer).ListGradesByProductId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ControlService_ListGrades_FullMethodName,
+		FullMethod: ControlService_ListGradesByProductId_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ControlServiceServer).ListGrades(ctx, req.(*ListGradesRequest))
+		return srv.(ControlServiceServer).ListGradesByProductId(ctx, req.(*ListGradesByProductIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -678,8 +678,8 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ControlService_CreateOrUpdateGrade_Handler,
 		},
 		{
-			MethodName: "ListGrades",
-			Handler:    _ControlService_ListGrades_Handler,
+			MethodName: "ListGradesByProductId",
+			Handler:    _ControlService_ListGradesByProductId_Handler,
 		},
 		{
 			MethodName: "CreateOrUpdateDailyPrice",

@@ -34,7 +34,7 @@ func (s *Server) handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.CheckEmailExists(s.withAuth(r), email)
+	resp, err := s.controlClient.CheckEmailExists(s.withAuth(r), email)
 	if err != nil {
 		s.logger.Service().Error().Err(err).Msg("failed to check if email exists")
 		util.WriteGRPCErrorResponse(w, err)
@@ -65,7 +65,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.Login(s.withAuth(r), req.Email, req.Password, req.DeviceID)
+	resp, err := s.controlClient.Login(s.withAuth(r), req.Email, req.Password, req.DeviceID)
 	if err != nil {
 		util.WriteJSONResponse(w, http.StatusUnauthorized, false, err.Error(), nil)
 		return
@@ -93,7 +93,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := s.accountClient.Logout(s.withAuth(r), accessToken, req.DeviceID); err != nil {
+	if _, err := s.controlClient.Logout(s.withAuth(r), accessToken, req.DeviceID); err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
@@ -113,7 +113,7 @@ func (s *Server) handleRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.RefreshToken(s.withAuth(r), req.RefreshToken, req.DeviceID)
+	resp, err := s.controlClient.RefreshToken(s.withAuth(r), req.RefreshToken, req.DeviceID)
 	if err != nil {
 		util.WriteJSONResponse(w, http.StatusUnauthorized, false, err.Error(), nil)
 		return
@@ -140,17 +140,22 @@ func (s *Server) handleCreateOrUpdateAccount(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	resp, err := s.accountClient.CreateOrUpdateAccount(s.withAuth(r), req.ID, req.Name, req.UserType, req.Email, req.Password)
+	resp, err := s.controlClient.CreateOrUpdateAccount(s.withAuth(r), req.ID, req.Name, req.UserType, req.Email, req.Password)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
-	util.WriteJSONResponse(w, http.StatusOK, true, "Account created/updated successfully", toAccount(resp.Account))
+	util.WriteJSONResponse(w, http.StatusOK, true, "Account created/updated successfully", &Account{
+		ID:       resp.Account.Id,
+		Name:     resp.Account.Name,
+		UserType: resp.Account.Usertype,
+		Email:    resp.Account.Email,
+	})
 }
 
 func (s *Server) handleListAccounts(w http.ResponseWriter, r *http.Request) {
-	resp, err := s.accountClient.ListAccounts(s.withAuth(r), 0, 100)
+	resp, err := s.controlClient.ListAccounts(s.withAuth(r), 0, 100)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
@@ -160,7 +165,12 @@ func (s *Server) handleListAccounts(w http.ResponseWriter, r *http.Request) {
 		Accounts: func() []*Account {
 			accounts := make([]*Account, len(resp.Accounts))
 			for i, a := range resp.Accounts {
-				accounts[i] = toAccount(a)
+				accounts[i] = &Account{
+					ID:       a.Id,
+					Name:     a.Name,
+					UserType: a.Usertype,
+					Email:    a.Email,
+				}
 			}
 			return accounts
 		}(),
@@ -179,13 +189,18 @@ func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := s.accountClient.GetAccountByID(s.withAuth(r), id)
+	resp, err := s.controlClient.GetAccountByID(s.withAuth(r), id)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
-	util.WriteJSONResponse(w, http.StatusOK, true, "Account retrieved successfully", toAccount(resp.Account))
+	util.WriteJSONResponse(w, http.StatusOK, true, "Account retrieved successfully", &Account{
+		ID:       resp.Account.Id,
+		Name:     resp.Account.Name,
+		UserType: resp.Account.Usertype,
+		Email:    resp.Account.Email,
+	})
 }
 
 func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *http.Request) {
@@ -200,7 +215,7 @@ func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *h
 		return
 	}
 
-	resp, err := s.accountClient.CreateOrUpdateMerchantDetails(s.withAuth(r), req.ID, req.AccountID, req.PhoneNumber, req.Address, req.City, req.State, req.Pincode)
+	resp, err := s.controlClient.CreateOrUpdateMerchantDetails(s.withAuth(r), req.ID, req.AccountID, req.PhoneNumber, req.Address, req.City, req.State, req.Pincode)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
@@ -229,7 +244,7 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	resp, err := s.accountClient.GetMerchantDetails(s.withAuth(r), id)
+	resp, err := s.controlClient.GetMerchantDetails(s.withAuth(r), id)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
@@ -246,17 +261,137 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 	})
 }
 
+func (s *Server) handleCreateOrUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req CreateOrUpdateProductRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
+		return
+	}
+
+	resp, err := s.controlClient.CreateOrUpdateProduct(s.withAuth(r), req.ID, req.Name, req.Category, req.Description, req.Status)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Product created/updated successfully", &Product{
+		ID:          resp.Product.Id,
+		Name:        resp.Product.Name,
+		Category:    resp.Product.Category,
+		Description: resp.Product.Description,
+		Status:      resp.Product.Status,
+	})
+}
+
+func (s *Server) handleListProducts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	resp, err := s.controlClient.ListProducts(s.withAuth(r), 0, 100)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Products listed successfully", ListProductsResponse{
+		Products: func() []*Product {
+			products := make([]*Product, len(resp.Products))
+			for i, p := range resp.Products {
+				products[i] = &Product{
+					ID:          p.Id,
+					Name:        p.Name,
+					Category:    p.Category,
+					Description: p.Description,
+					Status:      p.Status,
+				}
+			}
+			return products
+		}(),
+	})
+}
+
+func (s *Server) handleCreateOrUpdateGrade(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req CreateOrUpdateGradeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
+		return
+	}
+
+	resp, err := s.controlClient.CreateOrUpdateGrade(s.withAuth(r), req.ID, req.Name, req.Description, req.Status)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Grade created/updated successfully", &Grade{
+		ID:          resp.Grade.Id,
+		Name:        resp.Grade.Name,
+		Description: resp.Grade.Description,
+		Status:      resp.Grade.Status,
+	})
+}
+
+func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	resp, err := s.controlClient.ListGradesByProductId(s.withAuth(r), "", 0, 100)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Grades listed successfully", ListGradesByProductIdResponse{
+		Grades: func() []*Grade {
+			grades := make([]*Grade, len(resp.Grades))
+			for i, g := range resp.Grades {
+				grades[i] = &Grade{
+					ID:          g.Id,
+					Name:        g.Name,
+					Description: g.Description,
+					Status:      g.Status,
+				}
+			}
+			return grades
+		}(),
+	})
+}
+
 func toAuthenticatedResponse(resp interface{}) *AuthenticatedResponse {
 	switch r := resp.(type) {
 	case *pb.LoginResponse:
 		return &AuthenticatedResponse{
-			Account:      toAccount(r.Account),
+			Account: &Account{
+				ID:       r.Account.Id,
+				Name:     r.Account.Name,
+				UserType: r.Account.Usertype,
+				Email:    r.Account.Email,
+			},
 			AccessToken:  r.AccessToken,
 			RefreshToken: r.RefreshToken,
 		}
 	case *pb.RefreshTokenResponse:
 		return &AuthenticatedResponse{
-			Account:      toAccount(r.Account),
+			Account: &Account{
+				ID:       r.Account.Id,
+				Name:     r.Account.Name,
+				UserType: r.Account.Usertype,
+				Email:    r.Account.Email,
+			},
 			AccessToken:  r.AccessToken,
 			RefreshToken: r.RefreshToken,
 		}

@@ -302,7 +302,13 @@ func (server *GrpcServer) CreateOrUpdateProduct(ctx context.Context, request *pb
 		return nil, err
 	}
 	return &pb.CreateOrUpdateProductResponse{
-		Product: toProtoProduct(product),
+		Product: &pb.Product{
+			Id:          product.ID,
+			Name:        product.Name,
+			Category:    product.Category,
+			Description: product.Description,
+			Status:      product.Status,
+		},
 	}, nil
 }
 
@@ -316,7 +322,13 @@ func (server *GrpcServer) ListProducts(ctx context.Context, request *pb.ListProd
 	}
 	protoProducts := make([]*pb.Product, len(products))
 	for i, p := range products {
-		protoProducts[i] = toProtoProduct(p)
+		protoProducts[i] = &pb.Product{
+			Id:          p.ID,
+			Name:        p.Name,
+			Category:    p.Category,
+			Description: p.Description,
+			Status:      p.Status,
+		}
 	}
 	return &pb.ListProductsResponse{
 		Products: protoProducts,
@@ -339,11 +351,17 @@ func (server *GrpcServer) CreateOrUpdateGrade(ctx context.Context, request *pb.C
 		return nil, err
 	}
 	return &pb.CreateOrUpdateGradeResponse{
-		Grade: toProtoGrade(grade),
+		Grade: &pb.Grade{
+			Id:          grade.ID,
+			ProductId:   grade.ProductID,
+			Name:        grade.Name,
+			Description: grade.Description,
+			Status:      grade.Status,
+		},
 	}, nil
 }
 
-func (server *GrpcServer) ListGrades(ctx context.Context, request *pb.ListGradesRequest) (*pb.ListGradesResponse, error) {
+func (server *GrpcServer) ListGradesByProductId(ctx context.Context, request *pb.ListGradesByProductIdRequest) (*pb.ListGradesByProductIdResponse, error) {
 	if err := server.checkAuthenticated(ctx); err != nil {
 		return nil, err
 	}
@@ -353,9 +371,15 @@ func (server *GrpcServer) ListGrades(ctx context.Context, request *pb.ListGrades
 	}
 	protoGrades := make([]*pb.Grade, len(grades))
 	for i, g := range grades {
-		protoGrades[i] = toProtoGrade(g)
+		protoGrades[i] = &pb.Grade{
+			Id:          g.ID,
+			ProductId:   g.ProductID,
+			Name:        g.Name,
+			Description: g.Description,
+			Status:      g.Status,
+		}
 	}
-	return &pb.ListGradesResponse{
+	return &pb.ListGradesByProductIdResponse{
 		Grades: protoGrades,
 	}, nil
 }
@@ -380,7 +404,14 @@ func (server *GrpcServer) CreateOrUpdateDailyPrice(ctx context.Context, request 
 		return nil, err
 	}
 	return &pb.CreateOrUpdateDailyPriceResponse{
-		DailyPrice: toProtoDailyPrice(dailyPrice),
+		DailyPrice: &pb.DailyPrice{
+			Id:        dailyPrice.ID,
+			ProductId: dailyPrice.ProductID,
+			GradeId:   dailyPrice.GradeID,
+			Price:     dailyPrice.Price,
+			Date:      dailyPrice.Date.Format("2006-01-02"),
+			Time:      dailyPrice.Time.Format("15:04:05"),
+		},
 	}, nil
 }
 
@@ -395,7 +426,14 @@ func (server *GrpcServer) ListDailyPrices(ctx context.Context, request *pb.ListD
 	}
 	protoPrices := make([]*pb.DailyPrice, len(prices))
 	for i, p := range prices {
-		protoPrices[i] = toProtoDailyPrice(p)
+		protoPrices[i] = &pb.DailyPrice{
+			Id:        p.ID,
+			ProductId: p.ProductID,
+			GradeId:   p.GradeID,
+			Price:     p.Price,
+			Date:      p.Date.Format("2006-01-02"),
+			Time:      p.Time.Format("15:04:05"),
+		}
 	}
 	return &pb.ListDailyPricesResponse{
 		DailyPrices: protoPrices,
@@ -413,40 +451,16 @@ func (server *GrpcServer) GetTodaysPrice(ctx context.Context, request *pb.GetTod
 	}
 	protoPrices := make([]*pb.DailyPrice, len(prices))
 	for i, p := range prices {
-		protoPrices[i] = toProtoDailyPrice(p)
+		protoPrices[i] = &pb.DailyPrice{
+			Id:        p.ID,
+			ProductId: p.ProductID,
+			GradeId:   p.GradeID,
+			Price:     p.Price,
+			Date:      p.Date.Format("2006-01-02"),
+			Time:      p.Time.Format("15:04:05"),
+		}
 	}
 	return &pb.GetTodaysPriceResponse{
 		DailyPrices: protoPrices,
 	}, nil
-}
-
-func toProtoProduct(p *Product) *pb.Product {
-	return &pb.Product{
-		Id:          p.ID,
-		Name:        p.Name,
-		Category:    p.Category,
-		Description: p.Description,
-		Status:      p.Status,
-	}
-}
-
-func toProtoGrade(g *Grade) *pb.Grade {
-	return &pb.Grade{
-		Id:          g.ID,
-		ProductId:   g.ProductID,
-		Name:        g.Name,
-		Description: g.Description,
-		Status:      g.Status,
-	}
-}
-
-func toProtoDailyPrice(p *DailyPrice) *pb.DailyPrice {
-	return &pb.DailyPrice{
-		Id:        p.ID,
-		ProductId: p.ProductID,
-		GradeId:   p.GradeID,
-		Price:     p.Price,
-		Date:      p.Date.Format("2006-01-02"),
-		Time:      p.Time.Format("15:04:05"),
-	}
 }

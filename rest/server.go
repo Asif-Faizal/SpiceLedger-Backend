@@ -11,7 +11,7 @@ import (
 )
 
 type Server struct {
-	accountClient *control.ControlClient
+	controlClient *control.ControlClient
 	logger        util.Logger
 	basicUser     string
 	basicPass     string
@@ -28,7 +28,7 @@ func NewServer(accountGrpcURL string, basicUser, basicPass string, logger util.L
 	}
 
 	return &Server{
-		accountClient: accountClient,
+		controlClient: accountClient,
 		logger:        logger,
 		basicUser:     basicUser,
 		basicPass:     basicPass,
@@ -42,8 +42,8 @@ func (s *Server) authCtx(ctx context.Context) context.Context {
 }
 
 func (s *Server) Close() error {
-	if s.accountClient != nil {
-		s.accountClient.Close()
+	if s.controlClient != nil {
+		s.controlClient.Close()
 	}
 	return nil
 }
