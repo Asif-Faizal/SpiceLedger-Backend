@@ -1,6 +1,10 @@
 package rest
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
+)
 
 func NewHandler(server *Server) http.Handler {
 	mux := http.NewServeMux()
@@ -11,5 +15,6 @@ func NewHandler(server *Server) http.Handler {
 	mux.HandleFunc("/accounts/refresh", server.handleRefreshToken)
 	mux.HandleFunc("/accounts", server.handleAccounts)
 	mux.HandleFunc("/accounts/", server.handleAccountByID)
-	return mux
+
+	return util.LoggingMiddleware(server.logger)(mux)
 }

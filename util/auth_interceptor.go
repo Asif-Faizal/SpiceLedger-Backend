@@ -40,6 +40,7 @@ func AuthInterceptor(jwtSecret, basicUser, basicPass string) grpc.UnaryServerInt
 				newCtx = context.WithValue(newCtx, UserTypeKey, claims.UserType)
 				newCtx = context.WithValue(newCtx, EmailKey, claims.Email)
 				newCtx = context.WithValue(newCtx, IsAuthenticatedKey, true)
+				newCtx = context.WithValue(newCtx, AccessTokenKey, tokenString)
 				if claims.UserType == UserTypeAdmin {
 					newCtx = context.WithValue(newCtx, IsAdminKey, true)
 				}

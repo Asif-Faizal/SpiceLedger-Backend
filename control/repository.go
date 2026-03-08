@@ -3,6 +3,7 @@ package control
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
@@ -77,11 +78,11 @@ func (repository *MysqlRepository) CreateOrUpdateAccount(ctx context.Context, ac
 		account.Name, account.UserType, account.Email, account.Password,
 	)
 
-	repository.logger.Database().Debug().
+	repository.logger.Database().Info().
 		Str("query", query).
 		Str("duration", time.Since(start).String()).
-		Bool("success", err == nil).
-		Msg("Execute Query")
+		Str("result", fmt.Sprintf("success: %v", err == nil)).
+		Msg("DB")
 
 	if err != nil {
 		return nil, err
@@ -120,11 +121,11 @@ func (repository *MysqlRepository) GetAccountByEmail(ctx context.Context, email 
 	var name sql.NullString
 	err := row.Scan(&account.ID, &name, &account.UserType, &account.Email, &account.Password)
 
-	repository.logger.Database().Debug().
-		Str("query", query).
+	repository.logger.Database().Info().
+		Str("query", query+" ("+email+")").
 		Str("duration", time.Since(start).String()).
-		Bool("success", err == nil).
-		Msg("Query Row")
+		Str("result", fmt.Sprintf("success: %v", err == nil)).
+		Msg("DB")
 
 	if err != nil {
 		return nil, err
@@ -139,11 +140,11 @@ func (repository *MysqlRepository) ListAccounts(ctx context.Context, skip uint, 
 
 	rows, err := repository.db.QueryContext(ctx, query, take, skip)
 
-	repository.logger.Database().Debug().
+	repository.logger.Database().Info().
 		Str("query", query).
 		Str("duration", time.Since(start).String()).
-		Bool("success", err == nil).
-		Msg("Query Context")
+		Str("result", fmt.Sprintf("success: %v", err == nil)).
+		Msg("DB")
 
 	if err != nil {
 		return nil, err

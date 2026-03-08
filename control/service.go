@@ -57,6 +57,15 @@ func (service *AccountService) CreateOrUpdateAccount(ctx context.Context, accoun
 	}
 
 	id := account.ID
+
+	// Check if email already exists for a different user
+	existingAccount, err := service.repository.GetAccountByEmail(ctx, account.Email)
+	if err == nil && existingAccount != nil {
+		if id == "" || id != existingAccount.ID {
+			return nil, errors.New("email already in use")
+		}
+	}
+
 	if id == "" {
 		id = ksuid.New().String()
 	}

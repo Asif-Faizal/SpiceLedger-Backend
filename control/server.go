@@ -32,6 +32,7 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			util.UnaryServerInterceptor(logger),
 			util.AuthInterceptor(config.JWTSecret, config.BasicAuthUser, config.BasicAuthPass),
+			SessionInterceptor(service, logger),
 		)),
 	)
 
@@ -45,6 +46,27 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 
 	logger.Transport().Info().Int("port", config.Port).Msg("gRPC server listening")
 	return grpcServer.Serve(lis)
+}
+
+func SessionInterceptor(service Service, logger util.Logger) grpc.UnaryServerInterceptor {
+	return func(
+		ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
+		accessToken, _ := ctx.Value(util.AccessTokenKey).(string)
+		if accessToken != "" {
+			accountService := service.(*AccountService)
+			session, err := accountService.repository.GetSessionByAccessToken(ctx, accessToken)
+			if err != nil || session == nil || session.IsRevoked {
+				logger.Transport().Warn().Str("token", accessToken).Msg("Rejected revoked or missing session")
+				return nil, status.Error(codes.Unauthenticated, "session revoked or invalid")
+			}
+		}
+
+		return handler(ctx, req)
+	}
 }
 
 func (server *GrpcServer) checkAdmin(ctx context.Context) error {

@@ -13,4 +13,5 @@ const (
 	EmailKey           ContextKey = "email"
 	IsAdminKey         ContextKey = "is_admin"
 	IsAuthenticatedKey ContextKey = "is_authenticated"
+	AccessTokenKey     ContextKey = "access_token"
 )
