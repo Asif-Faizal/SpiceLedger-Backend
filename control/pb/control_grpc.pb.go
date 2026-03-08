@@ -37,6 +37,7 @@ const (
 	ControlService_CreateOrUpdateDailyPrice_FullMethodName      = "/pb.ControlService/CreateOrUpdateDailyPrice"
 	ControlService_ListDailyPrices_FullMethodName               = "/pb.ControlService/ListDailyPrices"
 	ControlService_GetTodaysPrice_FullMethodName                = "/pb.ControlService/GetTodaysPrice"
+	ControlService_GetTodaysByProductId_FullMethodName          = "/pb.ControlService/GetTodaysByProductId"
 )
 
 // ControlServiceClient is the client API for ControlService service.
@@ -62,6 +63,7 @@ type ControlServiceClient interface {
 	CreateOrUpdateDailyPrice(ctx context.Context, in *CreateOrUpdateDailyPriceRequest, opts ...grpc.CallOption) (*CreateOrUpdateDailyPriceResponse, error)
 	ListDailyPrices(ctx context.Context, in *ListDailyPricesRequest, opts ...grpc.CallOption) (*ListDailyPricesResponse, error)
 	GetTodaysPrice(ctx context.Context, in *GetTodaysPriceRequest, opts ...grpc.CallOption) (*GetTodaysPriceResponse, error)
+	GetTodaysByProductId(ctx context.Context, in *GetTodaysByProductIdRequest, opts ...grpc.CallOption) (*GetTodaysByProductIdResponse, error)
 }
 
 type controlServiceClient struct {
@@ -232,6 +234,16 @@ func (c *controlServiceClient) GetTodaysPrice(ctx context.Context, in *GetTodays
 	return out, nil
 }
 
+func (c *controlServiceClient) GetTodaysByProductId(ctx context.Context, in *GetTodaysByProductIdRequest, opts ...grpc.CallOption) (*GetTodaysByProductIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTodaysByProductIdResponse)
+	err := c.cc.Invoke(ctx, ControlService_GetTodaysByProductId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ControlServiceServer is the server API for ControlService service.
 // All implementations must embed UnimplementedControlServiceServer
 // for forward compatibility.
@@ -255,6 +267,7 @@ type ControlServiceServer interface {
 	CreateOrUpdateDailyPrice(context.Context, *CreateOrUpdateDailyPriceRequest) (*CreateOrUpdateDailyPriceResponse, error)
 	ListDailyPrices(context.Context, *ListDailyPricesRequest) (*ListDailyPricesResponse, error)
 	GetTodaysPrice(context.Context, *GetTodaysPriceRequest) (*GetTodaysPriceResponse, error)
+	GetTodaysByProductId(context.Context, *GetTodaysByProductIdRequest) (*GetTodaysByProductIdResponse, error)
 	mustEmbedUnimplementedControlServiceServer()
 }
 
@@ -312,6 +325,9 @@ func (UnimplementedControlServiceServer) ListDailyPrices(context.Context, *ListD
 }
 func (UnimplementedControlServiceServer) GetTodaysPrice(context.Context, *GetTodaysPriceRequest) (*GetTodaysPriceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTodaysPrice not implemented")
+}
+func (UnimplementedControlServiceServer) GetTodaysByProductId(context.Context, *GetTodaysByProductIdRequest) (*GetTodaysByProductIdResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTodaysByProductId not implemented")
 }
 func (UnimplementedControlServiceServer) mustEmbedUnimplementedControlServiceServer() {}
 func (UnimplementedControlServiceServer) testEmbeddedByValue()                        {}
@@ -622,6 +638,24 @@ func _ControlService_GetTodaysPrice_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ControlService_GetTodaysByProductId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTodaysByProductIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).GetTodaysByProductId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_GetTodaysByProductId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).GetTodaysByProductId(ctx, req.(*GetTodaysByProductIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ControlService_ServiceDesc is the grpc.ServiceDesc for ControlService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -692,6 +726,10 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTodaysPrice",
 			Handler:    _ControlService_GetTodaysPrice_Handler,
+		},
+		{
+			MethodName: "GetTodaysByProductId",
+			Handler:    _ControlService_GetTodaysByProductId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

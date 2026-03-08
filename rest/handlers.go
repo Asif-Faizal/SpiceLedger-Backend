@@ -3,6 +3,7 @@ package rest
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -367,6 +368,139 @@ func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Requ
 				}
 			}
 			return grades
+		}(),
+	})
+}
+
+func (s *Server) handleCreateOrUpdateDailyPrice(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req CreateOrUpdateDailyPriceRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
+		return
+	}
+
+	resp, err := s.controlClient.CreateOrUpdateDailyPrice(s.withAuth(r), req.ID, req.ProductID, req.GradeID, req.Price, req.Date, req.Time)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Daily price created/updated successfully", &DailyPrice{
+		ID:        resp.DailyPrice.Id,
+		ProductID: resp.DailyPrice.ProductId,
+		GradeID:   resp.DailyPrice.GradeId,
+		Price:     resp.DailyPrice.Price,
+		Date:      resp.DailyPrice.Date,
+		Time:      resp.DailyPrice.Time,
+	})
+}
+
+func (s *Server) handleListDailyPricesByGradeId(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gradeID := r.URL.Query().Get("grade_id")
+	durationStr := r.URL.Query().Get("duration")
+	dateStr := r.URL.Query().Get("date")
+
+	var duration int
+	if durationStr != "" {
+		fmt.Sscanf(durationStr, "%d", &duration)
+	}
+
+	resp, err := s.controlClient.ListDailyPrices(s.withAuth(r), gradeID, dateStr, int32(duration))
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Daily prices listed successfully", ListDailyPricesResponse{
+		DailyPrices: func() []*DailyPrice {
+			dailyPrices := make([]*DailyPrice, len(resp.DailyPrices))
+			for i, dp := range resp.DailyPrices {
+				dailyPrices[i] = &DailyPrice{
+					ID:        dp.Id,
+					ProductID: dp.ProductId,
+					GradeID:   dp.GradeId,
+					Price:     dp.Price,
+					Date:      dp.Date,
+					Time:      dp.Time,
+				}
+			}
+			return dailyPrices
+		}(),
+	})
+}
+
+func (s *Server) handleGetTodaysByGradeId(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	gradeID := r.URL.Query().Get("grade_id")
+	dateStr := r.URL.Query().Get("date")
+
+	resp, err := s.controlClient.GetTodaysPrice(s.withAuth(r), gradeID, dateStr)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Daily prices for grade listed successfully", GetTodaysPriceResponse{
+		DailyPrices: func() []*DailyPrice {
+			dailyPrices := make([]*DailyPrice, len(resp.DailyPrices))
+			for i, dp := range resp.DailyPrices {
+				dailyPrices[i] = &DailyPrice{
+					ID:        dp.Id,
+					ProductID: dp.ProductId,
+					GradeID:   dp.GradeId,
+					Price:     dp.Price,
+					Date:      dp.Date,
+					Time:      dp.Time,
+				}
+			}
+			return dailyPrices
+		}(),
+	})
+}
+
+func (s *Server) handleGetTodaysByProductId(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	productID := r.URL.Query().Get("product_id")
+	dateStr := r.URL.Query().Get("date")
+
+	resp, err := s.controlClient.GetTodaysByProductId(s.withAuth(r), productID, dateStr)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Daily prices for product listed successfully", GetTodaysPriceByProductIdResponse{
+		DailyPrices: func() []*DailyPrice {
+			dailyPrices := make([]*DailyPrice, len(resp.DailyPrices))
+			for i, dp := range resp.DailyPrices {
+				dailyPrices[i] = &DailyPrice{
+					ID:        dp.Id,
+					ProductID: dp.ProductId,
+					GradeID:   dp.GradeId,
+					Price:     dp.Price,
+					Date:      dp.Date,
+					Time:      dp.Time,
+				}
+			}
+			return dailyPrices
 		}(),
 	})
 }

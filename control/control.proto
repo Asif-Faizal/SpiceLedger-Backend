@@ -218,6 +218,15 @@ message GetTodaysPriceResponse {
     repeated DailyPrice daily_prices = 1;
 }
 
+message GetTodaysByProductIdRequest {
+    string product_id = 1;
+    string date = 2;
+}
+
+message GetTodaysByProductIdResponse {
+    repeated DailyPrice daily_prices = 1;
+}
+
 service ControlService {
   rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
   rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
@@ -241,4 +250,5 @@ service ControlService {
   rpc CreateOrUpdateDailyPrice(CreateOrUpdateDailyPriceRequest) returns (CreateOrUpdateDailyPriceResponse);
   rpc ListDailyPrices(ListDailyPricesRequest) returns (ListDailyPricesResponse);
   rpc GetTodaysPrice(GetTodaysPriceRequest) returns (GetTodaysPriceResponse);
+  rpc GetTodaysByProductId(GetTodaysByProductIdRequest) returns (GetTodaysByProductIdResponse);
 }

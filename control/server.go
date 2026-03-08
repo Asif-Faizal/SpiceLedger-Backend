@@ -464,3 +464,28 @@ func (server *GrpcServer) GetTodaysPrice(ctx context.Context, request *pb.GetTod
 		DailyPrices: protoPrices,
 	}, nil
 }
+
+func (server *GrpcServer) GetTodaysByProductId(ctx context.Context, request *pb.GetTodaysByProductIdRequest) (*pb.GetTodaysByProductIdResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	date, _ := time.Parse("2006-01-02", request.Date)
+	prices, err := server.accountService.GetTodaysByProductId(ctx, request.ProductId, date)
+	if err != nil {
+		return nil, err
+	}
+	protoPrices := make([]*pb.DailyPrice, len(prices))
+	for i, p := range prices {
+		protoPrices[i] = &pb.DailyPrice{
+			Id:        p.ID,
+			ProductId: p.ProductID,
+			GradeId:   p.GradeID,
+			Price:     p.Price,
+			Date:      p.Date.Format("2006-01-02"),
+			Time:      p.Time.Format("15:04:05"),
+		}
+	}
+	return &pb.GetTodaysByProductIdResponse{
+		DailyPrices: protoPrices,
+	}, nil
+}

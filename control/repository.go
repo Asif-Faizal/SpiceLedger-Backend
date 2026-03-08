@@ -38,13 +38,45 @@ type Repository interface {
 
 	// Daily Price
 	CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error)
-	ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error)
+	GetTodaysByProductId(ctx context.Context, productId string, date time.Time) ([]*DailyPrice, error)
+	ListDailyPricesByGradeId(ctx context.Context, gradeId string, date time.Time, duration int) ([]*DailyPrice, error)
 	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
 }
 
 type MysqlRepository struct {
 	db     *sql.DB
 	logger util.Logger
+}
+
+func (repository *MysqlRepository) GetTodaysByProductId(ctx context.Context, productId string, date time.Time) ([]*DailyPrice, error) {
+	start := time.Now()
+	query := "SELECT id, product_id, grade_id, price, date, time FROM daily_price WHERE product_id = ? AND date = ? ORDER BY time DESC"
+
+	rows, err := repository.db.QueryContext(ctx, query, productId, date.Format("2006-01-02"))
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Rows")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	dailyPrices := []*DailyPrice{}
+	for rows.Next() {
+		dailyPrice := &DailyPrice{}
+		var dateStr, timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+			return nil, err
+		}
+		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrices = append(dailyPrices, dailyPrice)
+	}
+	return dailyPrices, nil
 }
 
 func NewMysqlRepository(url string, logger util.Logger) (Repository, error) {
@@ -491,13 +523,12 @@ func (repository *MysqlRepository) CreateOrUpdateDailyPrice(ctx context.Context,
 	return dailyPrice, nil
 }
 
-func (repository *MysqlRepository) ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error) {
+func (repository *MysqlRepository) ListDailyPricesByGradeId(ctx context.Context, gradeId string, date time.Time, duration int) ([]*DailyPrice, error) {
 	start := time.Now()
-	// Filter for past 'duration' days from today
-	startDate := today.AddDate(0, 0, -duration)
+	startDate := date.AddDate(0, 0, -duration)
 	query := "SELECT id, product_id, grade_id, price, date, time FROM daily_price WHERE grade_id = ? AND date BETWEEN ? AND ? ORDER BY date DESC, time DESC"
 
-	rows, err := repository.db.QueryContext(ctx, query, gradeId, startDate.Format("2006-01-02"), today.Format("2006-01-02"))
+	rows, err := repository.db.QueryContext(ctx, query, gradeId, startDate.Format("2006-01-02"), date.Format("2006-01-02"))
 
 	repository.logger.Database().Debug().
 		Str("query", query).

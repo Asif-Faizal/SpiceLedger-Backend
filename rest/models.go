@@ -98,3 +98,33 @@ type CreateOrUpdateGradeRequest struct {
 type ListGradesByProductIdResponse struct {
 	Grades []*Grade `json:"grades"`
 }
+
+type DailyPrice struct {
+	ID        string  `json:"id"`
+	ProductID string  `json:"product_id"`
+	GradeID   string  `json:"grade_id"`
+	Price     float64 `json:"price"`
+	Date      string  `json:"date"`
+	Time      string  `json:"time"`
+}
+
+type CreateOrUpdateDailyPriceRequest struct {
+	ID        string  `json:"id"`
+	ProductID string  `json:"product_id"`
+	GradeID   string  `json:"grade_id"`
+	Price     float64 `json:"price"`
+	Date      string  `json:"date"`
+	Time      string  `json:"time"`
+}
+
+type ListDailyPricesResponse struct {
+	DailyPrices []*DailyPrice `json:"daily_prices"`
+}
+
+type GetTodaysPriceResponse struct {
+	DailyPrices []*DailyPrice `json:"daily_prices"`
+}
+
+type GetTodaysPriceByProductIdResponse struct {
+	DailyPrices []*DailyPrice `json:"daily_prices"`
+}

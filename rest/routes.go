@@ -17,6 +17,13 @@ func NewHandler(server *Server) http.Handler {
 	mux.HandleFunc("/accounts/", server.handleAccountByID)
 	mux.HandleFunc("/accounts/merchant-details", server.handleCreateOrUpdateMerchantDetails)
 	mux.HandleFunc("/accounts/merchant-details/", server.handleGetMerchantDetails)
-
+	mux.HandleFunc("/products", server.handleCreateOrUpdateProduct)
+	mux.HandleFunc("/products/", server.handleListProducts)
+	mux.HandleFunc("/grades", server.handleCreateOrUpdateGrade)
+	mux.HandleFunc("/grades/", server.handleListGradesByProductId)
+	mux.HandleFunc("/daily-prices", server.handleCreateOrUpdateDailyPrice)
+	mux.HandleFunc("/daily-prices/", server.handleListDailyPricesByGradeId)
+	mux.HandleFunc("/daily-prices/product/today/", server.handleGetTodaysByProductId)
+	mux.HandleFunc("/daily-prices/grade/today/", server.handleGetTodaysByGradeId)
 	return util.LoggingMiddleware(server.logger)(mux)
 }

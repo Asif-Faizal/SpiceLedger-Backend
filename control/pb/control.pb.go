@@ -2142,6 +2142,102 @@ func (x *GetTodaysPriceResponse) GetDailyPrices() []*DailyPrice {
 	return nil
 }
 
+type GetTodaysByProductIdRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Date          string                 `protobuf:"bytes,2,opt,name=date,proto3" json:"date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTodaysByProductIdRequest) Reset() {
+	*x = GetTodaysByProductIdRequest{}
+	mi := &file_control_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTodaysByProductIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTodaysByProductIdRequest) ProtoMessage() {}
+
+func (x *GetTodaysByProductIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTodaysByProductIdRequest.ProtoReflect.Descriptor instead.
+func (*GetTodaysByProductIdRequest) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *GetTodaysByProductIdRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *GetTodaysByProductIdRequest) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+type GetTodaysByProductIdResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DailyPrices   []*DailyPrice          `protobuf:"bytes,1,rep,name=daily_prices,json=dailyPrices,proto3" json:"daily_prices,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTodaysByProductIdResponse) Reset() {
+	*x = GetTodaysByProductIdResponse{}
+	mi := &file_control_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTodaysByProductIdResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTodaysByProductIdResponse) ProtoMessage() {}
+
+func (x *GetTodaysByProductIdResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTodaysByProductIdResponse.ProtoReflect.Descriptor instead.
+func (*GetTodaysByProductIdResponse) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetTodaysByProductIdResponse) GetDailyPrices() []*DailyPrice {
+	if x != nil {
+		return x.DailyPrices
+	}
+	return nil
+}
+
 var File_control_proto protoreflect.FileDescriptor
 
 const file_control_proto_rawDesc = "" +
@@ -2291,7 +2387,13 @@ const file_control_proto_rawDesc = "" +
 	"\bgrade_id\x18\x01 \x01(\tR\agradeId\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\tR\x04date\"K\n" +
 	"\x16GetTodaysPriceResponse\x121\n" +
-	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices2\x89\n" +
+	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices\"P\n" +
+	"\x1bGetTodaysByProductIdRequest\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x12\n" +
+	"\x04date\x18\x02 \x01(\tR\x04date\"Q\n" +
+	"\x1cGetTodaysByProductIdResponse\x121\n" +
+	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices2\xe4\n" +
 	"\n" +
 	"\x0eControlService\x12M\n" +
 	"\x10CheckEmailExists\x12\x1b.pb.CheckEmailExistsRequest\x1a\x1c.pb.CheckEmailExistsResponse\x12\\\n" +
@@ -2309,7 +2411,8 @@ const file_control_proto_rawDesc = "" +
 	"\x15ListGradesByProductId\x12 .pb.ListGradesByProductIdRequest\x1a!.pb.ListGradesByProductIdResponse\x12e\n" +
 	"\x18CreateOrUpdateDailyPrice\x12#.pb.CreateOrUpdateDailyPriceRequest\x1a$.pb.CreateOrUpdateDailyPriceResponse\x12J\n" +
 	"\x0fListDailyPrices\x12\x1a.pb.ListDailyPricesRequest\x1a\x1b.pb.ListDailyPricesResponse\x12G\n" +
-	"\x0eGetTodaysPrice\x12\x19.pb.GetTodaysPriceRequest\x1a\x1a.pb.GetTodaysPriceResponseB\x04Z\x02./b\x06proto3"
+	"\x0eGetTodaysPrice\x12\x19.pb.GetTodaysPriceRequest\x1a\x1a.pb.GetTodaysPriceResponse\x12Y\n" +
+	"\x14GetTodaysByProductId\x12\x1f.pb.GetTodaysByProductIdRequest\x1a .pb.GetTodaysByProductIdResponseB\x04Z\x02./b\x06proto3"
 
 var (
 	file_control_proto_rawDescOnce sync.Once
@@ -2323,7 +2426,7 @@ func file_control_proto_rawDescGZIP() []byte {
 	return file_control_proto_rawDescData
 }
 
-var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_control_proto_goTypes = []any{
 	(*Account)(nil),                               // 0: pb.Account
 	(*MerchantDetails)(nil),                       // 1: pb.MerchantDetails
@@ -2362,6 +2465,8 @@ var file_control_proto_goTypes = []any{
 	(*ListDailyPricesResponse)(nil),               // 34: pb.ListDailyPricesResponse
 	(*GetTodaysPriceRequest)(nil),                 // 35: pb.GetTodaysPriceRequest
 	(*GetTodaysPriceResponse)(nil),                // 36: pb.GetTodaysPriceResponse
+	(*GetTodaysByProductIdRequest)(nil),           // 37: pb.GetTodaysByProductIdRequest
+	(*GetTodaysByProductIdResponse)(nil),          // 38: pb.GetTodaysByProductIdResponse
 }
 var file_control_proto_depIdxs = []int32{
 	0,  // 0: pb.CreateOrUpdateAccountResponse.account:type_name -> pb.Account
@@ -2378,43 +2483,46 @@ var file_control_proto_depIdxs = []int32{
 	4,  // 11: pb.CreateOrUpdateDailyPriceResponse.daily_price:type_name -> pb.DailyPrice
 	4,  // 12: pb.ListDailyPricesResponse.daily_prices:type_name -> pb.DailyPrice
 	4,  // 13: pb.GetTodaysPriceResponse.daily_prices:type_name -> pb.DailyPrice
-	5,  // 14: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
-	7,  // 15: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
-	9,  // 16: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
-	11, // 17: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
-	13, // 18: pb.ControlService.Login:input_type -> pb.LoginRequest
-	15, // 19: pb.ControlService.Logout:input_type -> pb.LogoutRequest
-	17, // 20: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
-	19, // 21: pb.ControlService.CreateOrUpdateMerchantDetails:input_type -> pb.CreateOrUpdateMerchantDetailsRequest
-	21, // 22: pb.ControlService.GetMerchantDetails:input_type -> pb.GetMerchantDetailsRequest
-	23, // 23: pb.ControlService.CreateOrUpdateProduct:input_type -> pb.CreateOrUpdateProductRequest
-	25, // 24: pb.ControlService.ListProducts:input_type -> pb.ListProductsRequest
-	27, // 25: pb.ControlService.CreateOrUpdateGrade:input_type -> pb.CreateOrUpdateGradeRequest
-	29, // 26: pb.ControlService.ListGradesByProductId:input_type -> pb.ListGradesByProductIdRequest
-	31, // 27: pb.ControlService.CreateOrUpdateDailyPrice:input_type -> pb.CreateOrUpdateDailyPriceRequest
-	33, // 28: pb.ControlService.ListDailyPrices:input_type -> pb.ListDailyPricesRequest
-	35, // 29: pb.ControlService.GetTodaysPrice:input_type -> pb.GetTodaysPriceRequest
-	6,  // 30: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
-	8,  // 31: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
-	10, // 32: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
-	12, // 33: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
-	14, // 34: pb.ControlService.Login:output_type -> pb.LoginResponse
-	16, // 35: pb.ControlService.Logout:output_type -> pb.LogoutResponse
-	18, // 36: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
-	20, // 37: pb.ControlService.CreateOrUpdateMerchantDetails:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
-	22, // 38: pb.ControlService.GetMerchantDetails:output_type -> pb.GetMerchantDetailsResponse
-	24, // 39: pb.ControlService.CreateOrUpdateProduct:output_type -> pb.CreateOrUpdateProductResponse
-	26, // 40: pb.ControlService.ListProducts:output_type -> pb.ListProductsResponse
-	28, // 41: pb.ControlService.CreateOrUpdateGrade:output_type -> pb.CreateOrUpdateGradeResponse
-	30, // 42: pb.ControlService.ListGradesByProductId:output_type -> pb.ListGradesByProductIdResponse
-	32, // 43: pb.ControlService.CreateOrUpdateDailyPrice:output_type -> pb.CreateOrUpdateDailyPriceResponse
-	34, // 44: pb.ControlService.ListDailyPrices:output_type -> pb.ListDailyPricesResponse
-	36, // 45: pb.ControlService.GetTodaysPrice:output_type -> pb.GetTodaysPriceResponse
-	30, // [30:46] is the sub-list for method output_type
-	14, // [14:30] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	4,  // 14: pb.GetTodaysByProductIdResponse.daily_prices:type_name -> pb.DailyPrice
+	5,  // 15: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
+	7,  // 16: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
+	9,  // 17: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
+	11, // 18: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
+	13, // 19: pb.ControlService.Login:input_type -> pb.LoginRequest
+	15, // 20: pb.ControlService.Logout:input_type -> pb.LogoutRequest
+	17, // 21: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
+	19, // 22: pb.ControlService.CreateOrUpdateMerchantDetails:input_type -> pb.CreateOrUpdateMerchantDetailsRequest
+	21, // 23: pb.ControlService.GetMerchantDetails:input_type -> pb.GetMerchantDetailsRequest
+	23, // 24: pb.ControlService.CreateOrUpdateProduct:input_type -> pb.CreateOrUpdateProductRequest
+	25, // 25: pb.ControlService.ListProducts:input_type -> pb.ListProductsRequest
+	27, // 26: pb.ControlService.CreateOrUpdateGrade:input_type -> pb.CreateOrUpdateGradeRequest
+	29, // 27: pb.ControlService.ListGradesByProductId:input_type -> pb.ListGradesByProductIdRequest
+	31, // 28: pb.ControlService.CreateOrUpdateDailyPrice:input_type -> pb.CreateOrUpdateDailyPriceRequest
+	33, // 29: pb.ControlService.ListDailyPrices:input_type -> pb.ListDailyPricesRequest
+	35, // 30: pb.ControlService.GetTodaysPrice:input_type -> pb.GetTodaysPriceRequest
+	37, // 31: pb.ControlService.GetTodaysByProductId:input_type -> pb.GetTodaysByProductIdRequest
+	6,  // 32: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
+	8,  // 33: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
+	10, // 34: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
+	12, // 35: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
+	14, // 36: pb.ControlService.Login:output_type -> pb.LoginResponse
+	16, // 37: pb.ControlService.Logout:output_type -> pb.LogoutResponse
+	18, // 38: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
+	20, // 39: pb.ControlService.CreateOrUpdateMerchantDetails:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
+	22, // 40: pb.ControlService.GetMerchantDetails:output_type -> pb.GetMerchantDetailsResponse
+	24, // 41: pb.ControlService.CreateOrUpdateProduct:output_type -> pb.CreateOrUpdateProductResponse
+	26, // 42: pb.ControlService.ListProducts:output_type -> pb.ListProductsResponse
+	28, // 43: pb.ControlService.CreateOrUpdateGrade:output_type -> pb.CreateOrUpdateGradeResponse
+	30, // 44: pb.ControlService.ListGradesByProductId:output_type -> pb.ListGradesByProductIdResponse
+	32, // 45: pb.ControlService.CreateOrUpdateDailyPrice:output_type -> pb.CreateOrUpdateDailyPriceResponse
+	34, // 46: pb.ControlService.ListDailyPrices:output_type -> pb.ListDailyPricesResponse
+	36, // 47: pb.ControlService.GetTodaysPrice:output_type -> pb.GetTodaysPriceResponse
+	38, // 48: pb.ControlService.GetTodaysByProductId:output_type -> pb.GetTodaysByProductIdResponse
+	32, // [32:49] is the sub-list for method output_type
+	15, // [15:32] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_control_proto_init() }
@@ -2428,7 +2536,7 @@ func file_control_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_control_proto_rawDesc), len(file_control_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   37,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

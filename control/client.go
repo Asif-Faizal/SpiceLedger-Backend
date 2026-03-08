@@ -222,3 +222,14 @@ func (client *ControlClient) GetTodaysPrice(ctx context.Context, gradeID string,
 	}
 	return response, nil
 }
+
+func (client *ControlClient) GetTodaysByProductId(ctx context.Context, productID string, date string) (*pb.GetTodaysByProductIdResponse, error) {
+	response, err := client.client.GetTodaysByProductId(ctx, &pb.GetTodaysByProductIdRequest{
+		ProductId: productID,
+		Date:      date,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
