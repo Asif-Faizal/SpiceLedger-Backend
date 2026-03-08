@@ -15,6 +15,8 @@ func NewHandler(server *Server) http.Handler {
 	mux.HandleFunc("/accounts/refresh", server.handleRefreshToken)
 	mux.HandleFunc("/accounts", server.handleAccounts)
 	mux.HandleFunc("/accounts/", server.handleAccountByID)
+	mux.HandleFunc("/accounts/merchant-details", server.handleCreateOrUpdateMerchantDetails)
+	mux.HandleFunc("/accounts/merchant-details/", server.handleGetMerchantDetails)
 
 	return util.LoggingMiddleware(server.logger)(mux)
 }

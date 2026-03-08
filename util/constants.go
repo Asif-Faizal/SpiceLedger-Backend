@@ -12,6 +12,7 @@ const (
 	UserTypeKey        ContextKey = "user_type"
 	EmailKey           ContextKey = "email"
 	IsAdminKey         ContextKey = "is_admin"
+	IsMerchantKey      ContextKey = "is_merchant"
 	IsAuthenticatedKey ContextKey = "is_authenticated"
 	AccessTokenKey     ContextKey = "access_token"
 )

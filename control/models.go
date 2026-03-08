@@ -26,3 +26,13 @@ type AuthenticatedResponse struct {
 	AccessToken  string   `json:"access_token"`
 	RefreshToken string   `json:"refresh_token"`
 }
+
+type MerchantDetails struct {
+	ID        string `json:"id" validate:"required,uuid4"`
+	AccountID string `json:"account_id" validate:"required,uuid4"`
+	Phone     string `json:"phone_number" validate:"required,min=10,max=15"`
+	Address   string `json:"address" validate:"required,min=3,max=255"`
+	City      string `json:"city" validate:"required,min=3,max=50"`
+	State     string `json:"state" validate:"required,min=3,max=50"`
+	Pincode   string `json:"pincode" validate:"required,min=6,max=6"`
+}

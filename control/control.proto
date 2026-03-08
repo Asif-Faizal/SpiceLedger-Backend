@@ -13,6 +13,16 @@ message Account {
   string password = 5;
 }
 
+message MerchantDetails {
+  string id = 1;
+  string account_id = 2;
+  string phone_number = 3;
+  string address = 4;
+  string city = 5;
+  string state = 6;
+  string pincode = 7;
+}
+
 message CheckEmailExistsRequest {
   string email = 1;
 }
@@ -83,6 +93,28 @@ message RefreshTokenResponse {
   string refresh_token = 3;
 }
 
+message CreateOrUpdateMerchantDetailsRequest {
+  string id = 1;
+  string account_id = 2;
+  string phone_number = 3;
+  string address = 4;
+  string city = 5;
+  string state = 6;
+  string pincode = 7;
+}
+
+message CreateOrUpdateMerchantDetailsResponse {
+  MerchantDetails merchant_details = 1;
+}
+
+message GetMerchantDetailsRequest {
+  string account_id = 1;
+}
+
+message GetMerchantDetailsResponse {
+  MerchantDetails merchant_details = 1;
+}
+
 service ControlService {
   rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
   rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
@@ -91,4 +123,6 @@ service ControlService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  rpc CreateOrUpdateMerchantDetails(CreateOrUpdateMerchantDetailsRequest) returns (CreateOrUpdateMerchantDetailsResponse);
+  rpc GetMerchantDetails(GetMerchantDetailsRequest) returns (GetMerchantDetailsResponse);
 }

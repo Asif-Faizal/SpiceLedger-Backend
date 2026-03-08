@@ -108,3 +108,29 @@ func (client *ControlClient) RefreshToken(ctx context.Context, refreshToken, dev
 	}
 	return response, nil
 }
+
+func (client *ControlClient) CreateOrUpdateMerchantDetails(ctx context.Context, id, accountID, phone, address, city, state, pincode string) (*pb.CreateOrUpdateMerchantDetailsResponse, error) {
+	response, err := client.client.CreateOrUpdateMerchantDetails(ctx, &pb.CreateOrUpdateMerchantDetailsRequest{
+		Id:          id,
+		AccountId:   accountID,
+		PhoneNumber: phone,
+		Address:     address,
+		City:        city,
+		State:       state,
+		Pincode:     pincode,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+func (client *ControlClient) GetMerchantDetails(ctx context.Context, accountID string) (*pb.GetMerchantDetailsResponse, error) {
+	response, err := client.client.GetMerchantDetails(ctx, &pb.GetMerchantDetailsRequest{
+		AccountId: accountID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}

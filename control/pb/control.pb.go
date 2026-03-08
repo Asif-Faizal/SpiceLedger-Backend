@@ -99,6 +99,98 @@ func (x *Account) GetPassword() string {
 	return ""
 }
 
+type MerchantDetails struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	AccountId     string                 `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,3,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Address       string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	City          string                 `protobuf:"bytes,5,opt,name=city,proto3" json:"city,omitempty"`
+	State         string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
+	Pincode       string                 `protobuf:"bytes,7,opt,name=pincode,proto3" json:"pincode,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MerchantDetails) Reset() {
+	*x = MerchantDetails{}
+	mi := &file_control_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MerchantDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MerchantDetails) ProtoMessage() {}
+
+func (x *MerchantDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MerchantDetails.ProtoReflect.Descriptor instead.
+func (*MerchantDetails) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MerchantDetails) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetAccountId() string {
+	if x != nil {
+		return x.AccountId
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *MerchantDetails) GetPincode() string {
+	if x != nil {
+		return x.Pincode
+	}
+	return ""
+}
+
 type CheckEmailExistsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -108,7 +200,7 @@ type CheckEmailExistsRequest struct {
 
 func (x *CheckEmailExistsRequest) Reset() {
 	*x = CheckEmailExistsRequest{}
-	mi := &file_control_proto_msgTypes[1]
+	mi := &file_control_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -120,7 +212,7 @@ func (x *CheckEmailExistsRequest) String() string {
 func (*CheckEmailExistsRequest) ProtoMessage() {}
 
 func (x *CheckEmailExistsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[1]
+	mi := &file_control_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -133,7 +225,7 @@ func (x *CheckEmailExistsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckEmailExistsRequest.ProtoReflect.Descriptor instead.
 func (*CheckEmailExistsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{1}
+	return file_control_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CheckEmailExistsRequest) GetEmail() string {
@@ -152,7 +244,7 @@ type CheckEmailExistsResponse struct {
 
 func (x *CheckEmailExistsResponse) Reset() {
 	*x = CheckEmailExistsResponse{}
-	mi := &file_control_proto_msgTypes[2]
+	mi := &file_control_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -164,7 +256,7 @@ func (x *CheckEmailExistsResponse) String() string {
 func (*CheckEmailExistsResponse) ProtoMessage() {}
 
 func (x *CheckEmailExistsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[2]
+	mi := &file_control_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -177,7 +269,7 @@ func (x *CheckEmailExistsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckEmailExistsResponse.ProtoReflect.Descriptor instead.
 func (*CheckEmailExistsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{2}
+	return file_control_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CheckEmailExistsResponse) GetExists() bool {
@@ -200,7 +292,7 @@ type CreateOrUpdateAccountRequest struct {
 
 func (x *CreateOrUpdateAccountRequest) Reset() {
 	*x = CreateOrUpdateAccountRequest{}
-	mi := &file_control_proto_msgTypes[3]
+	mi := &file_control_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -212,7 +304,7 @@ func (x *CreateOrUpdateAccountRequest) String() string {
 func (*CreateOrUpdateAccountRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[3]
+	mi := &file_control_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -225,7 +317,7 @@ func (x *CreateOrUpdateAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateAccountRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{3}
+	return file_control_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateOrUpdateAccountRequest) GetId() string {
@@ -272,7 +364,7 @@ type CreateOrUpdateAccountResponse struct {
 
 func (x *CreateOrUpdateAccountResponse) Reset() {
 	*x = CreateOrUpdateAccountResponse{}
-	mi := &file_control_proto_msgTypes[4]
+	mi := &file_control_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -284,7 +376,7 @@ func (x *CreateOrUpdateAccountResponse) String() string {
 func (*CreateOrUpdateAccountResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[4]
+	mi := &file_control_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -297,7 +389,7 @@ func (x *CreateOrUpdateAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateAccountResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{4}
+	return file_control_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateOrUpdateAccountResponse) GetAccount() *Account {
@@ -316,7 +408,7 @@ type GetAccountByIDRequest struct {
 
 func (x *GetAccountByIDRequest) Reset() {
 	*x = GetAccountByIDRequest{}
-	mi := &file_control_proto_msgTypes[5]
+	mi := &file_control_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -328,7 +420,7 @@ func (x *GetAccountByIDRequest) String() string {
 func (*GetAccountByIDRequest) ProtoMessage() {}
 
 func (x *GetAccountByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[5]
+	mi := &file_control_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -341,7 +433,7 @@ func (x *GetAccountByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetAccountByIDRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{5}
+	return file_control_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetAccountByIDRequest) GetId() string {
@@ -360,7 +452,7 @@ type GetAccountByIDResponse struct {
 
 func (x *GetAccountByIDResponse) Reset() {
 	*x = GetAccountByIDResponse{}
-	mi := &file_control_proto_msgTypes[6]
+	mi := &file_control_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -372,7 +464,7 @@ func (x *GetAccountByIDResponse) String() string {
 func (*GetAccountByIDResponse) ProtoMessage() {}
 
 func (x *GetAccountByIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[6]
+	mi := &file_control_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -385,7 +477,7 @@ func (x *GetAccountByIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountByIDResponse.ProtoReflect.Descriptor instead.
 func (*GetAccountByIDResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{6}
+	return file_control_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetAccountByIDResponse) GetAccount() *Account {
@@ -405,7 +497,7 @@ type ListAccountsRequest struct {
 
 func (x *ListAccountsRequest) Reset() {
 	*x = ListAccountsRequest{}
-	mi := &file_control_proto_msgTypes[7]
+	mi := &file_control_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +509,7 @@ func (x *ListAccountsRequest) String() string {
 func (*ListAccountsRequest) ProtoMessage() {}
 
 func (x *ListAccountsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[7]
+	mi := &file_control_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,7 +522,7 @@ func (x *ListAccountsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAccountsRequest.ProtoReflect.Descriptor instead.
 func (*ListAccountsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{7}
+	return file_control_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListAccountsRequest) GetSkip() uint32 {
@@ -456,7 +548,7 @@ type ListAccountsResponse struct {
 
 func (x *ListAccountsResponse) Reset() {
 	*x = ListAccountsResponse{}
-	mi := &file_control_proto_msgTypes[8]
+	mi := &file_control_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -468,7 +560,7 @@ func (x *ListAccountsResponse) String() string {
 func (*ListAccountsResponse) ProtoMessage() {}
 
 func (x *ListAccountsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[8]
+	mi := &file_control_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -481,7 +573,7 @@ func (x *ListAccountsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAccountsResponse.ProtoReflect.Descriptor instead.
 func (*ListAccountsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{8}
+	return file_control_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListAccountsResponse) GetAccounts() []*Account {
@@ -502,7 +594,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_control_proto_msgTypes[9]
+	mi := &file_control_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -514,7 +606,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[9]
+	mi := &file_control_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -527,7 +619,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{9}
+	return file_control_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *LoginRequest) GetEmail() string {
@@ -562,7 +654,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_control_proto_msgTypes[10]
+	mi := &file_control_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -574,7 +666,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[10]
+	mi := &file_control_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -587,7 +679,7 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{10}
+	return file_control_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *LoginResponse) GetAccount() *Account {
@@ -621,7 +713,7 @@ type LogoutRequest struct {
 
 func (x *LogoutRequest) Reset() {
 	*x = LogoutRequest{}
-	mi := &file_control_proto_msgTypes[11]
+	mi := &file_control_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -633,7 +725,7 @@ func (x *LogoutRequest) String() string {
 func (*LogoutRequest) ProtoMessage() {}
 
 func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[11]
+	mi := &file_control_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -646,7 +738,7 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{11}
+	return file_control_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *LogoutRequest) GetAccessToken() string {
@@ -672,7 +764,7 @@ type LogoutResponse struct {
 
 func (x *LogoutResponse) Reset() {
 	*x = LogoutResponse{}
-	mi := &file_control_proto_msgTypes[12]
+	mi := &file_control_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -684,7 +776,7 @@ func (x *LogoutResponse) String() string {
 func (*LogoutResponse) ProtoMessage() {}
 
 func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[12]
+	mi := &file_control_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -697,7 +789,7 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{12}
+	return file_control_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LogoutResponse) GetSuccess() bool {
@@ -717,7 +809,7 @@ type RefreshTokenRequest struct {
 
 func (x *RefreshTokenRequest) Reset() {
 	*x = RefreshTokenRequest{}
-	mi := &file_control_proto_msgTypes[13]
+	mi := &file_control_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -729,7 +821,7 @@ func (x *RefreshTokenRequest) String() string {
 func (*RefreshTokenRequest) ProtoMessage() {}
 
 func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[13]
+	mi := &file_control_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -742,7 +834,7 @@ func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{13}
+	return file_control_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RefreshTokenRequest) GetRefreshToken() string {
@@ -770,7 +862,7 @@ type RefreshTokenResponse struct {
 
 func (x *RefreshTokenResponse) Reset() {
 	*x = RefreshTokenResponse{}
-	mi := &file_control_proto_msgTypes[14]
+	mi := &file_control_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -782,7 +874,7 @@ func (x *RefreshTokenResponse) String() string {
 func (*RefreshTokenResponse) ProtoMessage() {}
 
 func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[14]
+	mi := &file_control_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -795,7 +887,7 @@ func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{14}
+	return file_control_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RefreshTokenResponse) GetAccount() *Account {
@@ -819,6 +911,230 @@ func (x *RefreshTokenResponse) GetRefreshToken() string {
 	return ""
 }
 
+type CreateOrUpdateMerchantDetailsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	AccountId     string                 `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,3,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Address       string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	City          string                 `protobuf:"bytes,5,opt,name=city,proto3" json:"city,omitempty"`
+	State         string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
+	Pincode       string                 `protobuf:"bytes,7,opt,name=pincode,proto3" json:"pincode,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) Reset() {
+	*x = CreateOrUpdateMerchantDetailsRequest{}
+	mi := &file_control_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrUpdateMerchantDetailsRequest) ProtoMessage() {}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrUpdateMerchantDetailsRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateMerchantDetailsRequest) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetAccountId() string {
+	if x != nil {
+		return x.AccountId
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *CreateOrUpdateMerchantDetailsRequest) GetPincode() string {
+	if x != nil {
+		return x.Pincode
+	}
+	return ""
+}
+
+type CreateOrUpdateMerchantDetailsResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	MerchantDetails *MerchantDetails       `protobuf:"bytes,1,opt,name=merchant_details,json=merchantDetails,proto3" json:"merchant_details,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreateOrUpdateMerchantDetailsResponse) Reset() {
+	*x = CreateOrUpdateMerchantDetailsResponse{}
+	mi := &file_control_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrUpdateMerchantDetailsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrUpdateMerchantDetailsResponse) ProtoMessage() {}
+
+func (x *CreateOrUpdateMerchantDetailsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrUpdateMerchantDetailsResponse.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateMerchantDetailsResponse) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *CreateOrUpdateMerchantDetailsResponse) GetMerchantDetails() *MerchantDetails {
+	if x != nil {
+		return x.MerchantDetails
+	}
+	return nil
+}
+
+type GetMerchantDetailsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountId     string                 `protobuf:"bytes,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMerchantDetailsRequest) Reset() {
+	*x = GetMerchantDetailsRequest{}
+	mi := &file_control_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMerchantDetailsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMerchantDetailsRequest) ProtoMessage() {}
+
+func (x *GetMerchantDetailsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMerchantDetailsRequest.ProtoReflect.Descriptor instead.
+func (*GetMerchantDetailsRequest) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetMerchantDetailsRequest) GetAccountId() string {
+	if x != nil {
+		return x.AccountId
+	}
+	return ""
+}
+
+type GetMerchantDetailsResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	MerchantDetails *MerchantDetails       `protobuf:"bytes,1,opt,name=merchant_details,json=merchantDetails,proto3" json:"merchant_details,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *GetMerchantDetailsResponse) Reset() {
+	*x = GetMerchantDetailsResponse{}
+	mi := &file_control_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMerchantDetailsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMerchantDetailsResponse) ProtoMessage() {}
+
+func (x *GetMerchantDetailsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMerchantDetailsResponse.ProtoReflect.Descriptor instead.
+func (*GetMerchantDetailsResponse) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GetMerchantDetailsResponse) GetMerchantDetails() *MerchantDetails {
+	if x != nil {
+		return x.MerchantDetails
+	}
+	return nil
+}
+
 var File_control_proto protoreflect.FileDescriptor
 
 const file_control_proto_rawDesc = "" +
@@ -829,7 +1145,16 @@ const file_control_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
 	"\busertype\x18\x03 \x01(\tR\busertype\x12\x14\n" +
 	"\x05email\x18\x04 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x05 \x01(\tR\bpassword\"/\n" +
+	"\bpassword\x18\x05 \x01(\tR\bpassword\"\xc1\x01\n" +
+	"\x0fMerchantDetails\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x02 \x01(\tR\taccountId\x12!\n" +
+	"\fphone_number\x18\x03 \x01(\tR\vphoneNumber\x12\x18\n" +
+	"\aaddress\x18\x04 \x01(\tR\aaddress\x12\x12\n" +
+	"\x04city\x18\x05 \x01(\tR\x04city\x12\x14\n" +
+	"\x05state\x18\x06 \x01(\tR\x05state\x12\x18\n" +
+	"\apincode\x18\a \x01(\tR\apincode\"/\n" +
 	"\x17CheckEmailExistsRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"2\n" +
 	"\x18CheckEmailExistsResponse\x12\x16\n" +
@@ -870,7 +1195,23 @@ const file_control_proto_rawDesc = "" +
 	"\x14RefreshTokenResponse\x12%\n" +
 	"\aaccount\x18\x01 \x01(\v2\v.pb.AccountR\aaccount\x12!\n" +
 	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken2\xeb\x03\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"\xd6\x01\n" +
+	"$CreateOrUpdateMerchantDetailsRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x02 \x01(\tR\taccountId\x12!\n" +
+	"\fphone_number\x18\x03 \x01(\tR\vphoneNumber\x12\x18\n" +
+	"\aaddress\x18\x04 \x01(\tR\aaddress\x12\x12\n" +
+	"\x04city\x18\x05 \x01(\tR\x04city\x12\x14\n" +
+	"\x05state\x18\x06 \x01(\tR\x05state\x12\x18\n" +
+	"\apincode\x18\a \x01(\tR\apincode\"g\n" +
+	"%CreateOrUpdateMerchantDetailsResponse\x12>\n" +
+	"\x10merchant_details\x18\x01 \x01(\v2\x13.pb.MerchantDetailsR\x0fmerchantDetails\":\n" +
+	"\x19GetMerchantDetailsRequest\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\tR\taccountId\"\\\n" +
+	"\x1aGetMerchantDetailsResponse\x12>\n" +
+	"\x10merchant_details\x18\x01 \x01(\v2\x13.pb.MerchantDetailsR\x0fmerchantDetails2\xb6\x05\n" +
 	"\x0eControlService\x12M\n" +
 	"\x10CheckEmailExists\x12\x1b.pb.CheckEmailExistsRequest\x1a\x1c.pb.CheckEmailExistsResponse\x12\\\n" +
 	"\x15CreateOrUpdateAccount\x12 .pb.CreateOrUpdateAccountRequest\x1a!.pb.CreateOrUpdateAccountResponse\x12G\n" +
@@ -878,7 +1219,9 @@ const file_control_proto_rawDesc = "" +
 	"\fListAccounts\x12\x17.pb.ListAccountsRequest\x1a\x18.pb.ListAccountsResponse\x12,\n" +
 	"\x05Login\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\x12/\n" +
 	"\x06Logout\x12\x11.pb.LogoutRequest\x1a\x12.pb.LogoutResponse\x12A\n" +
-	"\fRefreshToken\x12\x17.pb.RefreshTokenRequest\x1a\x18.pb.RefreshTokenResponseB\x04Z\x02./b\x06proto3"
+	"\fRefreshToken\x12\x17.pb.RefreshTokenRequest\x1a\x18.pb.RefreshTokenResponse\x12t\n" +
+	"\x1dCreateOrUpdateMerchantDetails\x12(.pb.CreateOrUpdateMerchantDetailsRequest\x1a).pb.CreateOrUpdateMerchantDetailsResponse\x12S\n" +
+	"\x12GetMerchantDetails\x12\x1d.pb.GetMerchantDetailsRequest\x1a\x1e.pb.GetMerchantDetailsResponseB\x04Z\x02./b\x06proto3"
 
 var (
 	file_control_proto_rawDescOnce sync.Once
@@ -892,23 +1235,28 @@ func file_control_proto_rawDescGZIP() []byte {
 	return file_control_proto_rawDescData
 }
 
-var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_control_proto_goTypes = []any{
-	(*Account)(nil),                       // 0: pb.Account
-	(*CheckEmailExistsRequest)(nil),       // 1: pb.CheckEmailExistsRequest
-	(*CheckEmailExistsResponse)(nil),      // 2: pb.CheckEmailExistsResponse
-	(*CreateOrUpdateAccountRequest)(nil),  // 3: pb.CreateOrUpdateAccountRequest
-	(*CreateOrUpdateAccountResponse)(nil), // 4: pb.CreateOrUpdateAccountResponse
-	(*GetAccountByIDRequest)(nil),         // 5: pb.GetAccountByIDRequest
-	(*GetAccountByIDResponse)(nil),        // 6: pb.GetAccountByIDResponse
-	(*ListAccountsRequest)(nil),           // 7: pb.ListAccountsRequest
-	(*ListAccountsResponse)(nil),          // 8: pb.ListAccountsResponse
-	(*LoginRequest)(nil),                  // 9: pb.LoginRequest
-	(*LoginResponse)(nil),                 // 10: pb.LoginResponse
-	(*LogoutRequest)(nil),                 // 11: pb.LogoutRequest
-	(*LogoutResponse)(nil),                // 12: pb.LogoutResponse
-	(*RefreshTokenRequest)(nil),           // 13: pb.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),          // 14: pb.RefreshTokenResponse
+	(*Account)(nil),                               // 0: pb.Account
+	(*MerchantDetails)(nil),                       // 1: pb.MerchantDetails
+	(*CheckEmailExistsRequest)(nil),               // 2: pb.CheckEmailExistsRequest
+	(*CheckEmailExistsResponse)(nil),              // 3: pb.CheckEmailExistsResponse
+	(*CreateOrUpdateAccountRequest)(nil),          // 4: pb.CreateOrUpdateAccountRequest
+	(*CreateOrUpdateAccountResponse)(nil),         // 5: pb.CreateOrUpdateAccountResponse
+	(*GetAccountByIDRequest)(nil),                 // 6: pb.GetAccountByIDRequest
+	(*GetAccountByIDResponse)(nil),                // 7: pb.GetAccountByIDResponse
+	(*ListAccountsRequest)(nil),                   // 8: pb.ListAccountsRequest
+	(*ListAccountsResponse)(nil),                  // 9: pb.ListAccountsResponse
+	(*LoginRequest)(nil),                          // 10: pb.LoginRequest
+	(*LoginResponse)(nil),                         // 11: pb.LoginResponse
+	(*LogoutRequest)(nil),                         // 12: pb.LogoutRequest
+	(*LogoutResponse)(nil),                        // 13: pb.LogoutResponse
+	(*RefreshTokenRequest)(nil),                   // 14: pb.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),                  // 15: pb.RefreshTokenResponse
+	(*CreateOrUpdateMerchantDetailsRequest)(nil),  // 16: pb.CreateOrUpdateMerchantDetailsRequest
+	(*CreateOrUpdateMerchantDetailsResponse)(nil), // 17: pb.CreateOrUpdateMerchantDetailsResponse
+	(*GetMerchantDetailsRequest)(nil),             // 18: pb.GetMerchantDetailsRequest
+	(*GetMerchantDetailsResponse)(nil),            // 19: pb.GetMerchantDetailsResponse
 }
 var file_control_proto_depIdxs = []int32{
 	0,  // 0: pb.CreateOrUpdateAccountResponse.account:type_name -> pb.Account
@@ -916,25 +1264,31 @@ var file_control_proto_depIdxs = []int32{
 	0,  // 2: pb.ListAccountsResponse.accounts:type_name -> pb.Account
 	0,  // 3: pb.LoginResponse.account:type_name -> pb.Account
 	0,  // 4: pb.RefreshTokenResponse.account:type_name -> pb.Account
-	1,  // 5: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
-	3,  // 6: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
-	5,  // 7: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
-	7,  // 8: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
-	9,  // 9: pb.ControlService.Login:input_type -> pb.LoginRequest
-	11, // 10: pb.ControlService.Logout:input_type -> pb.LogoutRequest
-	13, // 11: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
-	2,  // 12: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
-	4,  // 13: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
-	6,  // 14: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
-	8,  // 15: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
-	10, // 16: pb.ControlService.Login:output_type -> pb.LoginResponse
-	12, // 17: pb.ControlService.Logout:output_type -> pb.LogoutResponse
-	14, // 18: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
-	12, // [12:19] is the sub-list for method output_type
-	5,  // [5:12] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	1,  // 5: pb.CreateOrUpdateMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
+	1,  // 6: pb.GetMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
+	2,  // 7: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
+	4,  // 8: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
+	6,  // 9: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
+	8,  // 10: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
+	10, // 11: pb.ControlService.Login:input_type -> pb.LoginRequest
+	12, // 12: pb.ControlService.Logout:input_type -> pb.LogoutRequest
+	14, // 13: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
+	16, // 14: pb.ControlService.CreateOrUpdateMerchantDetails:input_type -> pb.CreateOrUpdateMerchantDetailsRequest
+	18, // 15: pb.ControlService.GetMerchantDetails:input_type -> pb.GetMerchantDetailsRequest
+	3,  // 16: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
+	5,  // 17: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
+	7,  // 18: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
+	9,  // 19: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
+	11, // 20: pb.ControlService.Login:output_type -> pb.LoginResponse
+	13, // 21: pb.ControlService.Logout:output_type -> pb.LogoutResponse
+	15, // 22: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
+	17, // 23: pb.ControlService.CreateOrUpdateMerchantDetails:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
+	19, // 24: pb.ControlService.GetMerchantDetails:output_type -> pb.GetMerchantDetailsResponse
+	16, // [16:25] is the sub-list for method output_type
+	7,  // [7:16] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_control_proto_init() }
@@ -948,7 +1302,7 @@ func file_control_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_control_proto_rawDesc), len(file_control_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

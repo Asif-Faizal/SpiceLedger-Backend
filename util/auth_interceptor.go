@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 // AuthInterceptor validates the JWT from the Authorization header and injects claims into the context
@@ -35,15 +37,19 @@ func AuthInterceptor(jwtSecret, basicUser, basicPass string) grpc.UnaryServerInt
 		if strings.HasPrefix(headerValue, "Bearer ") {
 			tokenString := strings.TrimPrefix(headerValue, "Bearer ")
 			claims, err := ValidateToken(tokenString, jwtSecret)
-			if err == nil {
-				newCtx = context.WithValue(newCtx, AccountIDKey, claims.AccountID)
-				newCtx = context.WithValue(newCtx, UserTypeKey, claims.UserType)
-				newCtx = context.WithValue(newCtx, EmailKey, claims.Email)
-				newCtx = context.WithValue(newCtx, IsAuthenticatedKey, true)
-				newCtx = context.WithValue(newCtx, AccessTokenKey, tokenString)
-				if claims.UserType == UserTypeAdmin {
-					newCtx = context.WithValue(newCtx, IsAdminKey, true)
-				}
+			if err != nil {
+				return nil, status.Error(codes.Unauthenticated, err.Error())
+			}
+			newCtx = context.WithValue(newCtx, AccountIDKey, claims.AccountID)
+			newCtx = context.WithValue(newCtx, UserTypeKey, claims.UserType)
+			newCtx = context.WithValue(newCtx, EmailKey, claims.Email)
+			newCtx = context.WithValue(newCtx, IsAuthenticatedKey, true)
+			newCtx = context.WithValue(newCtx, AccessTokenKey, tokenString)
+			if claims.UserType == UserTypeAdmin {
+				newCtx = context.WithValue(newCtx, IsAdminKey, true)
+			}
+			if claims.UserType == UserTypeMerchant {
+				newCtx = context.WithValue(newCtx, IsMerchantKey, true)
 			}
 			return handler(newCtx, req)
 		}

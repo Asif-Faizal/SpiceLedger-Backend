@@ -77,6 +77,14 @@ func (server *GrpcServer) checkAdmin(ctx context.Context) error {
 	return nil
 }
 
+func (server *GrpcServer) checkMerchant(ctx context.Context) error {
+	isMerchant, ok := ctx.Value(util.IsMerchantKey).(bool)
+	if !ok || !isMerchant {
+		return status.Error(codes.PermissionDenied, "merchant access required")
+	}
+	return nil
+}
+
 func (server *GrpcServer) checkAuthenticated(ctx context.Context) error {
 	isAuthenticated, ok := ctx.Value(util.IsAuthenticatedKey).(bool)
 	if !ok || !isAuthenticated {
@@ -224,5 +232,55 @@ func (server *GrpcServer) RefreshToken(ctx context.Context, request *pb.RefreshT
 		Account:      account,
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
+	}, nil
+}
+
+func (server *GrpcServer) CreateOrUpdateMerchantDetails(ctx context.Context, request *pb.CreateOrUpdateMerchantDetailsRequest) (*pb.CreateOrUpdateMerchantDetailsResponse, error) {
+	if err := server.checkMerchant(ctx); err != nil {
+		return nil, err
+	}
+	merchantDetails, err := server.accountService.CreateOrUpdateMerchantDetails(ctx, &MerchantDetails{
+		ID:        request.Id,
+		AccountID: request.AccountId,
+		Phone:     request.PhoneNumber,
+		Address:   request.Address,
+		City:      request.City,
+		State:     request.State,
+		Pincode:   request.Pincode,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateOrUpdateMerchantDetailsResponse{
+		MerchantDetails: &pb.MerchantDetails{
+			Id:          merchantDetails.ID,
+			AccountId:   merchantDetails.AccountID,
+			PhoneNumber: merchantDetails.Phone,
+			Address:     merchantDetails.Address,
+			City:        merchantDetails.City,
+			State:       merchantDetails.State,
+			Pincode:     merchantDetails.Pincode,
+		},
+	}, nil
+}
+
+func (server *GrpcServer) GetMerchantDetails(ctx context.Context, request *pb.GetMerchantDetailsRequest) (*pb.GetMerchantDetailsResponse, error) {
+	if err := server.checkMerchant(ctx); err != nil {
+		return nil, err
+	}
+	merchantDetails, err := server.accountService.GetMerchantDetails(ctx, request.AccountId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetMerchantDetailsResponse{
+		MerchantDetails: &pb.MerchantDetails{
+			Id:          merchantDetails.ID,
+			AccountId:   merchantDetails.AccountID,
+			PhoneNumber: merchantDetails.Phone,
+			Address:     merchantDetails.Address,
+			City:        merchantDetails.City,
+			State:       merchantDetails.State,
+			Pincode:     merchantDetails.Pincode,
+		},
 	}, nil
 }

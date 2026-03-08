@@ -37,7 +37,7 @@ func (s *Server) handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 	resp, err := s.accountClient.CheckEmailExists(s.withAuth(r), email)
 	if err != nil {
 		s.logger.Service().Error().Err(err).Msg("failed to check if email exists")
-		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
@@ -94,7 +94,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := s.accountClient.Logout(s.withAuth(r), accessToken, req.DeviceID); err != nil {
-		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (s *Server) handleCreateOrUpdateAccount(w http.ResponseWriter, r *http.Requ
 
 	resp, err := s.accountClient.CreateOrUpdateAccount(s.withAuth(r), req.ID, req.Name, req.UserType, req.Email, req.Password)
 	if err != nil {
-		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
@@ -152,12 +152,18 @@ func (s *Server) handleCreateOrUpdateAccount(w http.ResponseWriter, r *http.Requ
 func (s *Server) handleListAccounts(w http.ResponseWriter, r *http.Request) {
 	resp, err := s.accountClient.ListAccounts(s.withAuth(r), 0, 100)
 	if err != nil {
-		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
 	util.WriteJSONResponse(w, http.StatusOK, true, "Accounts listed successfully", ListAccountsResponse{
-		Accounts: toAccounts(resp.Accounts),
+		Accounts: func() []*Account {
+			accounts := make([]*Account, len(resp.Accounts))
+			for i, a := range resp.Accounts {
+				accounts[i] = toAccount(a)
+			}
+			return accounts
+		}(),
 	})
 }
 
@@ -175,19 +181,69 @@ func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := s.accountClient.GetAccountByID(s.withAuth(r), id)
 	if err != nil {
-		util.WriteJSONResponse(w, http.StatusInternalServerError, false, err.Error(), nil)
+		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
 
 	util.WriteJSONResponse(w, http.StatusOK, true, "Account retrieved successfully", toAccount(resp.Account))
 }
 
-func toAccounts(pbAccounts []*pb.Account) []*Account {
-	accounts := make([]*Account, len(pbAccounts))
-	for i, a := range pbAccounts {
-		accounts[i] = toAccount(a)
+func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
-	return accounts
+
+	var req CreateOrUpdateMerchantDetailsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
+		return
+	}
+
+	resp, err := s.accountClient.CreateOrUpdateMerchantDetails(s.withAuth(r), req.ID, req.AccountID, req.PhoneNumber, req.Address, req.City, req.State, req.Pincode)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Merchant details created/updated successfully", &MerchantDetails{
+		ID:          resp.MerchantDetails.Id,
+		AccountID:   resp.MerchantDetails.AccountId,
+		PhoneNumber: resp.MerchantDetails.PhoneNumber,
+		Address:     resp.MerchantDetails.Address,
+		City:        resp.MerchantDetails.City,
+		State:       resp.MerchantDetails.State,
+		Pincode:     resp.MerchantDetails.Pincode,
+	})
+}
+
+func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	id := strings.TrimPrefix(r.URL.Path, "/accounts/merchant-details/")
+	if id == "" {
+		http.Error(w, "id is required", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := s.accountClient.GetMerchantDetails(s.withAuth(r), id)
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Merchant details retrieved successfully", &MerchantDetails{
+		ID:          resp.MerchantDetails.Id,
+		AccountID:   resp.MerchantDetails.AccountId,
+		PhoneNumber: resp.MerchantDetails.PhoneNumber,
+		Address:     resp.MerchantDetails.Address,
+		City:        resp.MerchantDetails.City,
+		State:       resp.MerchantDetails.State,
+		Pincode:     resp.MerchantDetails.Pincode,
+	})
 }
 
 func toAuthenticatedResponse(resp interface{}) *AuthenticatedResponse {

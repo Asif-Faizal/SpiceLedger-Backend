@@ -23,6 +23,10 @@ type Repository interface {
 	GetSessionByRefreshToken(ctx context.Context, refreshToken string) (*Session, error)
 	GetSessionByAccessToken(ctx context.Context, accessToken string) (*Session, error)
 	RevokeSessionByAccessToken(ctx context.Context, accessToken string) error
+
+	// Merchant Details
+	CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error)
+	GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error)
 }
 
 type MysqlRepository struct {
@@ -272,4 +276,50 @@ func (repository *MysqlRepository) RevokeSessionByAccessToken(ctx context.Contex
 		Msg("Execute Query")
 
 	return err
+}
+
+func (repository *MysqlRepository) CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error) {
+	start := time.Now()
+	query := "INSERT INTO merchant_details (id, account_id, phone_number, address, city, state, pincode) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE phone_number = ?, address = ?, city = ?, state = ?, pincode = ?"
+
+	_, err := repository.db.ExecContext(ctx, query,
+		merchantDetails.ID,
+		merchantDetails.AccountID,
+		merchantDetails.Phone,
+		merchantDetails.Address,
+		merchantDetails.City,
+		merchantDetails.State,
+		merchantDetails.Pincode,
+	)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Execute Query")
+
+	if err != nil {
+		return nil, err
+	}
+	return merchantDetails, nil
+}
+
+func (repository *MysqlRepository) GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error) {
+	start := time.Now()
+	query := "SELECT id, account_id, phone_number, address, city, state, pincode FROM merchant_details WHERE account_id = ?"
+
+	row := repository.db.QueryRowContext(ctx, query, accountID)
+	merchantDetails := &MerchantDetails{}
+	err := row.Scan(&merchantDetails.ID, &merchantDetails.AccountID, &merchantDetails.Phone, &merchantDetails.Address, &merchantDetails.City, &merchantDetails.State, &merchantDetails.Pincode)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Row")
+
+	if err != nil {
+		return nil, err
+	}
+	return merchantDetails, nil
 }

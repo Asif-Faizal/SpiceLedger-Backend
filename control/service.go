@@ -17,6 +17,8 @@ type Service interface {
 	Login(ctx context.Context, email string, password string, deviceID string) (*AuthenticatedResponse, error)
 	Logout(ctx context.Context, accessToken string, deviceID string) error
 	RefreshToken(ctx context.Context, refreshToken string, deviceID string) (*AuthenticatedResponse, error)
+	CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error)
+	GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error)
 }
 
 type AccountService struct {
@@ -222,4 +224,59 @@ func (service *AccountService) RefreshToken(ctx context.Context, refreshToken st
 		AccessToken:  newAccessToken,
 		RefreshToken: newRefreshToken,
 	}, nil
+}
+
+func (service *AccountService) CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error) {
+	if merchantDetails.AccountID == "" {
+		return nil, errors.New("account_id is required")
+	}
+	if merchantDetails.Phone == "" {
+		return nil, errors.New("phone_number is required")
+	}
+	if merchantDetails.Address == "" {
+		return nil, errors.New("address is required")
+	}
+	if merchantDetails.City == "" {
+		return nil, errors.New("city is required")
+	}
+	if merchantDetails.State == "" {
+		return nil, errors.New("state is required")
+	}
+	if merchantDetails.Pincode == "" {
+		return nil, errors.New("pincode is required")
+	}
+	id := merchantDetails.ID
+
+	// Check if merchant details already exists for a different user
+	existingMerchantDetails, err := service.repository.GetMerchantDetails(ctx, merchantDetails.AccountID)
+	if err == nil && existingMerchantDetails != nil {
+		if id == "" || id != existingMerchantDetails.ID {
+			return nil, errors.New("merchant details already exists")
+		}
+	}
+
+	if id == "" {
+		id = ksuid.New().String()
+	}
+	newMerchantDetails := &MerchantDetails{
+		ID:        id,
+		AccountID: merchantDetails.AccountID,
+		Phone:     merchantDetails.Phone,
+		Address:   merchantDetails.Address,
+		City:      merchantDetails.City,
+		State:     merchantDetails.State,
+		Pincode:   merchantDetails.Pincode,
+	}
+	if _, err := service.repository.CreateOrUpdateMerchantDetails(ctx, newMerchantDetails); err != nil {
+		return nil, err
+	}
+	return newMerchantDetails, nil
+}
+
+func (service *AccountService) GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error) {
+	merchantDetails, err := service.repository.GetMerchantDetails(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+	return merchantDetails, nil
 }
