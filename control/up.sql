@@ -59,6 +59,6 @@ CREATE TABLE IF NOT EXISTS daily_price (
     time TIME NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (grade_id) REFERENCES grade(id),
-    UNIQUE (id, product_id, grade_id, date, time),
+    UNIQUE (product_id, grade_id, date),
     INDEX idx_price_lookup (product_id, grade_id, date, time)
 ) ENGINE=InnoDB;

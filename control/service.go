@@ -332,6 +332,7 @@ func (service *AccountService) CreateOrUpdateGrade(ctx context.Context, grade *G
 	}
 	newGrade := &Grade{
 		ID:          id,
+		ProductID:   grade.ProductID,
 		Name:        grade.Name,
 		Description: grade.Description,
 		Status:      grade.Status,

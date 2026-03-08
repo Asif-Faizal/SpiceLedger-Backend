@@ -389,8 +389,14 @@ func (server *GrpcServer) CreateOrUpdateDailyPrice(ctx context.Context, request 
 	if err := server.checkAdmin(ctx); err != nil {
 		return nil, err
 	}
-	date, _ := time.Parse("2006-01-02", request.Date)
-	t, _ := time.Parse("15:04:05", request.Time)
+	date, err := time.Parse("2006-01-02", request.Date)
+	if err != nil {
+		date = time.Now()
+	}
+	t, err := time.Parse("15:04:05", request.Time)
+	if err != nil {
+		t = time.Now()
+	}
 
 	dailyPrice, err := server.accountService.CreateOrUpdateDailyPrice(ctx, &DailyPrice{
 		ID:        request.Id,

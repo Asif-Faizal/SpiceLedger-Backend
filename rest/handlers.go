@@ -330,7 +330,7 @@ func (s *Server) handleCreateOrUpdateGrade(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	resp, err := s.controlClient.CreateOrUpdateGrade(s.withAuth(r), req.ID, req.Name, req.Description, req.Status)
+	resp, err := s.controlClient.CreateOrUpdateGrade(s.withAuth(r), req.ID, req.ProductID, req.Name, req.Description, req.Status)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
@@ -338,6 +338,7 @@ func (s *Server) handleCreateOrUpdateGrade(w http.ResponseWriter, r *http.Reques
 
 	util.WriteJSONResponse(w, http.StatusOK, true, "Grade created/updated successfully", &Grade{
 		ID:          resp.Grade.Id,
+		ProductID:   resp.Grade.ProductId,
 		Name:        resp.Grade.Name,
 		Description: resp.Grade.Description,
 		Status:      resp.Grade.Status,
@@ -350,7 +351,8 @@ func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	resp, err := s.controlClient.ListGradesByProductId(s.withAuth(r), "", 0, 100)
+	productID := r.URL.Query().Get("product_id")
+	resp, err := s.controlClient.ListGradesByProductId(s.withAuth(r), productID, 0, 100)
 	if err != nil {
 		util.WriteGRPCErrorResponse(w, err)
 		return
@@ -362,6 +364,7 @@ func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Requ
 			for i, g := range resp.Grades {
 				grades[i] = &Grade{
 					ID:          g.Id,
+					ProductID:   g.ProductId,
 					Name:        g.Name,
 					Description: g.Description,
 					Status:      g.Status,

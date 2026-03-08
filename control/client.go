@@ -160,9 +160,10 @@ func (client *ControlClient) ListProducts(ctx context.Context, skip uint32, take
 	return response, nil
 }
 
-func (client *ControlClient) CreateOrUpdateGrade(ctx context.Context, id, name, description, status string) (*pb.CreateOrUpdateGradeResponse, error) {
+func (client *ControlClient) CreateOrUpdateGrade(ctx context.Context, id, productID, name, description, status string) (*pb.CreateOrUpdateGradeResponse, error) {
 	response, err := client.client.CreateOrUpdateGrade(ctx, &pb.CreateOrUpdateGradeRequest{
 		Id:          id,
+		ProductId:   productID,
 		Name:        name,
 		Description: description,
 		Status:      status,

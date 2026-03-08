@@ -83,6 +83,7 @@ type ListProductsResponse struct {
 
 type Grade struct {
 	ID          string `json:"id"`
+	ProductID   string `json:"product_id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      string `json:"status"`
@@ -90,6 +91,7 @@ type Grade struct {
 
 type CreateOrUpdateGradeRequest struct {
 	ID          string `json:"id"`
+	ProductID   string `json:"product_id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      string `json:"status"`

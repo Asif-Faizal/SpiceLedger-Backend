@@ -68,11 +68,10 @@ func (repository *MysqlRepository) GetTodaysByProductId(ctx context.Context, pro
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var dateStr, timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+		var timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
 			return nil, err
 		}
-		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
 		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
@@ -495,20 +494,17 @@ func (repository *MysqlRepository) ListGradesByProductId(ctx context.Context, pr
 
 func (repository *MysqlRepository) CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error) {
 	start := time.Now()
-	query := "INSERT INTO daily_price (id, product_id, grade_id, price, date, time) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE product_id = ?, grade_id = ?, price = ?, date = ?, time = ?"
+	query := "INSERT INTO daily_price (id, product_id, grade_id, price, date, time) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE price = ?, time = ?"
 
 	_, err := repository.db.ExecContext(ctx, query,
 		dailyPrice.ID,
 		dailyPrice.ProductID,
 		dailyPrice.GradeID,
 		dailyPrice.Price,
-		dailyPrice.Date,
-		dailyPrice.Time,
-		dailyPrice.ProductID,
-		dailyPrice.GradeID,
+		dailyPrice.Date.Format("2006-01-02"),
+		dailyPrice.Time.Format("15:04:05"),
 		dailyPrice.Price,
-		dailyPrice.Date,
-		dailyPrice.Time,
+		dailyPrice.Time.Format("15:04:05"),
 	)
 
 	repository.logger.Database().Debug().
@@ -544,11 +540,10 @@ func (repository *MysqlRepository) ListDailyPricesByGradeId(ctx context.Context,
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var dateStr, timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+		var timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
 			return nil, err
 		}
-		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
 		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
@@ -575,11 +570,10 @@ func (repository *MysqlRepository) GetTodaysByGradeId(ctx context.Context, grade
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var dateStr, timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+		var timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
 			return nil, err
 		}
-		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
 		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
