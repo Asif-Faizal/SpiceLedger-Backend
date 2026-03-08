@@ -265,7 +265,7 @@ func (server *GrpcServer) CreateOrUpdateMerchantDetails(ctx context.Context, req
 }
 
 func (server *GrpcServer) GetMerchantDetails(ctx context.Context, request *pb.GetMerchantDetailsRequest) (*pb.GetMerchantDetailsResponse, error) {
-	if err := server.checkMerchant(ctx); err != nil {
+	if err := server.checkAuthenticated(ctx); err != nil {
 		return nil, err
 	}
 	merchantDetails, err := server.accountService.GetMerchantDetails(ctx, request.AccountId)

@@ -247,12 +247,11 @@ func (service *AccountService) CreateOrUpdateMerchantDetails(ctx context.Context
 	}
 	id := merchantDetails.ID
 
-	// Check if merchant details already exists for a different user
+	// Check if merchant details already exists for this account
 	existingMerchantDetails, err := service.repository.GetMerchantDetails(ctx, merchantDetails.AccountID)
 	if err == nil && existingMerchantDetails != nil {
-		if id == "" || id != existingMerchantDetails.ID {
-			return nil, errors.New("merchant details already exists")
-		}
+		// Use the existing ID to ensure we update the correct record
+		id = existingMerchantDetails.ID
 	}
 
 	if id == "" {

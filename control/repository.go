@@ -290,6 +290,12 @@ func (repository *MysqlRepository) CreateOrUpdateMerchantDetails(ctx context.Con
 		merchantDetails.City,
 		merchantDetails.State,
 		merchantDetails.Pincode,
+		// ON DUPLICATE KEY UPDATE
+		merchantDetails.Phone,
+		merchantDetails.Address,
+		merchantDetails.City,
+		merchantDetails.State,
+		merchantDetails.Pincode,
 	)
 
 	repository.logger.Database().Debug().

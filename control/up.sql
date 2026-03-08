@@ -19,10 +19,14 @@ CREATE TABLE IF NOT EXISTS sessions (
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS merchants (
+CREATE TABLE IF NOT EXISTS merchant_details (
     id CHAR(27) PRIMARY KEY,
     account_id CHAR(27) NOT NULL,
-    address VARCHAR(255) NOT NULL,
     phone_number VARCHAR(15) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    pincode CHAR(6) NOT NULL,
+    UNIQUE (account_id),
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 ) ENGINE=InnoDB;
