@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
@@ -283,4 +284,169 @@ func (server *GrpcServer) GetMerchantDetails(ctx context.Context, request *pb.Ge
 			Pincode:     merchantDetails.Pincode,
 		},
 	}, nil
+}
+
+// Products
+func (server *GrpcServer) CreateOrUpdateProduct(ctx context.Context, request *pb.CreateOrUpdateProductRequest) (*pb.CreateOrUpdateProductResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
+	product, err := server.accountService.CreateOrUpdateProduct(ctx, &Product{
+		ID:          request.Id,
+		Name:        request.Name,
+		Category:    request.Category,
+		Description: request.Description,
+		Status:      request.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateOrUpdateProductResponse{
+		Product: toProtoProduct(product),
+	}, nil
+}
+
+func (server *GrpcServer) ListProducts(ctx context.Context, request *pb.ListProductsRequest) (*pb.ListProductsResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	products, err := server.accountService.ListProducts(ctx, uint(request.Skip), uint(request.Take))
+	if err != nil {
+		return nil, err
+	}
+	protoProducts := make([]*pb.Product, len(products))
+	for i, p := range products {
+		protoProducts[i] = toProtoProduct(p)
+	}
+	return &pb.ListProductsResponse{
+		Products: protoProducts,
+	}, nil
+}
+
+// Grades
+func (server *GrpcServer) CreateOrUpdateGrade(ctx context.Context, request *pb.CreateOrUpdateGradeRequest) (*pb.CreateOrUpdateGradeResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
+	grade, err := server.accountService.CreateOrUpdateGrade(ctx, &Grade{
+		ID:          request.Id,
+		ProductID:   request.ProductId,
+		Name:        request.Name,
+		Description: request.Description,
+		Status:      request.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateOrUpdateGradeResponse{
+		Grade: toProtoGrade(grade),
+	}, nil
+}
+
+func (server *GrpcServer) ListGrades(ctx context.Context, request *pb.ListGradesRequest) (*pb.ListGradesResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	grades, err := server.accountService.ListGradesByProductId(ctx, request.ProductId, uint(request.Skip), uint(request.Take))
+	if err != nil {
+		return nil, err
+	}
+	protoGrades := make([]*pb.Grade, len(grades))
+	for i, g := range grades {
+		protoGrades[i] = toProtoGrade(g)
+	}
+	return &pb.ListGradesResponse{
+		Grades: protoGrades,
+	}, nil
+}
+
+// Daily Price
+func (server *GrpcServer) CreateOrUpdateDailyPrice(ctx context.Context, request *pb.CreateOrUpdateDailyPriceRequest) (*pb.CreateOrUpdateDailyPriceResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
+	date, _ := time.Parse("2006-01-02", request.Date)
+	t, _ := time.Parse("15:04:05", request.Time)
+
+	dailyPrice, err := server.accountService.CreateOrUpdateDailyPrice(ctx, &DailyPrice{
+		ID:        request.Id,
+		ProductID: request.ProductId,
+		GradeID:   request.GradeId,
+		Price:     request.Price,
+		Date:      date,
+		Time:      t,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateOrUpdateDailyPriceResponse{
+		DailyPrice: toProtoDailyPrice(dailyPrice),
+	}, nil
+}
+
+func (server *GrpcServer) ListDailyPrices(ctx context.Context, request *pb.ListDailyPricesRequest) (*pb.ListDailyPricesResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	today, _ := time.Parse("2006-01-02", request.Today)
+	prices, err := server.accountService.ListDailyPricesByGradeId(ctx, request.GradeId, today, int(request.Duration))
+	if err != nil {
+		return nil, err
+	}
+	protoPrices := make([]*pb.DailyPrice, len(prices))
+	for i, p := range prices {
+		protoPrices[i] = toProtoDailyPrice(p)
+	}
+	return &pb.ListDailyPricesResponse{
+		DailyPrices: protoPrices,
+	}, nil
+}
+
+func (server *GrpcServer) GetTodaysPrice(ctx context.Context, request *pb.GetTodaysPriceRequest) (*pb.GetTodaysPriceResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	date, _ := time.Parse("2006-01-02", request.Date)
+	prices, err := server.accountService.GetTodaysByGradeId(ctx, request.GradeId, date)
+	if err != nil {
+		return nil, err
+	}
+	protoPrices := make([]*pb.DailyPrice, len(prices))
+	for i, p := range prices {
+		protoPrices[i] = toProtoDailyPrice(p)
+	}
+	return &pb.GetTodaysPriceResponse{
+		DailyPrices: protoPrices,
+	}, nil
+}
+
+func toProtoProduct(p *Product) *pb.Product {
+	return &pb.Product{
+		Id:          p.ID,
+		Name:        p.Name,
+		Category:    p.Category,
+		Description: p.Description,
+		Status:      p.Status,
+	}
+}
+
+func toProtoGrade(g *Grade) *pb.Grade {
+	return &pb.Grade{
+		Id:          g.ID,
+		ProductId:   g.ProductID,
+		Name:        g.Name,
+		Description: g.Description,
+		Status:      g.Status,
+	}
+}
+
+func toProtoDailyPrice(p *DailyPrice) *pb.DailyPrice {
+	return &pb.DailyPrice{
+		Id:        p.ID,
+		ProductId: p.ProductID,
+		GradeId:   p.GradeID,
+		Price:     p.Price,
+		Date:      p.Date.Format("2006-01-02"),
+		Time:      p.Time.Format("15:04:05"),
+	}
 }

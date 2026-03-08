@@ -19,6 +19,19 @@ type Service interface {
 	RefreshToken(ctx context.Context, refreshToken string, deviceID string) (*AuthenticatedResponse, error)
 	CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error)
 	GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error)
+
+	// Products
+	CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error)
+	ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error)
+
+	// Grades
+	CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error)
+	ListGradesByProductId(ctx context.Context, productId string, skip uint, take uint) ([]*Grade, error)
+
+	// Daily Price
+	CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error)
+	ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error)
+	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
 }
 
 type AccountService struct {
@@ -278,4 +291,105 @@ func (service *AccountService) GetMerchantDetails(ctx context.Context, accountID
 		return nil, err
 	}
 	return merchantDetails, nil
+}
+
+// Products
+func (service *AccountService) CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error) {
+	id := product.ID
+	if id == "" {
+		id = ksuid.New().String()
+	}
+	newProduct := &Product{
+		ID:          id,
+		Name:        product.Name,
+		Description: product.Description,
+		Category:    product.Category,
+		Status:      product.Status,
+	}
+	if _, err := service.repository.CreateOrUpdateProduct(ctx, newProduct); err != nil {
+		return nil, err
+	}
+	return newProduct, nil
+}
+
+func (service *AccountService) ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error) {
+	if take > 100 || (skip == 0 && take == 0) {
+		take = 100
+	}
+	products, err := service.repository.ListProducts(ctx, skip, take)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
+// Grades
+func (service *AccountService) CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error) {
+	id := grade.ID
+	if id == "" {
+		id = ksuid.New().String()
+	}
+	newGrade := &Grade{
+		ID:          id,
+		Name:        grade.Name,
+		Description: grade.Description,
+		Status:      grade.Status,
+	}
+	if _, err := service.repository.CreateOrUpdateGrade(ctx, newGrade); err != nil {
+		return nil, err
+	}
+	return newGrade, nil
+}
+
+func (service *AccountService) ListGradesByProductId(ctx context.Context, productId string, skip uint, take uint) ([]*Grade, error) {
+	if take > 100 || (skip == 0 && take == 0) {
+		take = 100
+	}
+	grades, err := service.repository.ListGradesByProductId(ctx, productId, skip, take)
+	if err != nil {
+		return nil, err
+	}
+	return grades, nil
+}
+
+// Daily Price
+func (service *AccountService) CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error) {
+	id := dailyPrice.ID
+	if id == "" {
+		id = ksuid.New().String()
+	}
+	newDailyPrice := &DailyPrice{
+		ID:        id,
+		ProductID: dailyPrice.ProductID,
+		GradeID:   dailyPrice.GradeID,
+		Price:     dailyPrice.Price,
+		Date:      dailyPrice.Date,
+		Time:      dailyPrice.Time,
+	}
+	if _, err := service.repository.CreateOrUpdateDailyPrice(ctx, newDailyPrice); err != nil {
+		return nil, err
+	}
+	return newDailyPrice, nil
+}
+
+func (service *AccountService) ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error) {
+	if duration > 100 || (today.Equal(time.Time{}) && duration == 0) {
+		duration = 100
+	}
+	dailyPrices, err := service.repository.ListDailyPricesByGradeId(ctx, gradeId, today, duration)
+	if err != nil {
+		return nil, err
+	}
+	return dailyPrices, nil
+}
+
+func (service *AccountService) GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error) {
+	if date.Equal(time.Time{}) {
+		date = time.Now()
+	}
+	dailyPrice, err := service.repository.GetTodaysByGradeId(ctx, gradeId, date)
+	if err != nil {
+		return nil, err
+	}
+	return dailyPrice, nil
 }

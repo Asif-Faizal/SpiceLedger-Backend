@@ -23,6 +23,31 @@ message MerchantDetails {
   string pincode = 7;
 }
 
+message Product {
+  string id = 1;
+  string name = 2;
+  string category = 3;
+  string description = 4;
+  string status = 5;
+}
+
+message Grade {
+  string id = 1;
+  string product_id = 2;
+  string name = 3;
+  string description = 4;
+  string status = 5;
+}
+
+message DailyPrice {
+  string id = 1;
+  string product_id = 2;
+  string grade_id = 3;
+  double price = 4;
+  string date = 5; // YYYY-MM-DD
+  string time = 6; // HH:MM:SS
+}
+
 message CheckEmailExistsRequest {
   string email = 1;
 }
@@ -115,6 +140,84 @@ message GetMerchantDetailsResponse {
   MerchantDetails merchant_details = 1;
 }
 
+// Products
+message CreateOrUpdateProductRequest {
+    string id = 1;
+    string name = 2;
+    string category = 3;
+    string description = 4;
+    string status = 5;
+}
+
+message CreateOrUpdateProductResponse {
+    Product product = 1;
+}
+
+message ListProductsRequest {
+    uint32 skip = 1;
+    uint32 take = 2;
+}
+
+message ListProductsResponse {
+    repeated Product products = 1;
+}
+
+// Grades
+message CreateOrUpdateGradeRequest {
+    string id = 1;
+    string product_id = 2;
+    string name = 3;
+    string description = 4;
+    string status = 5;
+}
+
+message CreateOrUpdateGradeResponse {
+    Grade grade = 1;
+}
+
+message ListGradesRequest {
+    string product_id = 1;
+    uint32 skip = 2;
+    uint32 take = 3;
+}
+
+message ListGradesResponse {
+    repeated Grade grades = 1;
+}
+
+// Daily Prices
+message CreateOrUpdateDailyPriceRequest {
+    string id = 1;
+    string product_id = 2;
+    string grade_id = 3;
+    double price = 4;
+    string date = 5;
+    string time = 6;
+}
+
+message CreateOrUpdateDailyPriceResponse {
+    DailyPrice daily_price = 1;
+}
+
+message ListDailyPricesRequest {
+    string grade_id = 1;
+    string today = 2;
+    int32 duration = 3;
+}
+
+message ListDailyPricesResponse {
+    repeated DailyPrice daily_prices = 1;
+}
+
+message GetTodaysPriceRequest {
+    string grade_id = 1;
+    string date = 2;
+}
+
+message GetTodaysPriceResponse {
+    repeated DailyPrice daily_prices = 1;
+}
+
 service ControlService {
   rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
   rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
@@ -125,4 +228,17 @@ service ControlService {
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
   rpc CreateOrUpdateMerchantDetails(CreateOrUpdateMerchantDetailsRequest) returns (CreateOrUpdateMerchantDetailsResponse);
   rpc GetMerchantDetails(GetMerchantDetailsRequest) returns (GetMerchantDetailsResponse);
+
+  // Product Management
+  rpc CreateOrUpdateProduct(CreateOrUpdateProductRequest) returns (CreateOrUpdateProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  
+  // Grade Management
+  rpc CreateOrUpdateGrade(CreateOrUpdateGradeRequest) returns (CreateOrUpdateGradeResponse);
+  rpc ListGrades(ListGradesRequest) returns (ListGradesResponse);
+
+  // Daily Price Management
+  rpc CreateOrUpdateDailyPrice(CreateOrUpdateDailyPriceRequest) returns (CreateOrUpdateDailyPriceResponse);
+  rpc ListDailyPrices(ListDailyPricesRequest) returns (ListDailyPricesResponse);
+  rpc GetTodaysPrice(GetTodaysPriceRequest) returns (GetTodaysPriceResponse);
 }

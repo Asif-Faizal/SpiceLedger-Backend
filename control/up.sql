@@ -30,3 +30,35 @@ CREATE TABLE IF NOT EXISTS merchant_details (
     UNIQUE (account_id),
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS products (
+    id CHAR(27) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category ENUM('spice', 'others') NOT NULL,
+    description TEXT,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    UNIQUE (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS grade (
+    id CHAR(27) PRIMARY KEY,
+    product_id CHAR(27) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    UNIQUE (id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS daily_price (
+    id CHAR(27) PRIMARY KEY,
+    product_id CHAR(27) NOT NULL,
+    grade_id CHAR(27) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    date DATE NOT NULL,
+    time TIME NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (grade_id) REFERENCES grade(id),
+    UNIQUE (id, product_id, grade_id, date, time),
+    INDEX idx_price_lookup (product_id, grade_id, date, time)
+) ENGINE=InnoDB;

@@ -27,6 +27,19 @@ type Repository interface {
 	// Merchant Details
 	CreateOrUpdateMerchantDetails(ctx context.Context, merchantDetails *MerchantDetails) (*MerchantDetails, error)
 	GetMerchantDetails(ctx context.Context, accountID string) (*MerchantDetails, error)
+
+	// Products
+	CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error)
+	ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error)
+
+	// Grades
+	CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error)
+	ListGradesByProductId(ctx context.Context, productId string, skip uint, take uint) ([]*Grade, error)
+
+	// Daily Price
+	CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error)
+	ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error)
+	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
 }
 
 type MysqlRepository struct {
@@ -328,4 +341,216 @@ func (repository *MysqlRepository) GetMerchantDetails(ctx context.Context, accou
 		return nil, err
 	}
 	return merchantDetails, nil
+}
+
+func (repository *MysqlRepository) CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error) {
+	start := time.Now()
+	query := "INSERT INTO products (id, name, category, description, status) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, category = ?, description = ?, status = ?"
+
+	_, err := repository.db.ExecContext(ctx, query,
+		product.ID,
+		product.Name,
+		product.Category,
+		product.Description,
+		product.Status,
+		product.Name,
+		product.Category,
+		product.Description,
+		product.Status,
+	)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Execute Query")
+
+	if err != nil {
+		return nil, err
+	}
+	return product, nil
+}
+
+func (repository *MysqlRepository) ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error) {
+	start := time.Now()
+	query := "SELECT id, name, category, description, status FROM products ORDER BY id DESC LIMIT ? OFFSET ?"
+
+	rows, err := repository.db.QueryContext(ctx, query, take, skip)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Rows")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	products := []*Product{}
+	for rows.Next() {
+		product := &Product{}
+		if err := rows.Scan(&product.ID, &product.Name, &product.Category, &product.Description, &product.Status); err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
+func (repository *MysqlRepository) CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error) {
+	start := time.Now()
+	query := "INSERT INTO grade (id, product_id, name, description, status) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE product_id = ?, name = ?, description = ?, status = ?"
+
+	_, err := repository.db.ExecContext(ctx, query,
+		grade.ID,
+		grade.ProductID,
+		grade.Name,
+		grade.Description,
+		grade.Status,
+		grade.ProductID,
+		grade.Name,
+		grade.Description,
+		grade.Status,
+	)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Execute Query")
+
+	if err != nil {
+		return nil, err
+	}
+	return grade, nil
+}
+
+func (repository *MysqlRepository) ListGradesByProductId(ctx context.Context, productId string, skip uint, take uint) ([]*Grade, error) {
+	start := time.Now()
+	query := "SELECT id, product_id, name, description, status FROM grade WHERE product_id = ? ORDER BY id DESC LIMIT ? OFFSET ?"
+
+	rows, err := repository.db.QueryContext(ctx, query, productId, take, skip)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Rows")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	grades := []*Grade{}
+	for rows.Next() {
+		grade := &Grade{}
+		if err := rows.Scan(&grade.ID, &grade.ProductID, &grade.Name, &grade.Description, &grade.Status); err != nil {
+			return nil, err
+		}
+		grades = append(grades, grade)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return grades, nil
+}
+
+func (repository *MysqlRepository) CreateOrUpdateDailyPrice(ctx context.Context, dailyPrice *DailyPrice) (*DailyPrice, error) {
+	start := time.Now()
+	query := "INSERT INTO daily_price (id, product_id, grade_id, price, date, time) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE product_id = ?, grade_id = ?, price = ?, date = ?, time = ?"
+
+	_, err := repository.db.ExecContext(ctx, query,
+		dailyPrice.ID,
+		dailyPrice.ProductID,
+		dailyPrice.GradeID,
+		dailyPrice.Price,
+		dailyPrice.Date,
+		dailyPrice.Time,
+		dailyPrice.ProductID,
+		dailyPrice.GradeID,
+		dailyPrice.Price,
+		dailyPrice.Date,
+		dailyPrice.Time,
+	)
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Execute Query")
+
+	if err != nil {
+		return nil, err
+	}
+	return dailyPrice, nil
+}
+
+func (repository *MysqlRepository) ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error) {
+	start := time.Now()
+	// Filter for past 'duration' days from today
+	startDate := today.AddDate(0, 0, -duration)
+	query := "SELECT id, product_id, grade_id, price, date, time FROM daily_price WHERE grade_id = ? AND date BETWEEN ? AND ? ORDER BY date DESC, time DESC"
+
+	rows, err := repository.db.QueryContext(ctx, query, gradeId, startDate.Format("2006-01-02"), today.Format("2006-01-02"))
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Rows")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	dailyPrices := []*DailyPrice{}
+	for rows.Next() {
+		dailyPrice := &DailyPrice{}
+		var dateStr, timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+			return nil, err
+		}
+		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrices = append(dailyPrices, dailyPrice)
+	}
+	return dailyPrices, nil
+}
+
+func (repository *MysqlRepository) GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error) {
+	start := time.Now()
+	query := "SELECT id, product_id, grade_id, price, date, time FROM daily_price WHERE grade_id = ? AND date = ? ORDER BY time DESC"
+
+	rows, err := repository.db.QueryContext(ctx, query, gradeId, date.Format("2006-01-02"))
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("Query Rows")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	dailyPrices := []*DailyPrice{}
+	for rows.Next() {
+		dailyPrice := &DailyPrice{}
+		var dateStr, timeStr string
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dateStr, &timeStr); err != nil {
+			return nil, err
+		}
+		dailyPrice.Date, _ = time.Parse("2006-01-02", dateStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrices = append(dailyPrices, dailyPrice)
+	}
+	return dailyPrices, nil
 }

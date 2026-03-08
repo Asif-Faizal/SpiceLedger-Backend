@@ -30,6 +30,13 @@ const (
 	ControlService_RefreshToken_FullMethodName                  = "/pb.ControlService/RefreshToken"
 	ControlService_CreateOrUpdateMerchantDetails_FullMethodName = "/pb.ControlService/CreateOrUpdateMerchantDetails"
 	ControlService_GetMerchantDetails_FullMethodName            = "/pb.ControlService/GetMerchantDetails"
+	ControlService_CreateOrUpdateProduct_FullMethodName         = "/pb.ControlService/CreateOrUpdateProduct"
+	ControlService_ListProducts_FullMethodName                  = "/pb.ControlService/ListProducts"
+	ControlService_CreateOrUpdateGrade_FullMethodName           = "/pb.ControlService/CreateOrUpdateGrade"
+	ControlService_ListGrades_FullMethodName                    = "/pb.ControlService/ListGrades"
+	ControlService_CreateOrUpdateDailyPrice_FullMethodName      = "/pb.ControlService/CreateOrUpdateDailyPrice"
+	ControlService_ListDailyPrices_FullMethodName               = "/pb.ControlService/ListDailyPrices"
+	ControlService_GetTodaysPrice_FullMethodName                = "/pb.ControlService/GetTodaysPrice"
 )
 
 // ControlServiceClient is the client API for ControlService service.
@@ -45,6 +52,16 @@ type ControlServiceClient interface {
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	CreateOrUpdateMerchantDetails(ctx context.Context, in *CreateOrUpdateMerchantDetailsRequest, opts ...grpc.CallOption) (*CreateOrUpdateMerchantDetailsResponse, error)
 	GetMerchantDetails(ctx context.Context, in *GetMerchantDetailsRequest, opts ...grpc.CallOption) (*GetMerchantDetailsResponse, error)
+	// Product Management
+	CreateOrUpdateProduct(ctx context.Context, in *CreateOrUpdateProductRequest, opts ...grpc.CallOption) (*CreateOrUpdateProductResponse, error)
+	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
+	// Grade Management
+	CreateOrUpdateGrade(ctx context.Context, in *CreateOrUpdateGradeRequest, opts ...grpc.CallOption) (*CreateOrUpdateGradeResponse, error)
+	ListGrades(ctx context.Context, in *ListGradesRequest, opts ...grpc.CallOption) (*ListGradesResponse, error)
+	// Daily Price Management
+	CreateOrUpdateDailyPrice(ctx context.Context, in *CreateOrUpdateDailyPriceRequest, opts ...grpc.CallOption) (*CreateOrUpdateDailyPriceResponse, error)
+	ListDailyPrices(ctx context.Context, in *ListDailyPricesRequest, opts ...grpc.CallOption) (*ListDailyPricesResponse, error)
+	GetTodaysPrice(ctx context.Context, in *GetTodaysPriceRequest, opts ...grpc.CallOption) (*GetTodaysPriceResponse, error)
 }
 
 type controlServiceClient struct {
@@ -145,6 +162,76 @@ func (c *controlServiceClient) GetMerchantDetails(ctx context.Context, in *GetMe
 	return out, nil
 }
 
+func (c *controlServiceClient) CreateOrUpdateProduct(ctx context.Context, in *CreateOrUpdateProductRequest, opts ...grpc.CallOption) (*CreateOrUpdateProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrUpdateProductResponse)
+	err := c.cc.Invoke(ctx, ControlService_CreateOrUpdateProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListProductsResponse)
+	err := c.cc.Invoke(ctx, ControlService_ListProducts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) CreateOrUpdateGrade(ctx context.Context, in *CreateOrUpdateGradeRequest, opts ...grpc.CallOption) (*CreateOrUpdateGradeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrUpdateGradeResponse)
+	err := c.cc.Invoke(ctx, ControlService_CreateOrUpdateGrade_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) ListGrades(ctx context.Context, in *ListGradesRequest, opts ...grpc.CallOption) (*ListGradesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListGradesResponse)
+	err := c.cc.Invoke(ctx, ControlService_ListGrades_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) CreateOrUpdateDailyPrice(ctx context.Context, in *CreateOrUpdateDailyPriceRequest, opts ...grpc.CallOption) (*CreateOrUpdateDailyPriceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrUpdateDailyPriceResponse)
+	err := c.cc.Invoke(ctx, ControlService_CreateOrUpdateDailyPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) ListDailyPrices(ctx context.Context, in *ListDailyPricesRequest, opts ...grpc.CallOption) (*ListDailyPricesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDailyPricesResponse)
+	err := c.cc.Invoke(ctx, ControlService_ListDailyPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) GetTodaysPrice(ctx context.Context, in *GetTodaysPriceRequest, opts ...grpc.CallOption) (*GetTodaysPriceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTodaysPriceResponse)
+	err := c.cc.Invoke(ctx, ControlService_GetTodaysPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ControlServiceServer is the server API for ControlService service.
 // All implementations must embed UnimplementedControlServiceServer
 // for forward compatibility.
@@ -158,6 +245,16 @@ type ControlServiceServer interface {
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	CreateOrUpdateMerchantDetails(context.Context, *CreateOrUpdateMerchantDetailsRequest) (*CreateOrUpdateMerchantDetailsResponse, error)
 	GetMerchantDetails(context.Context, *GetMerchantDetailsRequest) (*GetMerchantDetailsResponse, error)
+	// Product Management
+	CreateOrUpdateProduct(context.Context, *CreateOrUpdateProductRequest) (*CreateOrUpdateProductResponse, error)
+	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
+	// Grade Management
+	CreateOrUpdateGrade(context.Context, *CreateOrUpdateGradeRequest) (*CreateOrUpdateGradeResponse, error)
+	ListGrades(context.Context, *ListGradesRequest) (*ListGradesResponse, error)
+	// Daily Price Management
+	CreateOrUpdateDailyPrice(context.Context, *CreateOrUpdateDailyPriceRequest) (*CreateOrUpdateDailyPriceResponse, error)
+	ListDailyPrices(context.Context, *ListDailyPricesRequest) (*ListDailyPricesResponse, error)
+	GetTodaysPrice(context.Context, *GetTodaysPriceRequest) (*GetTodaysPriceResponse, error)
 	mustEmbedUnimplementedControlServiceServer()
 }
 
@@ -194,6 +291,27 @@ func (UnimplementedControlServiceServer) CreateOrUpdateMerchantDetails(context.C
 }
 func (UnimplementedControlServiceServer) GetMerchantDetails(context.Context, *GetMerchantDetailsRequest) (*GetMerchantDetailsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMerchantDetails not implemented")
+}
+func (UnimplementedControlServiceServer) CreateOrUpdateProduct(context.Context, *CreateOrUpdateProductRequest) (*CreateOrUpdateProductResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateProduct not implemented")
+}
+func (UnimplementedControlServiceServer) ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListProducts not implemented")
+}
+func (UnimplementedControlServiceServer) CreateOrUpdateGrade(context.Context, *CreateOrUpdateGradeRequest) (*CreateOrUpdateGradeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateGrade not implemented")
+}
+func (UnimplementedControlServiceServer) ListGrades(context.Context, *ListGradesRequest) (*ListGradesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListGrades not implemented")
+}
+func (UnimplementedControlServiceServer) CreateOrUpdateDailyPrice(context.Context, *CreateOrUpdateDailyPriceRequest) (*CreateOrUpdateDailyPriceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateDailyPrice not implemented")
+}
+func (UnimplementedControlServiceServer) ListDailyPrices(context.Context, *ListDailyPricesRequest) (*ListDailyPricesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListDailyPrices not implemented")
+}
+func (UnimplementedControlServiceServer) GetTodaysPrice(context.Context, *GetTodaysPriceRequest) (*GetTodaysPriceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTodaysPrice not implemented")
 }
 func (UnimplementedControlServiceServer) mustEmbedUnimplementedControlServiceServer() {}
 func (UnimplementedControlServiceServer) testEmbeddedByValue()                        {}
@@ -378,6 +496,132 @@ func _ControlService_GetMerchantDetails_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ControlService_CreateOrUpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).CreateOrUpdateProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_CreateOrUpdateProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).CreateOrUpdateProduct(ctx, req.(*CreateOrUpdateProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).ListProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_ListProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).ListProducts(ctx, req.(*ListProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_CreateOrUpdateGrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateGradeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).CreateOrUpdateGrade(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_CreateOrUpdateGrade_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).CreateOrUpdateGrade(ctx, req.(*CreateOrUpdateGradeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_ListGrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGradesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).ListGrades(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_ListGrades_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).ListGrades(ctx, req.(*ListGradesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_CreateOrUpdateDailyPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateDailyPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).CreateOrUpdateDailyPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_CreateOrUpdateDailyPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).CreateOrUpdateDailyPrice(ctx, req.(*CreateOrUpdateDailyPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_ListDailyPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDailyPricesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).ListDailyPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_ListDailyPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).ListDailyPrices(ctx, req.(*ListDailyPricesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_GetTodaysPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTodaysPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).GetTodaysPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_GetTodaysPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).GetTodaysPrice(ctx, req.(*GetTodaysPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ControlService_ServiceDesc is the grpc.ServiceDesc for ControlService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -420,6 +664,34 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMerchantDetails",
 			Handler:    _ControlService_GetMerchantDetails_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateProduct",
+			Handler:    _ControlService_CreateOrUpdateProduct_Handler,
+		},
+		{
+			MethodName: "ListProducts",
+			Handler:    _ControlService_ListProducts_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateGrade",
+			Handler:    _ControlService_CreateOrUpdateGrade_Handler,
+		},
+		{
+			MethodName: "ListGrades",
+			Handler:    _ControlService_ListGrades_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateDailyPrice",
+			Handler:    _ControlService_CreateOrUpdateDailyPrice_Handler,
+		},
+		{
+			MethodName: "ListDailyPrices",
+			Handler:    _ControlService_ListDailyPrices_Handler,
+		},
+		{
+			MethodName: "GetTodaysPrice",
+			Handler:    _ControlService_GetTodaysPrice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -36,3 +36,28 @@ type MerchantDetails struct {
 	State     string `json:"state" validate:"required,min=3,max=50"`
 	Pincode   string `json:"pincode" validate:"required,min=6,max=6"`
 }
+
+type Product struct {
+	ID          string `json:"id" validate:"required,uuid4"`
+	Name        string `json:"name" validate:"required,min=3,max=255"`
+	Category    string `json:"category" validate:"required,oneof=spice others"`
+	Description string `json:"description" validate:"omitempty,min=3,max=255"`
+	Status      string `json:"status" validate:"required,oneof=active inactive"`
+}
+
+type Grade struct {
+	ID          string `json:"id" validate:"required,uuid4"`
+	ProductID   string `json:"product_id" validate:"required,uuid4"`
+	Name        string `json:"name" validate:"required,min=3,max=255"`
+	Description string `json:"description" validate:"omitempty,min=3,max=255"`
+	Status      string `json:"status" validate:"required,oneof=active inactive"`
+}
+
+type DailyPrice struct {
+	ID        string    `json:"id" validate:"required,uuid4"`
+	ProductID string    `json:"product_id" validate:"required,uuid4"`
+	GradeID   string    `json:"grade_id" validate:"required,uuid4"`
+	Price     float64   `json:"price" validate:"required"`
+	Date      time.Time `json:"date" validate:"required"`
+	Time      time.Time `json:"time" validate:"required"`
+}
