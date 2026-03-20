@@ -63,6 +63,14 @@ func (client *ControlClient) GetAccountByID(ctx context.Context, id string) (*pb
 	return response, nil
 }
 
+func (client *ControlClient) GetAccountInfo(ctx context.Context, request *pb.GetAccountInfoRequest) (*pb.GetAccountByIDResponse, error) {
+	response, err := client.client.GetAccountInfo(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 // List Accounts
 func (client *ControlClient) ListAccounts(ctx context.Context, skip uint32, take uint32) (*pb.ListAccountsResponse, error) {
 	response, err := client.client.ListAccounts(ctx, &pb.ListAccountsRequest{

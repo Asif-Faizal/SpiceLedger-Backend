@@ -204,6 +204,26 @@ func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (s *Server) handleGetAccountInfo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	resp, err := s.controlClient.GetAccountInfo(s.withAuth(r), &pb.GetAccountInfoRequest{})
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Account info retrieved successfully", &Account{
+		ID:       resp.Account.Id,
+		Name:     resp.Account.Name,
+		UserType: resp.Account.Usertype,
+		Email:    resp.Account.Email,
+	})
+}
+
 func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)

@@ -24,6 +24,7 @@ const (
 	ControlService_CheckEmailExists_FullMethodName              = "/pb.ControlService/CheckEmailExists"
 	ControlService_CreateOrUpdateAccount_FullMethodName         = "/pb.ControlService/CreateOrUpdateAccount"
 	ControlService_GetAccountByID_FullMethodName                = "/pb.ControlService/GetAccountByID"
+	ControlService_GetAccountInfo_FullMethodName                = "/pb.ControlService/GetAccountInfo"
 	ControlService_ListAccounts_FullMethodName                  = "/pb.ControlService/ListAccounts"
 	ControlService_Login_FullMethodName                         = "/pb.ControlService/Login"
 	ControlService_Logout_FullMethodName                        = "/pb.ControlService/Logout"
@@ -47,6 +48,7 @@ type ControlServiceClient interface {
 	CheckEmailExists(ctx context.Context, in *CheckEmailExistsRequest, opts ...grpc.CallOption) (*CheckEmailExistsResponse, error)
 	CreateOrUpdateAccount(ctx context.Context, in *CreateOrUpdateAccountRequest, opts ...grpc.CallOption) (*CreateOrUpdateAccountResponse, error)
 	GetAccountByID(ctx context.Context, in *GetAccountByIDRequest, opts ...grpc.CallOption) (*GetAccountByIDResponse, error)
+	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountByIDResponse, error)
 	ListAccounts(ctx context.Context, in *ListAccountsRequest, opts ...grpc.CallOption) (*ListAccountsResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
@@ -98,6 +100,16 @@ func (c *controlServiceClient) GetAccountByID(ctx context.Context, in *GetAccoun
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountByIDResponse)
 	err := c.cc.Invoke(ctx, ControlService_GetAccountByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *controlServiceClient) GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountByIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAccountByIDResponse)
+	err := c.cc.Invoke(ctx, ControlService_GetAccountInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -251,6 +263,7 @@ type ControlServiceServer interface {
 	CheckEmailExists(context.Context, *CheckEmailExistsRequest) (*CheckEmailExistsResponse, error)
 	CreateOrUpdateAccount(context.Context, *CreateOrUpdateAccountRequest) (*CreateOrUpdateAccountResponse, error)
 	GetAccountByID(context.Context, *GetAccountByIDRequest) (*GetAccountByIDResponse, error)
+	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountByIDResponse, error)
 	ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
@@ -286,6 +299,9 @@ func (UnimplementedControlServiceServer) CreateOrUpdateAccount(context.Context, 
 }
 func (UnimplementedControlServiceServer) GetAccountByID(context.Context, *GetAccountByIDRequest) (*GetAccountByIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAccountByID not implemented")
+}
+func (UnimplementedControlServiceServer) GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountByIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAccountInfo not implemented")
 }
 func (UnimplementedControlServiceServer) ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAccounts not implemented")
@@ -400,6 +416,24 @@ func _ControlService_GetAccountByID_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ControlServiceServer).GetAccountByID(ctx, req.(*GetAccountByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ControlService_GetAccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).GetAccountInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_GetAccountInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).GetAccountInfo(ctx, req.(*GetAccountInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -674,6 +708,10 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountByID",
 			Handler:    _ControlService_GetAccountByID_Handler,
+		},
+		{
+			MethodName: "GetAccountInfo",
+			Handler:    _ControlService_GetAccountInfo_Handler,
 		},
 		{
 			MethodName: "ListAccounts",

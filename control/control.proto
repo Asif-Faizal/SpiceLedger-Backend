@@ -227,10 +227,13 @@ message GetTodaysByProductIdResponse {
     repeated DailyPrice daily_prices = 1;
 }
 
+message GetAccountInfoRequest {}
+
 service ControlService {
   rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
   rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
   rpc GetAccountByID(GetAccountByIDRequest) returns (GetAccountByIDResponse);
+  rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountByIDResponse);
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);

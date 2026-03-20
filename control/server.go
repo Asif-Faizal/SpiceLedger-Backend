@@ -154,6 +154,28 @@ func (server *GrpcServer) GetAccountByID(ctx context.Context, request *pb.GetAcc
 	}, nil
 }
 
+func (server *GrpcServer) GetAccountInfo(ctx context.Context, request *pb.GetAccountInfoRequest) (*pb.GetAccountByIDResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	accountID, ok := ctx.Value(util.AccountIDKey).(string)
+	if !ok || accountID == "" {
+		return nil, status.Error(codes.Unauthenticated, "account id not found in context")
+	}
+	account, err := server.accountService.GetAccountByID(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetAccountByIDResponse{
+		Account: &pb.Account{
+			Id:       account.ID,
+			Name:     account.Name,
+			Usertype: account.UserType,
+			Email:    account.Email,
+		},
+	}, nil
+}
+
 func (server *GrpcServer) ListAccounts(ctx context.Context, request *pb.ListAccountsRequest) (*pb.ListAccountsResponse, error) {
 	if err := server.checkAdmin(ctx); err != nil {
 		return nil, err
