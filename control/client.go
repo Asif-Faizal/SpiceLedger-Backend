@@ -143,6 +143,14 @@ func (client *ControlClient) GetMerchantDetails(ctx context.Context, accountID s
 	return response, nil
 }
 
+func (client *ControlClient) GetMerchantInfo(ctx context.Context, request *pb.GetMerchantInfoRequest) (*pb.GetMerchantDetailsResponse, error) {
+	response, err := client.client.GetMerchantInfo(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 func (client *ControlClient) CreateOrUpdateProduct(ctx context.Context, id, name, category, description, status string) (*pb.CreateOrUpdateProductResponse, error) {
 	response, err := client.client.CreateOrUpdateProduct(ctx, &pb.CreateOrUpdateProductRequest{
 		Id:          id,

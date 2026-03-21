@@ -308,6 +308,31 @@ func (server *GrpcServer) GetMerchantDetails(ctx context.Context, request *pb.Ge
 	}, nil
 }
 
+func (server *GrpcServer) GetMerchantInfo(ctx context.Context, request *pb.GetMerchantInfoRequest) (*pb.GetMerchantDetailsResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	accountId, ok := ctx.Value(util.AccountIDKey).(string)
+	if !ok || accountId == "" {
+		return nil, status.Error(codes.Unauthenticated, "account id not found in context")
+	}
+	merchantDetails, err := server.accountService.GetMerchantDetails(ctx, accountId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetMerchantDetailsResponse{
+		MerchantDetails: &pb.MerchantDetails{
+			Id:          merchantDetails.ID,
+			AccountId:   merchantDetails.AccountID,
+			PhoneNumber: merchantDetails.Phone,
+			Address:     merchantDetails.Address,
+			City:        merchantDetails.City,
+			State:       merchantDetails.State,
+			Pincode:     merchantDetails.Pincode,
+		},
+	}, nil
+}
+
 // Products
 func (server *GrpcServer) CreateOrUpdateProduct(ctx context.Context, request *pb.CreateOrUpdateProductRequest) (*pb.CreateOrUpdateProductResponse, error) {
 	if err := server.checkAdmin(ctx); err != nil {

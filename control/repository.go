@@ -119,11 +119,11 @@ func (repository *MysqlRepository) CheckEmailExists(ctx context.Context, email s
 
 func (repository *MysqlRepository) CreateOrUpdateAccount(ctx context.Context, account *Account) (*Account, error) {
 	start := time.Now()
-	query := "INSERT INTO accounts (id, name, user_type, email, password) VALUES (?, NULLIF(?,''), ?, ?, ?) ON DUPLICATE KEY UPDATE name = NULLIF(?,''), user_type = ?, email = ?, password = ?"
+	query := "INSERT INTO accounts (id, name, user_type, email, password) VALUES (?, NULLIF(?,''), ?, ?, ?) ON DUPLICATE KEY UPDATE name = NULLIF(?,''), user_type = ?, email = ?, password = IF(VALUES(password) = '', password, VALUES(password))"
 
 	_, err := repository.db.ExecContext(ctx, query,
 		account.ID, account.Name, account.UserType, account.Email, account.Password,
-		account.Name, account.UserType, account.Email, account.Password,
+		account.Name, account.UserType, account.Email,
 	)
 
 	repository.logger.Database().Info().

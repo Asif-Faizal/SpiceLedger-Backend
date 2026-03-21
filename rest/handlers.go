@@ -282,6 +282,29 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 	})
 }
 
+func (s *Server) handleGetMerchantInfo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	resp, err := s.controlClient.GetMerchantInfo(s.withAuth(r), &pb.GetMerchantInfoRequest{})
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Merchant details retrieved successfully", &MerchantDetails{
+		ID:          resp.MerchantDetails.Id,
+		AccountID:   resp.MerchantDetails.AccountId,
+		PhoneNumber: resp.MerchantDetails.PhoneNumber,
+		Address:     resp.MerchantDetails.Address,
+		City:        resp.MerchantDetails.City,
+		State:       resp.MerchantDetails.State,
+		Pincode:     resp.MerchantDetails.Pincode,
+	})
+}
+
 func (s *Server) handleCreateOrUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)

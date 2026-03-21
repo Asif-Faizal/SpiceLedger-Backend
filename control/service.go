@@ -83,6 +83,9 @@ func (service *AccountService) CreateOrUpdateAccount(ctx context.Context, accoun
 	}
 
 	if id == "" {
+		if account.Password == "" {
+			return nil, errors.New("password is required for new accounts")
+		}
 		id = ksuid.New().String()
 	}
 	hashed := ""

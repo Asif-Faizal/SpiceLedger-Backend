@@ -18,6 +18,7 @@ func NewHandler(server *Server) http.Handler {
 	mux.HandleFunc("/accounts/", server.handleAccountByID)
 	mux.HandleFunc("/accounts/merchant-details", server.handleCreateOrUpdateMerchantDetails)
 	mux.HandleFunc("/accounts/merchant-details/", server.handleGetMerchantDetails)
+	mux.HandleFunc("/accounts/merchant-info", server.handleGetMerchantInfo)
 	mux.HandleFunc("/products", server.handleCreateOrUpdateProduct)
 	mux.HandleFunc("/products/", server.handleListProducts)
 	mux.HandleFunc("/grades", server.handleCreateOrUpdateGrade)

@@ -229,6 +229,8 @@ message GetTodaysByProductIdResponse {
 
 message GetAccountInfoRequest {}
 
+message GetMerchantInfoRequest {}
+
 service ControlService {
   rpc CheckEmailExists(CheckEmailExistsRequest) returns (CheckEmailExistsResponse);
   rpc CreateOrUpdateAccount(CreateOrUpdateAccountRequest) returns (CreateOrUpdateAccountResponse);
@@ -240,6 +242,7 @@ service ControlService {
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
   rpc CreateOrUpdateMerchantDetails(CreateOrUpdateMerchantDetailsRequest) returns (CreateOrUpdateMerchantDetailsResponse);
   rpc GetMerchantDetails(GetMerchantDetailsRequest) returns (GetMerchantDetailsResponse);
+  rpc GetMerchantInfo(GetMerchantInfoRequest) returns (GetMerchantDetailsResponse);
 
   // Product Management
   rpc CreateOrUpdateProduct(CreateOrUpdateProductRequest) returns (CreateOrUpdateProductResponse);
