@@ -47,6 +47,15 @@ type CreateOrUpdateMerchantDetailsRequest struct {
 	Pincode     string `json:"pincode"`
 }
 
+type CreateOrUpdateMerchantInfoRequest struct {
+	ID          string `json:"id"`
+	PhoneNumber string `json:"phone_number"`
+	Address     string `json:"address"`
+	City        string `json:"city"`
+	State       string `json:"state"`
+	Pincode     string `json:"pincode"`
+}
+
 type MerchantDetails struct {
 	ID          string `json:"id"`
 	AccountID   string `json:"account_id"`

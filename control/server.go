@@ -2,6 +2,7 @@ package control
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 	"time"
@@ -287,12 +288,48 @@ func (server *GrpcServer) CreateOrUpdateMerchantDetails(ctx context.Context, req
 	}, nil
 }
 
+func (server *GrpcServer) CreateOrUpdateMerchantInfo(ctx context.Context, request *pb.CreateOrUpdateMerchantInfoRequest) (*pb.CreateOrUpdateMerchantDetailsResponse, error) {
+	if err := server.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
+	accountId, ok := ctx.Value(util.AccountIDKey).(string)
+	if !ok || accountId == "" {
+		return nil, status.Error(codes.Unauthenticated, "account id not found in context")
+	}
+	merchantDetails, err := server.accountService.CreateOrUpdateMerchantDetails(ctx, &MerchantDetails{
+		ID:        request.Id,
+		AccountID: accountId,
+		Phone:     request.PhoneNumber,
+		Address:   request.Address,
+		City:      request.City,
+		State:     request.State,
+		Pincode:   request.Pincode,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateOrUpdateMerchantDetailsResponse{
+		MerchantDetails: &pb.MerchantDetails{
+			Id:          merchantDetails.ID,
+			AccountId:   merchantDetails.AccountID,
+			PhoneNumber: merchantDetails.Phone,
+			Address:     merchantDetails.Address,
+			City:        merchantDetails.City,
+			State:       merchantDetails.State,
+			Pincode:     merchantDetails.Pincode,
+		},
+	}, nil
+}
+
 func (server *GrpcServer) GetMerchantDetails(ctx context.Context, request *pb.GetMerchantDetailsRequest) (*pb.GetMerchantDetailsResponse, error) {
 	if err := server.checkAuthenticated(ctx); err != nil {
 		return nil, err
 	}
 	merchantDetails, err := server.accountService.GetMerchantDetails(ctx, request.AccountId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "merchant details not found")
+		}
 		return nil, err
 	}
 	return &pb.GetMerchantDetailsResponse{
@@ -318,6 +355,9 @@ func (server *GrpcServer) GetMerchantInfo(ctx context.Context, request *pb.GetMe
 	}
 	merchantDetails, err := server.accountService.GetMerchantDetails(ctx, accountId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "merchant details not found")
+		}
 		return nil, err
 	}
 	return &pb.GetMerchantDetailsResponse{

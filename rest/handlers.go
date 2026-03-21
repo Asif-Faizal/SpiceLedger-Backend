@@ -9,7 +9,9 @@ import (
 
 	pb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 func (s *Server) withAuth(r *http.Request) context.Context {
@@ -224,11 +226,18 @@ func (s *Server) handleGetAccountInfo(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+func (s *Server) handleMerchantDetails(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.handleGetMerchantDetails(w, r)
+	case http.MethodPost:
+		s.handleCreateOrUpdateMerchantDetails(w, r)
+	default:
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
 	}
+}
+
+func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *http.Request) {
 
 	var req CreateOrUpdateMerchantDetailsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -253,11 +262,49 @@ func (s *Server) handleCreateOrUpdateMerchantDetails(w http.ResponseWriter, r *h
 	})
 }
 
-func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+func (s *Server) handleMerchantInfo(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.handleGetMerchantInfo(w, r)
+	case http.MethodPost:
+		s.handleCreateOrUpdateMerchantInfo(w, r)
+	default:
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) handleCreateOrUpdateMerchantInfo(w http.ResponseWriter, r *http.Request) {
+	var req CreateOrUpdateMerchantInfoRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		util.WriteJSONResponse(w, http.StatusBadRequest, false, "invalid request body", nil)
 		return
 	}
+
+	resp, err := s.controlClient.CreateOrUpdateMerchantInfo(s.withAuth(r), &pb.CreateOrUpdateMerchantInfoRequest{
+		Id:          req.ID,
+		PhoneNumber: req.PhoneNumber,
+		Address:     req.Address,
+		City:        req.City,
+		State:       req.State,
+		Pincode:     req.Pincode,
+	})
+	if err != nil {
+		util.WriteGRPCErrorResponse(w, err)
+		return
+	}
+
+	util.WriteJSONResponse(w, http.StatusOK, true, "Merchant details created/updated successfully", &MerchantDetails{
+		ID:          resp.MerchantDetails.Id,
+		AccountID:   resp.MerchantDetails.AccountId,
+		PhoneNumber: resp.MerchantDetails.PhoneNumber,
+		Address:     resp.MerchantDetails.Address,
+		City:        resp.MerchantDetails.City,
+		State:       resp.MerchantDetails.State,
+		Pincode:     resp.MerchantDetails.Pincode,
+	})
+}
+
+func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request) {
 
 	id := strings.TrimPrefix(r.URL.Path, "/accounts/merchant-details/")
 	if id == "" {
@@ -267,6 +314,10 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 
 	resp, err := s.controlClient.GetMerchantDetails(s.withAuth(r), id)
 	if err != nil {
+		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
+			util.WriteJSONResponse(w, http.StatusOK, true, "No merchant details found", map[string]interface{}{})
+			return
+		}
 		util.WriteGRPCErrorResponse(w, err)
 		return
 	}
@@ -283,13 +334,12 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 }
 
 func (s *Server) handleGetMerchantInfo(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	resp, err := s.controlClient.GetMerchantInfo(s.withAuth(r), &pb.GetMerchantInfoRequest{})
 	if err != nil {
+		if st, ok := status.FromError(err); ok && st.Code() == codes.NotFound {
+			util.WriteJSONResponse(w, http.StatusOK, true, "No merchant details found", map[string]interface{}{})
+			return
+		}
 		util.WriteGRPCErrorResponse(w, err)
 		return
 	}

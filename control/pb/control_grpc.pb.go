@@ -32,6 +32,7 @@ const (
 	ControlService_CreateOrUpdateMerchantDetails_FullMethodName = "/pb.ControlService/CreateOrUpdateMerchantDetails"
 	ControlService_GetMerchantDetails_FullMethodName            = "/pb.ControlService/GetMerchantDetails"
 	ControlService_GetMerchantInfo_FullMethodName               = "/pb.ControlService/GetMerchantInfo"
+	ControlService_CreateOrUpdateMerchantInfo_FullMethodName    = "/pb.ControlService/CreateOrUpdateMerchantInfo"
 	ControlService_CreateOrUpdateProduct_FullMethodName         = "/pb.ControlService/CreateOrUpdateProduct"
 	ControlService_ListProducts_FullMethodName                  = "/pb.ControlService/ListProducts"
 	ControlService_CreateOrUpdateGrade_FullMethodName           = "/pb.ControlService/CreateOrUpdateGrade"
@@ -57,6 +58,7 @@ type ControlServiceClient interface {
 	CreateOrUpdateMerchantDetails(ctx context.Context, in *CreateOrUpdateMerchantDetailsRequest, opts ...grpc.CallOption) (*CreateOrUpdateMerchantDetailsResponse, error)
 	GetMerchantDetails(ctx context.Context, in *GetMerchantDetailsRequest, opts ...grpc.CallOption) (*GetMerchantDetailsResponse, error)
 	GetMerchantInfo(ctx context.Context, in *GetMerchantInfoRequest, opts ...grpc.CallOption) (*GetMerchantDetailsResponse, error)
+	CreateOrUpdateMerchantInfo(ctx context.Context, in *CreateOrUpdateMerchantInfoRequest, opts ...grpc.CallOption) (*CreateOrUpdateMerchantDetailsResponse, error)
 	// Product Management
 	CreateOrUpdateProduct(ctx context.Context, in *CreateOrUpdateProductRequest, opts ...grpc.CallOption) (*CreateOrUpdateProductResponse, error)
 	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
@@ -188,6 +190,16 @@ func (c *controlServiceClient) GetMerchantInfo(ctx context.Context, in *GetMerch
 	return out, nil
 }
 
+func (c *controlServiceClient) CreateOrUpdateMerchantInfo(ctx context.Context, in *CreateOrUpdateMerchantInfoRequest, opts ...grpc.CallOption) (*CreateOrUpdateMerchantDetailsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrUpdateMerchantDetailsResponse)
+	err := c.cc.Invoke(ctx, ControlService_CreateOrUpdateMerchantInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *controlServiceClient) CreateOrUpdateProduct(ctx context.Context, in *CreateOrUpdateProductRequest, opts ...grpc.CallOption) (*CreateOrUpdateProductResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrUpdateProductResponse)
@@ -283,6 +295,7 @@ type ControlServiceServer interface {
 	CreateOrUpdateMerchantDetails(context.Context, *CreateOrUpdateMerchantDetailsRequest) (*CreateOrUpdateMerchantDetailsResponse, error)
 	GetMerchantDetails(context.Context, *GetMerchantDetailsRequest) (*GetMerchantDetailsResponse, error)
 	GetMerchantInfo(context.Context, *GetMerchantInfoRequest) (*GetMerchantDetailsResponse, error)
+	CreateOrUpdateMerchantInfo(context.Context, *CreateOrUpdateMerchantInfoRequest) (*CreateOrUpdateMerchantDetailsResponse, error)
 	// Product Management
 	CreateOrUpdateProduct(context.Context, *CreateOrUpdateProductRequest) (*CreateOrUpdateProductResponse, error)
 	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
@@ -336,6 +349,9 @@ func (UnimplementedControlServiceServer) GetMerchantDetails(context.Context, *Ge
 }
 func (UnimplementedControlServiceServer) GetMerchantInfo(context.Context, *GetMerchantInfoRequest) (*GetMerchantDetailsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMerchantInfo not implemented")
+}
+func (UnimplementedControlServiceServer) CreateOrUpdateMerchantInfo(context.Context, *CreateOrUpdateMerchantInfoRequest) (*CreateOrUpdateMerchantDetailsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateMerchantInfo not implemented")
 }
 func (UnimplementedControlServiceServer) CreateOrUpdateProduct(context.Context, *CreateOrUpdateProductRequest) (*CreateOrUpdateProductResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrUpdateProduct not implemented")
@@ -580,6 +596,24 @@ func _ControlService_GetMerchantInfo_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ControlService_CreateOrUpdateMerchantInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateMerchantInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).CreateOrUpdateMerchantInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_CreateOrUpdateMerchantInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).CreateOrUpdateMerchantInfo(ctx, req.(*CreateOrUpdateMerchantInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ControlService_CreateOrUpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrUpdateProductRequest)
 	if err := dec(in); err != nil {
@@ -774,6 +808,10 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMerchantInfo",
 			Handler:    _ControlService_GetMerchantInfo_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateMerchantInfo",
+			Handler:    _ControlService_CreateOrUpdateMerchantInfo_Handler,
 		},
 		{
 			MethodName: "CreateOrUpdateProduct",

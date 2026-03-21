@@ -128,6 +128,15 @@ message CreateOrUpdateMerchantDetailsRequest {
   string pincode = 7;
 }
 
+message CreateOrUpdateMerchantInfoRequest {
+  string id = 1;
+  string phone_number = 2;
+  string address = 3;
+  string city = 4;
+  string state = 5;
+  string pincode = 6;
+}
+
 message CreateOrUpdateMerchantDetailsResponse {
   MerchantDetails merchant_details = 1;
 }
@@ -243,6 +252,8 @@ service ControlService {
   rpc CreateOrUpdateMerchantDetails(CreateOrUpdateMerchantDetailsRequest) returns (CreateOrUpdateMerchantDetailsResponse);
   rpc GetMerchantDetails(GetMerchantDetailsRequest) returns (GetMerchantDetailsResponse);
   rpc GetMerchantInfo(GetMerchantInfoRequest) returns (GetMerchantDetailsResponse);
+  rpc CreateOrUpdateMerchantInfo(CreateOrUpdateMerchantInfoRequest) returns (CreateOrUpdateMerchantDetailsResponse);
+
 
   // Product Management
   rpc CreateOrUpdateProduct(CreateOrUpdateProductRequest) returns (CreateOrUpdateProductResponse);
