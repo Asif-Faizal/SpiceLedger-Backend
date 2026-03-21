@@ -1,0 +1,59 @@
+type Product {
+  id: ID!
+  name: String!
+  category: String!
+  description: String!
+  status: String!
+  grades: [Grade!]!
+}
+
+type Grade {
+  id: ID!
+  productId: ID!
+  name: String!
+  description: String!
+  status: String!
+  price: Float!
+}
+
+type DailyPrice {
+  id: ID!
+  productId: ID!
+  gradeId: ID!
+  price: Float!
+  date: String!
+  time: String!
+}
+
+type Query {
+  products(date: String): [Product!]!
+}
+
+type Mutation {
+  createProduct(input: CreateProductInput!): Product!
+  createGrade(input: CreateGradeInput!): Grade!
+  createDailyPrice(input: CreateDailyPriceInput!): DailyPrice!
+}
+
+input CreateProductInput {
+  id: ID!
+  name: String!
+  category: String!
+  description: String
+}
+
+input CreateGradeInput {
+  id: ID!
+  productId: ID!
+  name: String!
+  description: String
+}
+
+input CreateDailyPriceInput {
+  id: ID!
+  productId: ID!
+  gradeId: ID!
+  price: Float!
+  date: String!
+  time: String!
+}

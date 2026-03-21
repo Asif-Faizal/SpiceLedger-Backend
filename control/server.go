@@ -584,6 +584,9 @@ func (server *GrpcServer) GetTodaysByProductId(ctx context.Context, request *pb.
 }
 
 func (s *GrpcServer) GetProductsWithGradesAndPrices(ctx context.Context, req *pb.GetProductsWithGradesAndPricesRequest) (*pb.GetProductsWithGradesAndPricesResponse, error) {
+	if err := s.checkAuthenticated(ctx); err != nil {
+		return nil, err
+	}
 	dateStr := req.Date
 	var date time.Time
 	var err error

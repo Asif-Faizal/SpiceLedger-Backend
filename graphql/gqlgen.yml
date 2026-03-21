@@ -1,0 +1,11 @@
+schema: schema.graphql
+
+exec:
+  filename: generated.go
+  package: graphql
+
+models:
+  Product:
+    model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.ProductWithGradesAndPrice
+  Grade:
+    model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.GradeWithPrice
