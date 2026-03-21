@@ -31,6 +31,7 @@ type Repository interface {
 	// Products
 	CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error)
 	ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error)
+	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error)
 
 	// Grades
 	CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error)
@@ -578,4 +579,87 @@ func (repository *MysqlRepository) GetTodaysByGradeId(ctx context.Context, grade
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
 	return dailyPrices, nil
+}
+
+func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error) {
+	start := time.Now()
+	query := `
+		SELECT 
+			p.id as product_id,
+			p.name as product_name,
+			p.category as product_category,
+			p.description as product_description,
+			p.status as product_status,
+			g.id as grade_id,
+			g.name as grade_name,
+			g.description as grade_description,
+			g.status as grade_status,
+			dp.price
+		FROM products p
+		LEFT JOIN grade g ON g.product_id = p.id
+		LEFT JOIN daily_price dp 
+			ON dp.product_id = p.id 
+			AND dp.grade_id = g.id
+			AND dp.date = ?
+		WHERE p.status = 'active'
+		AND g.status = 'active'
+		ORDER BY p.id, g.id
+	`
+
+	rows, err := repository.db.QueryContext(ctx, query, date.Format("2006-01-02"))
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	productMap := make(map[string]*ProductWithGrades)
+	var products []*ProductWithGrades
+
+	for rows.Next() {
+		var pID, pName, pCategory, pDescription, pStatus string
+		var gID, gName, gDescription, gStatus sql.NullString
+		var dpPrice sql.NullFloat64
+
+		err := rows.Scan(
+			&pID, &pName, &pCategory, &pDescription, &pStatus,
+			&gID, &gName, &gDescription, &gStatus,
+			&dpPrice,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		product, ok := productMap[pID]
+		if !ok {
+			product = &ProductWithGrades{
+				ID:          pID,
+				Name:        pName,
+				Category:    pCategory,
+				Description: pDescription,
+				Status:      pStatus,
+				Grades:      []*GradeWithPrice{},
+			}
+			productMap[pID] = product
+			products = append(products, product)
+		}
+
+		if gID.Valid {
+			product.Grades = append(product.Grades, &GradeWithPrice{
+				ID:          gID.String,
+				ProductID:   pID,
+				Name:        gName.String,
+				Description: gDescription.String,
+				Status:      gStatus.String,
+				Price:       dpPrice.Float64,
+			})
+		}
+	}
+
+	repository.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Msg("GetProductsWithGradesAndPrices completed")
+
+	return products, nil
 }

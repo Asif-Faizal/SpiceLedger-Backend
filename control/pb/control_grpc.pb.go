@@ -6,7 +6,7 @@
 // - protoc             v6.33.4
 // source: control.proto
 
-package __
+package pb
 
 import (
 	context "context"
@@ -21,26 +21,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ControlService_CheckEmailExists_FullMethodName              = "/pb.ControlService/CheckEmailExists"
-	ControlService_CreateOrUpdateAccount_FullMethodName         = "/pb.ControlService/CreateOrUpdateAccount"
-	ControlService_GetAccountByID_FullMethodName                = "/pb.ControlService/GetAccountByID"
-	ControlService_GetAccountInfo_FullMethodName                = "/pb.ControlService/GetAccountInfo"
-	ControlService_ListAccounts_FullMethodName                  = "/pb.ControlService/ListAccounts"
-	ControlService_Login_FullMethodName                         = "/pb.ControlService/Login"
-	ControlService_Logout_FullMethodName                        = "/pb.ControlService/Logout"
-	ControlService_RefreshToken_FullMethodName                  = "/pb.ControlService/RefreshToken"
-	ControlService_CreateOrUpdateMerchantDetails_FullMethodName = "/pb.ControlService/CreateOrUpdateMerchantDetails"
-	ControlService_GetMerchantDetails_FullMethodName            = "/pb.ControlService/GetMerchantDetails"
-	ControlService_GetMerchantInfo_FullMethodName               = "/pb.ControlService/GetMerchantInfo"
-	ControlService_CreateOrUpdateMerchantInfo_FullMethodName    = "/pb.ControlService/CreateOrUpdateMerchantInfo"
-	ControlService_CreateOrUpdateProduct_FullMethodName         = "/pb.ControlService/CreateOrUpdateProduct"
-	ControlService_ListProducts_FullMethodName                  = "/pb.ControlService/ListProducts"
-	ControlService_CreateOrUpdateGrade_FullMethodName           = "/pb.ControlService/CreateOrUpdateGrade"
-	ControlService_ListGradesByProductId_FullMethodName         = "/pb.ControlService/ListGradesByProductId"
-	ControlService_CreateOrUpdateDailyPrice_FullMethodName      = "/pb.ControlService/CreateOrUpdateDailyPrice"
-	ControlService_ListDailyPrices_FullMethodName               = "/pb.ControlService/ListDailyPrices"
-	ControlService_GetTodaysPrice_FullMethodName                = "/pb.ControlService/GetTodaysPrice"
-	ControlService_GetTodaysByProductId_FullMethodName          = "/pb.ControlService/GetTodaysByProductId"
+	ControlService_CheckEmailExists_FullMethodName               = "/pb.ControlService/CheckEmailExists"
+	ControlService_CreateOrUpdateAccount_FullMethodName          = "/pb.ControlService/CreateOrUpdateAccount"
+	ControlService_GetAccountByID_FullMethodName                 = "/pb.ControlService/GetAccountByID"
+	ControlService_GetAccountInfo_FullMethodName                 = "/pb.ControlService/GetAccountInfo"
+	ControlService_ListAccounts_FullMethodName                   = "/pb.ControlService/ListAccounts"
+	ControlService_Login_FullMethodName                          = "/pb.ControlService/Login"
+	ControlService_Logout_FullMethodName                         = "/pb.ControlService/Logout"
+	ControlService_RefreshToken_FullMethodName                   = "/pb.ControlService/RefreshToken"
+	ControlService_CreateOrUpdateMerchantDetails_FullMethodName  = "/pb.ControlService/CreateOrUpdateMerchantDetails"
+	ControlService_GetMerchantDetails_FullMethodName             = "/pb.ControlService/GetMerchantDetails"
+	ControlService_GetMerchantInfo_FullMethodName                = "/pb.ControlService/GetMerchantInfo"
+	ControlService_CreateOrUpdateMerchantInfo_FullMethodName     = "/pb.ControlService/CreateOrUpdateMerchantInfo"
+	ControlService_CreateOrUpdateProduct_FullMethodName          = "/pb.ControlService/CreateOrUpdateProduct"
+	ControlService_ListProducts_FullMethodName                   = "/pb.ControlService/ListProducts"
+	ControlService_CreateOrUpdateGrade_FullMethodName            = "/pb.ControlService/CreateOrUpdateGrade"
+	ControlService_ListGradesByProductId_FullMethodName          = "/pb.ControlService/ListGradesByProductId"
+	ControlService_CreateOrUpdateDailyPrice_FullMethodName       = "/pb.ControlService/CreateOrUpdateDailyPrice"
+	ControlService_ListDailyPrices_FullMethodName                = "/pb.ControlService/ListDailyPrices"
+	ControlService_GetTodaysPrice_FullMethodName                 = "/pb.ControlService/GetTodaysPrice"
+	ControlService_GetTodaysByProductId_FullMethodName           = "/pb.ControlService/GetTodaysByProductId"
+	ControlService_GetProductsWithGradesAndPrices_FullMethodName = "/pb.ControlService/GetProductsWithGradesAndPrices"
 )
 
 // ControlServiceClient is the client API for ControlService service.
@@ -70,6 +71,7 @@ type ControlServiceClient interface {
 	ListDailyPrices(ctx context.Context, in *ListDailyPricesRequest, opts ...grpc.CallOption) (*ListDailyPricesResponse, error)
 	GetTodaysPrice(ctx context.Context, in *GetTodaysPriceRequest, opts ...grpc.CallOption) (*GetTodaysPriceResponse, error)
 	GetTodaysByProductId(ctx context.Context, in *GetTodaysByProductIdRequest, opts ...grpc.CallOption) (*GetTodaysByProductIdResponse, error)
+	GetProductsWithGradesAndPrices(ctx context.Context, in *GetProductsWithGradesAndPricesRequest, opts ...grpc.CallOption) (*GetProductsWithGradesAndPricesResponse, error)
 }
 
 type controlServiceClient struct {
@@ -280,6 +282,16 @@ func (c *controlServiceClient) GetTodaysByProductId(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *controlServiceClient) GetProductsWithGradesAndPrices(ctx context.Context, in *GetProductsWithGradesAndPricesRequest, opts ...grpc.CallOption) (*GetProductsWithGradesAndPricesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProductsWithGradesAndPricesResponse)
+	err := c.cc.Invoke(ctx, ControlService_GetProductsWithGradesAndPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ControlServiceServer is the server API for ControlService service.
 // All implementations must embed UnimplementedControlServiceServer
 // for forward compatibility.
@@ -307,6 +319,7 @@ type ControlServiceServer interface {
 	ListDailyPrices(context.Context, *ListDailyPricesRequest) (*ListDailyPricesResponse, error)
 	GetTodaysPrice(context.Context, *GetTodaysPriceRequest) (*GetTodaysPriceResponse, error)
 	GetTodaysByProductId(context.Context, *GetTodaysByProductIdRequest) (*GetTodaysByProductIdResponse, error)
+	GetProductsWithGradesAndPrices(context.Context, *GetProductsWithGradesAndPricesRequest) (*GetProductsWithGradesAndPricesResponse, error)
 	mustEmbedUnimplementedControlServiceServer()
 }
 
@@ -376,6 +389,9 @@ func (UnimplementedControlServiceServer) GetTodaysPrice(context.Context, *GetTod
 }
 func (UnimplementedControlServiceServer) GetTodaysByProductId(context.Context, *GetTodaysByProductIdRequest) (*GetTodaysByProductIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTodaysByProductId not implemented")
+}
+func (UnimplementedControlServiceServer) GetProductsWithGradesAndPrices(context.Context, *GetProductsWithGradesAndPricesRequest) (*GetProductsWithGradesAndPricesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProductsWithGradesAndPrices not implemented")
 }
 func (UnimplementedControlServiceServer) mustEmbedUnimplementedControlServiceServer() {}
 func (UnimplementedControlServiceServer) testEmbeddedByValue()                        {}
@@ -758,6 +774,24 @@ func _ControlService_GetTodaysByProductId_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ControlService_GetProductsWithGradesAndPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductsWithGradesAndPricesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ControlServiceServer).GetProductsWithGradesAndPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ControlService_GetProductsWithGradesAndPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ControlServiceServer).GetProductsWithGradesAndPrices(ctx, req.(*GetProductsWithGradesAndPricesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ControlService_ServiceDesc is the grpc.ServiceDesc for ControlService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -844,6 +878,10 @@ var ControlService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTodaysByProductId",
 			Handler:    _ControlService_GetTodaysByProductId_Handler,
+		},
+		{
+			MethodName: "GetProductsWithGradesAndPrices",
+			Handler:    _ControlService_GetProductsWithGradesAndPrices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

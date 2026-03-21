@@ -582,3 +582,49 @@ func (server *GrpcServer) GetTodaysByProductId(ctx context.Context, request *pb.
 		DailyPrices: protoPrices,
 	}, nil
 }
+
+func (s *GrpcServer) GetProductsWithGradesAndPrices(ctx context.Context, req *pb.GetProductsWithGradesAndPricesRequest) (*pb.GetProductsWithGradesAndPricesResponse, error) {
+	dateStr := req.Date
+	var date time.Time
+	var err error
+	if dateStr == "" {
+		date = time.Now()
+	} else {
+		date, err = time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid date format: %v", err)
+		}
+	}
+
+	products, err := s.accountService.GetProductsWithGradesAndPrices(ctx, date)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get products: %v", err)
+	}
+
+	pbProducts := make([]*pb.ProductWithGrades, len(products))
+	for i, p := range products {
+		pbGrades := make([]*pb.GradeWithPrice, len(p.Grades))
+		for j, g := range p.Grades {
+			pbGrades[j] = &pb.GradeWithPrice{
+				Id:          g.ID,
+				ProductId:   g.ProductID,
+				Name:        g.Name,
+				Description: g.Description,
+				Status:      g.Status,
+				Price:       g.Price,
+			}
+		}
+		pbProducts[i] = &pb.ProductWithGrades{
+			Id:          p.ID,
+			Name:        p.Name,
+			Category:    p.Category,
+			Description: p.Description,
+			Status:      p.Status,
+			Grades:      pbGrades,
+		}
+	}
+
+	return &pb.GetProductsWithGradesAndPricesResponse{
+		Products: pbProducts,
+	}, nil
+}

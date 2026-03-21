@@ -6,7 +6,7 @@
 // 	protoc        v6.33.4
 // source: control.proto
 
-package __
+package pb
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -343,6 +343,174 @@ func (x *Grade) GetStatus() string {
 	return ""
 }
 
+type GradeWithPrice struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Price         float64                `protobuf:"fixed64,6,opt,name=price,proto3" json:"price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GradeWithPrice) Reset() {
+	*x = GradeWithPrice{}
+	mi := &file_control_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GradeWithPrice) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GradeWithPrice) ProtoMessage() {}
+
+func (x *GradeWithPrice) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GradeWithPrice.ProtoReflect.Descriptor instead.
+func (*GradeWithPrice) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GradeWithPrice) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *GradeWithPrice) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *GradeWithPrice) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *GradeWithPrice) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *GradeWithPrice) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *GradeWithPrice) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+type ProductWithGrades struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	Grades        []*GradeWithPrice      `protobuf:"bytes,6,rep,name=grades,proto3" json:"grades,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductWithGrades) Reset() {
+	*x = ProductWithGrades{}
+	mi := &file_control_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductWithGrades) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductWithGrades) ProtoMessage() {}
+
+func (x *ProductWithGrades) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductWithGrades.ProtoReflect.Descriptor instead.
+func (*ProductWithGrades) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ProductWithGrades) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductWithGrades) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductWithGrades) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductWithGrades) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ProductWithGrades) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ProductWithGrades) GetGrades() []*GradeWithPrice {
+	if x != nil {
+		return x.Grades
+	}
+	return nil
+}
+
 type DailyPrice struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -357,7 +525,7 @@ type DailyPrice struct {
 
 func (x *DailyPrice) Reset() {
 	*x = DailyPrice{}
-	mi := &file_control_proto_msgTypes[4]
+	mi := &file_control_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -369,7 +537,7 @@ func (x *DailyPrice) String() string {
 func (*DailyPrice) ProtoMessage() {}
 
 func (x *DailyPrice) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[4]
+	mi := &file_control_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -382,7 +550,7 @@ func (x *DailyPrice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyPrice.ProtoReflect.Descriptor instead.
 func (*DailyPrice) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{4}
+	return file_control_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DailyPrice) GetId() string {
@@ -436,7 +604,7 @@ type CheckEmailExistsRequest struct {
 
 func (x *CheckEmailExistsRequest) Reset() {
 	*x = CheckEmailExistsRequest{}
-	mi := &file_control_proto_msgTypes[5]
+	mi := &file_control_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -448,7 +616,7 @@ func (x *CheckEmailExistsRequest) String() string {
 func (*CheckEmailExistsRequest) ProtoMessage() {}
 
 func (x *CheckEmailExistsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[5]
+	mi := &file_control_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -461,7 +629,7 @@ func (x *CheckEmailExistsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckEmailExistsRequest.ProtoReflect.Descriptor instead.
 func (*CheckEmailExistsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{5}
+	return file_control_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CheckEmailExistsRequest) GetEmail() string {
@@ -480,7 +648,7 @@ type CheckEmailExistsResponse struct {
 
 func (x *CheckEmailExistsResponse) Reset() {
 	*x = CheckEmailExistsResponse{}
-	mi := &file_control_proto_msgTypes[6]
+	mi := &file_control_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -492,7 +660,7 @@ func (x *CheckEmailExistsResponse) String() string {
 func (*CheckEmailExistsResponse) ProtoMessage() {}
 
 func (x *CheckEmailExistsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[6]
+	mi := &file_control_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -505,7 +673,7 @@ func (x *CheckEmailExistsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckEmailExistsResponse.ProtoReflect.Descriptor instead.
 func (*CheckEmailExistsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{6}
+	return file_control_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CheckEmailExistsResponse) GetExists() bool {
@@ -528,7 +696,7 @@ type CreateOrUpdateAccountRequest struct {
 
 func (x *CreateOrUpdateAccountRequest) Reset() {
 	*x = CreateOrUpdateAccountRequest{}
-	mi := &file_control_proto_msgTypes[7]
+	mi := &file_control_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -540,7 +708,7 @@ func (x *CreateOrUpdateAccountRequest) String() string {
 func (*CreateOrUpdateAccountRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[7]
+	mi := &file_control_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -553,7 +721,7 @@ func (x *CreateOrUpdateAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateAccountRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{7}
+	return file_control_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateOrUpdateAccountRequest) GetId() string {
@@ -600,7 +768,7 @@ type CreateOrUpdateAccountResponse struct {
 
 func (x *CreateOrUpdateAccountResponse) Reset() {
 	*x = CreateOrUpdateAccountResponse{}
-	mi := &file_control_proto_msgTypes[8]
+	mi := &file_control_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -612,7 +780,7 @@ func (x *CreateOrUpdateAccountResponse) String() string {
 func (*CreateOrUpdateAccountResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[8]
+	mi := &file_control_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -625,7 +793,7 @@ func (x *CreateOrUpdateAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateAccountResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{8}
+	return file_control_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateOrUpdateAccountResponse) GetAccount() *Account {
@@ -644,7 +812,7 @@ type GetAccountByIDRequest struct {
 
 func (x *GetAccountByIDRequest) Reset() {
 	*x = GetAccountByIDRequest{}
-	mi := &file_control_proto_msgTypes[9]
+	mi := &file_control_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -656,7 +824,7 @@ func (x *GetAccountByIDRequest) String() string {
 func (*GetAccountByIDRequest) ProtoMessage() {}
 
 func (x *GetAccountByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[9]
+	mi := &file_control_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -669,7 +837,7 @@ func (x *GetAccountByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetAccountByIDRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{9}
+	return file_control_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetAccountByIDRequest) GetId() string {
@@ -688,7 +856,7 @@ type GetAccountByIDResponse struct {
 
 func (x *GetAccountByIDResponse) Reset() {
 	*x = GetAccountByIDResponse{}
-	mi := &file_control_proto_msgTypes[10]
+	mi := &file_control_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -700,7 +868,7 @@ func (x *GetAccountByIDResponse) String() string {
 func (*GetAccountByIDResponse) ProtoMessage() {}
 
 func (x *GetAccountByIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[10]
+	mi := &file_control_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -713,7 +881,7 @@ func (x *GetAccountByIDResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountByIDResponse.ProtoReflect.Descriptor instead.
 func (*GetAccountByIDResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{10}
+	return file_control_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetAccountByIDResponse) GetAccount() *Account {
@@ -733,7 +901,7 @@ type ListAccountsRequest struct {
 
 func (x *ListAccountsRequest) Reset() {
 	*x = ListAccountsRequest{}
-	mi := &file_control_proto_msgTypes[11]
+	mi := &file_control_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -745,7 +913,7 @@ func (x *ListAccountsRequest) String() string {
 func (*ListAccountsRequest) ProtoMessage() {}
 
 func (x *ListAccountsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[11]
+	mi := &file_control_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -758,7 +926,7 @@ func (x *ListAccountsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAccountsRequest.ProtoReflect.Descriptor instead.
 func (*ListAccountsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{11}
+	return file_control_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListAccountsRequest) GetSkip() uint32 {
@@ -784,7 +952,7 @@ type ListAccountsResponse struct {
 
 func (x *ListAccountsResponse) Reset() {
 	*x = ListAccountsResponse{}
-	mi := &file_control_proto_msgTypes[12]
+	mi := &file_control_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -796,7 +964,7 @@ func (x *ListAccountsResponse) String() string {
 func (*ListAccountsResponse) ProtoMessage() {}
 
 func (x *ListAccountsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[12]
+	mi := &file_control_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -809,7 +977,7 @@ func (x *ListAccountsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAccountsResponse.ProtoReflect.Descriptor instead.
 func (*ListAccountsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{12}
+	return file_control_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListAccountsResponse) GetAccounts() []*Account {
@@ -830,7 +998,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_control_proto_msgTypes[13]
+	mi := &file_control_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -842,7 +1010,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[13]
+	mi := &file_control_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -855,7 +1023,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{13}
+	return file_control_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *LoginRequest) GetEmail() string {
@@ -890,7 +1058,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_control_proto_msgTypes[14]
+	mi := &file_control_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -902,7 +1070,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[14]
+	mi := &file_control_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -915,7 +1083,7 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{14}
+	return file_control_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *LoginResponse) GetAccount() *Account {
@@ -949,7 +1117,7 @@ type LogoutRequest struct {
 
 func (x *LogoutRequest) Reset() {
 	*x = LogoutRequest{}
-	mi := &file_control_proto_msgTypes[15]
+	mi := &file_control_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -961,7 +1129,7 @@ func (x *LogoutRequest) String() string {
 func (*LogoutRequest) ProtoMessage() {}
 
 func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[15]
+	mi := &file_control_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -974,7 +1142,7 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{15}
+	return file_control_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *LogoutRequest) GetAccessToken() string {
@@ -1000,7 +1168,7 @@ type LogoutResponse struct {
 
 func (x *LogoutResponse) Reset() {
 	*x = LogoutResponse{}
-	mi := &file_control_proto_msgTypes[16]
+	mi := &file_control_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1012,7 +1180,7 @@ func (x *LogoutResponse) String() string {
 func (*LogoutResponse) ProtoMessage() {}
 
 func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[16]
+	mi := &file_control_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1025,7 +1193,7 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{16}
+	return file_control_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *LogoutResponse) GetSuccess() bool {
@@ -1045,7 +1213,7 @@ type RefreshTokenRequest struct {
 
 func (x *RefreshTokenRequest) Reset() {
 	*x = RefreshTokenRequest{}
-	mi := &file_control_proto_msgTypes[17]
+	mi := &file_control_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1057,7 +1225,7 @@ func (x *RefreshTokenRequest) String() string {
 func (*RefreshTokenRequest) ProtoMessage() {}
 
 func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[17]
+	mi := &file_control_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1070,7 +1238,7 @@ func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
 func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{17}
+	return file_control_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RefreshTokenRequest) GetRefreshToken() string {
@@ -1098,7 +1266,7 @@ type RefreshTokenResponse struct {
 
 func (x *RefreshTokenResponse) Reset() {
 	*x = RefreshTokenResponse{}
-	mi := &file_control_proto_msgTypes[18]
+	mi := &file_control_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1110,7 +1278,7 @@ func (x *RefreshTokenResponse) String() string {
 func (*RefreshTokenResponse) ProtoMessage() {}
 
 func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[18]
+	mi := &file_control_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1123,7 +1291,7 @@ func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{18}
+	return file_control_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RefreshTokenResponse) GetAccount() *Account {
@@ -1162,7 +1330,7 @@ type CreateOrUpdateMerchantDetailsRequest struct {
 
 func (x *CreateOrUpdateMerchantDetailsRequest) Reset() {
 	*x = CreateOrUpdateMerchantDetailsRequest{}
-	mi := &file_control_proto_msgTypes[19]
+	mi := &file_control_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1174,7 +1342,7 @@ func (x *CreateOrUpdateMerchantDetailsRequest) String() string {
 func (*CreateOrUpdateMerchantDetailsRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateMerchantDetailsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[19]
+	mi := &file_control_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1187,7 +1355,7 @@ func (x *CreateOrUpdateMerchantDetailsRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use CreateOrUpdateMerchantDetailsRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateMerchantDetailsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{19}
+	return file_control_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CreateOrUpdateMerchantDetailsRequest) GetId() string {
@@ -1253,7 +1421,7 @@ type CreateOrUpdateMerchantInfoRequest struct {
 
 func (x *CreateOrUpdateMerchantInfoRequest) Reset() {
 	*x = CreateOrUpdateMerchantInfoRequest{}
-	mi := &file_control_proto_msgTypes[20]
+	mi := &file_control_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1265,7 +1433,7 @@ func (x *CreateOrUpdateMerchantInfoRequest) String() string {
 func (*CreateOrUpdateMerchantInfoRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateMerchantInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[20]
+	mi := &file_control_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1278,7 +1446,7 @@ func (x *CreateOrUpdateMerchantInfoRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CreateOrUpdateMerchantInfoRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateMerchantInfoRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{20}
+	return file_control_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CreateOrUpdateMerchantInfoRequest) GetId() string {
@@ -1332,7 +1500,7 @@ type CreateOrUpdateMerchantDetailsResponse struct {
 
 func (x *CreateOrUpdateMerchantDetailsResponse) Reset() {
 	*x = CreateOrUpdateMerchantDetailsResponse{}
-	mi := &file_control_proto_msgTypes[21]
+	mi := &file_control_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1344,7 +1512,7 @@ func (x *CreateOrUpdateMerchantDetailsResponse) String() string {
 func (*CreateOrUpdateMerchantDetailsResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateMerchantDetailsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[21]
+	mi := &file_control_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1357,7 +1525,7 @@ func (x *CreateOrUpdateMerchantDetailsResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use CreateOrUpdateMerchantDetailsResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateMerchantDetailsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{21}
+	return file_control_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CreateOrUpdateMerchantDetailsResponse) GetMerchantDetails() *MerchantDetails {
@@ -1376,7 +1544,7 @@ type GetMerchantDetailsRequest struct {
 
 func (x *GetMerchantDetailsRequest) Reset() {
 	*x = GetMerchantDetailsRequest{}
-	mi := &file_control_proto_msgTypes[22]
+	mi := &file_control_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1388,7 +1556,7 @@ func (x *GetMerchantDetailsRequest) String() string {
 func (*GetMerchantDetailsRequest) ProtoMessage() {}
 
 func (x *GetMerchantDetailsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[22]
+	mi := &file_control_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1401,7 +1569,7 @@ func (x *GetMerchantDetailsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMerchantDetailsRequest.ProtoReflect.Descriptor instead.
 func (*GetMerchantDetailsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{22}
+	return file_control_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetMerchantDetailsRequest) GetAccountId() string {
@@ -1420,7 +1588,7 @@ type GetMerchantDetailsResponse struct {
 
 func (x *GetMerchantDetailsResponse) Reset() {
 	*x = GetMerchantDetailsResponse{}
-	mi := &file_control_proto_msgTypes[23]
+	mi := &file_control_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1432,7 +1600,7 @@ func (x *GetMerchantDetailsResponse) String() string {
 func (*GetMerchantDetailsResponse) ProtoMessage() {}
 
 func (x *GetMerchantDetailsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[23]
+	mi := &file_control_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1445,7 +1613,7 @@ func (x *GetMerchantDetailsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMerchantDetailsResponse.ProtoReflect.Descriptor instead.
 func (*GetMerchantDetailsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{23}
+	return file_control_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetMerchantDetailsResponse) GetMerchantDetails() *MerchantDetails {
@@ -1469,7 +1637,7 @@ type CreateOrUpdateProductRequest struct {
 
 func (x *CreateOrUpdateProductRequest) Reset() {
 	*x = CreateOrUpdateProductRequest{}
-	mi := &file_control_proto_msgTypes[24]
+	mi := &file_control_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1481,7 +1649,7 @@ func (x *CreateOrUpdateProductRequest) String() string {
 func (*CreateOrUpdateProductRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[24]
+	mi := &file_control_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1494,7 +1662,7 @@ func (x *CreateOrUpdateProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateProductRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateProductRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{24}
+	return file_control_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CreateOrUpdateProductRequest) GetId() string {
@@ -1541,7 +1709,7 @@ type CreateOrUpdateProductResponse struct {
 
 func (x *CreateOrUpdateProductResponse) Reset() {
 	*x = CreateOrUpdateProductResponse{}
-	mi := &file_control_proto_msgTypes[25]
+	mi := &file_control_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1553,7 +1721,7 @@ func (x *CreateOrUpdateProductResponse) String() string {
 func (*CreateOrUpdateProductResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateProductResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[25]
+	mi := &file_control_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1566,7 +1734,7 @@ func (x *CreateOrUpdateProductResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateProductResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateProductResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{25}
+	return file_control_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateOrUpdateProductResponse) GetProduct() *Product {
@@ -1586,7 +1754,7 @@ type ListProductsRequest struct {
 
 func (x *ListProductsRequest) Reset() {
 	*x = ListProductsRequest{}
-	mi := &file_control_proto_msgTypes[26]
+	mi := &file_control_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1598,7 +1766,7 @@ func (x *ListProductsRequest) String() string {
 func (*ListProductsRequest) ProtoMessage() {}
 
 func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[26]
+	mi := &file_control_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1611,7 +1779,7 @@ func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsRequest.ProtoReflect.Descriptor instead.
 func (*ListProductsRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{26}
+	return file_control_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListProductsRequest) GetSkip() uint32 {
@@ -1637,7 +1805,7 @@ type ListProductsResponse struct {
 
 func (x *ListProductsResponse) Reset() {
 	*x = ListProductsResponse{}
-	mi := &file_control_proto_msgTypes[27]
+	mi := &file_control_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1649,7 +1817,7 @@ func (x *ListProductsResponse) String() string {
 func (*ListProductsResponse) ProtoMessage() {}
 
 func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[27]
+	mi := &file_control_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1662,7 +1830,7 @@ func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsResponse.ProtoReflect.Descriptor instead.
 func (*ListProductsResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{27}
+	return file_control_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListProductsResponse) GetProducts() []*Product {
@@ -1686,7 +1854,7 @@ type CreateOrUpdateGradeRequest struct {
 
 func (x *CreateOrUpdateGradeRequest) Reset() {
 	*x = CreateOrUpdateGradeRequest{}
-	mi := &file_control_proto_msgTypes[28]
+	mi := &file_control_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1698,7 +1866,7 @@ func (x *CreateOrUpdateGradeRequest) String() string {
 func (*CreateOrUpdateGradeRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateGradeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[28]
+	mi := &file_control_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1711,7 +1879,7 @@ func (x *CreateOrUpdateGradeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateGradeRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateGradeRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{28}
+	return file_control_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CreateOrUpdateGradeRequest) GetId() string {
@@ -1758,7 +1926,7 @@ type CreateOrUpdateGradeResponse struct {
 
 func (x *CreateOrUpdateGradeResponse) Reset() {
 	*x = CreateOrUpdateGradeResponse{}
-	mi := &file_control_proto_msgTypes[29]
+	mi := &file_control_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1770,7 +1938,7 @@ func (x *CreateOrUpdateGradeResponse) String() string {
 func (*CreateOrUpdateGradeResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateGradeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[29]
+	mi := &file_control_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1783,7 +1951,7 @@ func (x *CreateOrUpdateGradeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateGradeResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateGradeResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{29}
+	return file_control_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreateOrUpdateGradeResponse) GetGrade() *Grade {
@@ -1804,7 +1972,7 @@ type ListGradesByProductIdRequest struct {
 
 func (x *ListGradesByProductIdRequest) Reset() {
 	*x = ListGradesByProductIdRequest{}
-	mi := &file_control_proto_msgTypes[30]
+	mi := &file_control_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1816,7 +1984,7 @@ func (x *ListGradesByProductIdRequest) String() string {
 func (*ListGradesByProductIdRequest) ProtoMessage() {}
 
 func (x *ListGradesByProductIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[30]
+	mi := &file_control_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1829,7 +1997,7 @@ func (x *ListGradesByProductIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGradesByProductIdRequest.ProtoReflect.Descriptor instead.
 func (*ListGradesByProductIdRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{30}
+	return file_control_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListGradesByProductIdRequest) GetProductId() string {
@@ -1862,7 +2030,7 @@ type ListGradesByProductIdResponse struct {
 
 func (x *ListGradesByProductIdResponse) Reset() {
 	*x = ListGradesByProductIdResponse{}
-	mi := &file_control_proto_msgTypes[31]
+	mi := &file_control_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1874,7 +2042,7 @@ func (x *ListGradesByProductIdResponse) String() string {
 func (*ListGradesByProductIdResponse) ProtoMessage() {}
 
 func (x *ListGradesByProductIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[31]
+	mi := &file_control_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1887,7 +2055,7 @@ func (x *ListGradesByProductIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGradesByProductIdResponse.ProtoReflect.Descriptor instead.
 func (*ListGradesByProductIdResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{31}
+	return file_control_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListGradesByProductIdResponse) GetGrades() []*Grade {
@@ -1912,7 +2080,7 @@ type CreateOrUpdateDailyPriceRequest struct {
 
 func (x *CreateOrUpdateDailyPriceRequest) Reset() {
 	*x = CreateOrUpdateDailyPriceRequest{}
-	mi := &file_control_proto_msgTypes[32]
+	mi := &file_control_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1924,7 +2092,7 @@ func (x *CreateOrUpdateDailyPriceRequest) String() string {
 func (*CreateOrUpdateDailyPriceRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateDailyPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[32]
+	mi := &file_control_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1937,7 +2105,7 @@ func (x *CreateOrUpdateDailyPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateDailyPriceRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateDailyPriceRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{32}
+	return file_control_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateOrUpdateDailyPriceRequest) GetId() string {
@@ -1991,7 +2159,7 @@ type CreateOrUpdateDailyPriceResponse struct {
 
 func (x *CreateOrUpdateDailyPriceResponse) Reset() {
 	*x = CreateOrUpdateDailyPriceResponse{}
-	mi := &file_control_proto_msgTypes[33]
+	mi := &file_control_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2003,7 +2171,7 @@ func (x *CreateOrUpdateDailyPriceResponse) String() string {
 func (*CreateOrUpdateDailyPriceResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateDailyPriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[33]
+	mi := &file_control_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2016,7 +2184,7 @@ func (x *CreateOrUpdateDailyPriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateDailyPriceResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateDailyPriceResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{33}
+	return file_control_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreateOrUpdateDailyPriceResponse) GetDailyPrice() *DailyPrice {
@@ -2037,7 +2205,7 @@ type ListDailyPricesRequest struct {
 
 func (x *ListDailyPricesRequest) Reset() {
 	*x = ListDailyPricesRequest{}
-	mi := &file_control_proto_msgTypes[34]
+	mi := &file_control_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2049,7 +2217,7 @@ func (x *ListDailyPricesRequest) String() string {
 func (*ListDailyPricesRequest) ProtoMessage() {}
 
 func (x *ListDailyPricesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[34]
+	mi := &file_control_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2062,7 +2230,7 @@ func (x *ListDailyPricesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDailyPricesRequest.ProtoReflect.Descriptor instead.
 func (*ListDailyPricesRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{34}
+	return file_control_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ListDailyPricesRequest) GetGradeId() string {
@@ -2095,7 +2263,7 @@ type ListDailyPricesResponse struct {
 
 func (x *ListDailyPricesResponse) Reset() {
 	*x = ListDailyPricesResponse{}
-	mi := &file_control_proto_msgTypes[35]
+	mi := &file_control_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2107,7 +2275,7 @@ func (x *ListDailyPricesResponse) String() string {
 func (*ListDailyPricesResponse) ProtoMessage() {}
 
 func (x *ListDailyPricesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[35]
+	mi := &file_control_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2120,7 +2288,7 @@ func (x *ListDailyPricesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDailyPricesResponse.ProtoReflect.Descriptor instead.
 func (*ListDailyPricesResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{35}
+	return file_control_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ListDailyPricesResponse) GetDailyPrices() []*DailyPrice {
@@ -2140,7 +2308,7 @@ type GetTodaysPriceRequest struct {
 
 func (x *GetTodaysPriceRequest) Reset() {
 	*x = GetTodaysPriceRequest{}
-	mi := &file_control_proto_msgTypes[36]
+	mi := &file_control_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2152,7 +2320,7 @@ func (x *GetTodaysPriceRequest) String() string {
 func (*GetTodaysPriceRequest) ProtoMessage() {}
 
 func (x *GetTodaysPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[36]
+	mi := &file_control_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2165,7 +2333,7 @@ func (x *GetTodaysPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTodaysPriceRequest.ProtoReflect.Descriptor instead.
 func (*GetTodaysPriceRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{36}
+	return file_control_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetTodaysPriceRequest) GetGradeId() string {
@@ -2191,7 +2359,7 @@ type GetTodaysPriceResponse struct {
 
 func (x *GetTodaysPriceResponse) Reset() {
 	*x = GetTodaysPriceResponse{}
-	mi := &file_control_proto_msgTypes[37]
+	mi := &file_control_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2203,7 +2371,7 @@ func (x *GetTodaysPriceResponse) String() string {
 func (*GetTodaysPriceResponse) ProtoMessage() {}
 
 func (x *GetTodaysPriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[37]
+	mi := &file_control_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2216,7 +2384,7 @@ func (x *GetTodaysPriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTodaysPriceResponse.ProtoReflect.Descriptor instead.
 func (*GetTodaysPriceResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{37}
+	return file_control_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetTodaysPriceResponse) GetDailyPrices() []*DailyPrice {
@@ -2236,7 +2404,7 @@ type GetTodaysByProductIdRequest struct {
 
 func (x *GetTodaysByProductIdRequest) Reset() {
 	*x = GetTodaysByProductIdRequest{}
-	mi := &file_control_proto_msgTypes[38]
+	mi := &file_control_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2248,7 +2416,7 @@ func (x *GetTodaysByProductIdRequest) String() string {
 func (*GetTodaysByProductIdRequest) ProtoMessage() {}
 
 func (x *GetTodaysByProductIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[38]
+	mi := &file_control_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2261,7 +2429,7 @@ func (x *GetTodaysByProductIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTodaysByProductIdRequest.ProtoReflect.Descriptor instead.
 func (*GetTodaysByProductIdRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{38}
+	return file_control_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetTodaysByProductIdRequest) GetProductId() string {
@@ -2287,7 +2455,7 @@ type GetTodaysByProductIdResponse struct {
 
 func (x *GetTodaysByProductIdResponse) Reset() {
 	*x = GetTodaysByProductIdResponse{}
-	mi := &file_control_proto_msgTypes[39]
+	mi := &file_control_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2299,7 +2467,7 @@ func (x *GetTodaysByProductIdResponse) String() string {
 func (*GetTodaysByProductIdResponse) ProtoMessage() {}
 
 func (x *GetTodaysByProductIdResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[39]
+	mi := &file_control_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2312,12 +2480,100 @@ func (x *GetTodaysByProductIdResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTodaysByProductIdResponse.ProtoReflect.Descriptor instead.
 func (*GetTodaysByProductIdResponse) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{39}
+	return file_control_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetTodaysByProductIdResponse) GetDailyPrices() []*DailyPrice {
 	if x != nil {
 		return x.DailyPrices
+	}
+	return nil
+}
+
+type GetProductsWithGradesAndPricesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductsWithGradesAndPricesRequest) Reset() {
+	*x = GetProductsWithGradesAndPricesRequest{}
+	mi := &file_control_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductsWithGradesAndPricesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductsWithGradesAndPricesRequest) ProtoMessage() {}
+
+func (x *GetProductsWithGradesAndPricesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductsWithGradesAndPricesRequest.ProtoReflect.Descriptor instead.
+func (*GetProductsWithGradesAndPricesRequest) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *GetProductsWithGradesAndPricesRequest) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+type GetProductsWithGradesAndPricesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Products      []*ProductWithGrades   `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductsWithGradesAndPricesResponse) Reset() {
+	*x = GetProductsWithGradesAndPricesResponse{}
+	mi := &file_control_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductsWithGradesAndPricesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductsWithGradesAndPricesResponse) ProtoMessage() {}
+
+func (x *GetProductsWithGradesAndPricesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_control_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductsWithGradesAndPricesResponse.ProtoReflect.Descriptor instead.
+func (*GetProductsWithGradesAndPricesResponse) Descriptor() ([]byte, []int) {
+	return file_control_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *GetProductsWithGradesAndPricesResponse) GetProducts() []*ProductWithGrades {
+	if x != nil {
+		return x.Products
 	}
 	return nil
 }
@@ -2330,7 +2586,7 @@ type GetAccountInfoRequest struct {
 
 func (x *GetAccountInfoRequest) Reset() {
 	*x = GetAccountInfoRequest{}
-	mi := &file_control_proto_msgTypes[40]
+	mi := &file_control_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2342,7 +2598,7 @@ func (x *GetAccountInfoRequest) String() string {
 func (*GetAccountInfoRequest) ProtoMessage() {}
 
 func (x *GetAccountInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[40]
+	mi := &file_control_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2355,7 +2611,7 @@ func (x *GetAccountInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetAccountInfoRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{40}
+	return file_control_proto_rawDescGZIP(), []int{44}
 }
 
 type GetMerchantInfoRequest struct {
@@ -2366,7 +2622,7 @@ type GetMerchantInfoRequest struct {
 
 func (x *GetMerchantInfoRequest) Reset() {
 	*x = GetMerchantInfoRequest{}
-	mi := &file_control_proto_msgTypes[41]
+	mi := &file_control_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2378,7 +2634,7 @@ func (x *GetMerchantInfoRequest) String() string {
 func (*GetMerchantInfoRequest) ProtoMessage() {}
 
 func (x *GetMerchantInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_control_proto_msgTypes[41]
+	mi := &file_control_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2391,7 +2647,7 @@ func (x *GetMerchantInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMerchantInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetMerchantInfoRequest) Descriptor() ([]byte, []int) {
-	return file_control_proto_rawDescGZIP(), []int{41}
+	return file_control_proto_rawDescGZIP(), []int{45}
 }
 
 var File_control_proto protoreflect.FileDescriptor
@@ -2426,7 +2682,22 @@ const file_control_proto_rawDesc = "" +
 	"product_id\x18\x02 \x01(\tR\tproductId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06status\x18\x05 \x01(\tR\x06status\"\x94\x01\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\"\xa3\x01\n" +
+	"\x0eGradeWithPrice\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x12\x14\n" +
+	"\x05price\x18\x06 \x01(\x01R\x05price\"\xb9\x01\n" +
+	"\x11ProductWithGrades\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\tR\x06status\x12*\n" +
+	"\x06grades\x18\x06 \x03(\v2\x12.pb.GradeWithPriceR\x06grades\"\x94\x01\n" +
 	"\n" +
 	"DailyPrice\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
@@ -2556,9 +2827,13 @@ const file_control_proto_rawDesc = "" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\tR\x04date\"Q\n" +
 	"\x1cGetTodaysByProductIdResponse\x121\n" +
-	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices\"\x17\n" +
+	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices\";\n" +
+	"%GetProductsWithGradesAndPricesRequest\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\"[\n" +
+	"&GetProductsWithGradesAndPricesResponse\x121\n" +
+	"\bproducts\x18\x01 \x03(\v2\x15.pb.ProductWithGradesR\bproducts\"\x17\n" +
 	"\x15GetAccountInfoRequest\"\x18\n" +
-	"\x16GetMerchantInfoRequest2\xec\f\n" +
+	"\x16GetMerchantInfoRequest2\xe5\r\n" +
 	"\x0eControlService\x12M\n" +
 	"\x10CheckEmailExists\x12\x1b.pb.CheckEmailExistsRequest\x1a\x1c.pb.CheckEmailExistsResponse\x12\\\n" +
 	"\x15CreateOrUpdateAccount\x12 .pb.CreateOrUpdateAccountRequest\x1a!.pb.CreateOrUpdateAccountResponse\x12G\n" +
@@ -2579,7 +2854,8 @@ const file_control_proto_rawDesc = "" +
 	"\x18CreateOrUpdateDailyPrice\x12#.pb.CreateOrUpdateDailyPriceRequest\x1a$.pb.CreateOrUpdateDailyPriceResponse\x12J\n" +
 	"\x0fListDailyPrices\x12\x1a.pb.ListDailyPricesRequest\x1a\x1b.pb.ListDailyPricesResponse\x12G\n" +
 	"\x0eGetTodaysPrice\x12\x19.pb.GetTodaysPriceRequest\x1a\x1a.pb.GetTodaysPriceResponse\x12Y\n" +
-	"\x14GetTodaysByProductId\x12\x1f.pb.GetTodaysByProductIdRequest\x1a .pb.GetTodaysByProductIdResponseB\x04Z\x02./b\x06proto3"
+	"\x14GetTodaysByProductId\x12\x1f.pb.GetTodaysByProductIdRequest\x1a .pb.GetTodaysByProductIdResponse\x12w\n" +
+	"\x1eGetProductsWithGradesAndPrices\x12).pb.GetProductsWithGradesAndPricesRequest\x1a*.pb.GetProductsWithGradesAndPricesResponseB7Z5github.com/Asif-Faizal/SpiceLedger-Backend/control/pbb\x06proto3"
 
 var (
 	file_control_proto_rawDescOnce sync.Once
@@ -2593,112 +2869,120 @@ func file_control_proto_rawDescGZIP() []byte {
 	return file_control_proto_rawDescData
 }
 
-var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
+var file_control_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
 var file_control_proto_goTypes = []any{
-	(*Account)(nil),                               // 0: pb.Account
-	(*MerchantDetails)(nil),                       // 1: pb.MerchantDetails
-	(*Product)(nil),                               // 2: pb.Product
-	(*Grade)(nil),                                 // 3: pb.Grade
-	(*DailyPrice)(nil),                            // 4: pb.DailyPrice
-	(*CheckEmailExistsRequest)(nil),               // 5: pb.CheckEmailExistsRequest
-	(*CheckEmailExistsResponse)(nil),              // 6: pb.CheckEmailExistsResponse
-	(*CreateOrUpdateAccountRequest)(nil),          // 7: pb.CreateOrUpdateAccountRequest
-	(*CreateOrUpdateAccountResponse)(nil),         // 8: pb.CreateOrUpdateAccountResponse
-	(*GetAccountByIDRequest)(nil),                 // 9: pb.GetAccountByIDRequest
-	(*GetAccountByIDResponse)(nil),                // 10: pb.GetAccountByIDResponse
-	(*ListAccountsRequest)(nil),                   // 11: pb.ListAccountsRequest
-	(*ListAccountsResponse)(nil),                  // 12: pb.ListAccountsResponse
-	(*LoginRequest)(nil),                          // 13: pb.LoginRequest
-	(*LoginResponse)(nil),                         // 14: pb.LoginResponse
-	(*LogoutRequest)(nil),                         // 15: pb.LogoutRequest
-	(*LogoutResponse)(nil),                        // 16: pb.LogoutResponse
-	(*RefreshTokenRequest)(nil),                   // 17: pb.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),                  // 18: pb.RefreshTokenResponse
-	(*CreateOrUpdateMerchantDetailsRequest)(nil),  // 19: pb.CreateOrUpdateMerchantDetailsRequest
-	(*CreateOrUpdateMerchantInfoRequest)(nil),     // 20: pb.CreateOrUpdateMerchantInfoRequest
-	(*CreateOrUpdateMerchantDetailsResponse)(nil), // 21: pb.CreateOrUpdateMerchantDetailsResponse
-	(*GetMerchantDetailsRequest)(nil),             // 22: pb.GetMerchantDetailsRequest
-	(*GetMerchantDetailsResponse)(nil),            // 23: pb.GetMerchantDetailsResponse
-	(*CreateOrUpdateProductRequest)(nil),          // 24: pb.CreateOrUpdateProductRequest
-	(*CreateOrUpdateProductResponse)(nil),         // 25: pb.CreateOrUpdateProductResponse
-	(*ListProductsRequest)(nil),                   // 26: pb.ListProductsRequest
-	(*ListProductsResponse)(nil),                  // 27: pb.ListProductsResponse
-	(*CreateOrUpdateGradeRequest)(nil),            // 28: pb.CreateOrUpdateGradeRequest
-	(*CreateOrUpdateGradeResponse)(nil),           // 29: pb.CreateOrUpdateGradeResponse
-	(*ListGradesByProductIdRequest)(nil),          // 30: pb.ListGradesByProductIdRequest
-	(*ListGradesByProductIdResponse)(nil),         // 31: pb.ListGradesByProductIdResponse
-	(*CreateOrUpdateDailyPriceRequest)(nil),       // 32: pb.CreateOrUpdateDailyPriceRequest
-	(*CreateOrUpdateDailyPriceResponse)(nil),      // 33: pb.CreateOrUpdateDailyPriceResponse
-	(*ListDailyPricesRequest)(nil),                // 34: pb.ListDailyPricesRequest
-	(*ListDailyPricesResponse)(nil),               // 35: pb.ListDailyPricesResponse
-	(*GetTodaysPriceRequest)(nil),                 // 36: pb.GetTodaysPriceRequest
-	(*GetTodaysPriceResponse)(nil),                // 37: pb.GetTodaysPriceResponse
-	(*GetTodaysByProductIdRequest)(nil),           // 38: pb.GetTodaysByProductIdRequest
-	(*GetTodaysByProductIdResponse)(nil),          // 39: pb.GetTodaysByProductIdResponse
-	(*GetAccountInfoRequest)(nil),                 // 40: pb.GetAccountInfoRequest
-	(*GetMerchantInfoRequest)(nil),                // 41: pb.GetMerchantInfoRequest
+	(*Account)(nil),                                // 0: pb.Account
+	(*MerchantDetails)(nil),                        // 1: pb.MerchantDetails
+	(*Product)(nil),                                // 2: pb.Product
+	(*Grade)(nil),                                  // 3: pb.Grade
+	(*GradeWithPrice)(nil),                         // 4: pb.GradeWithPrice
+	(*ProductWithGrades)(nil),                      // 5: pb.ProductWithGrades
+	(*DailyPrice)(nil),                             // 6: pb.DailyPrice
+	(*CheckEmailExistsRequest)(nil),                // 7: pb.CheckEmailExistsRequest
+	(*CheckEmailExistsResponse)(nil),               // 8: pb.CheckEmailExistsResponse
+	(*CreateOrUpdateAccountRequest)(nil),           // 9: pb.CreateOrUpdateAccountRequest
+	(*CreateOrUpdateAccountResponse)(nil),          // 10: pb.CreateOrUpdateAccountResponse
+	(*GetAccountByIDRequest)(nil),                  // 11: pb.GetAccountByIDRequest
+	(*GetAccountByIDResponse)(nil),                 // 12: pb.GetAccountByIDResponse
+	(*ListAccountsRequest)(nil),                    // 13: pb.ListAccountsRequest
+	(*ListAccountsResponse)(nil),                   // 14: pb.ListAccountsResponse
+	(*LoginRequest)(nil),                           // 15: pb.LoginRequest
+	(*LoginResponse)(nil),                          // 16: pb.LoginResponse
+	(*LogoutRequest)(nil),                          // 17: pb.LogoutRequest
+	(*LogoutResponse)(nil),                         // 18: pb.LogoutResponse
+	(*RefreshTokenRequest)(nil),                    // 19: pb.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),                   // 20: pb.RefreshTokenResponse
+	(*CreateOrUpdateMerchantDetailsRequest)(nil),   // 21: pb.CreateOrUpdateMerchantDetailsRequest
+	(*CreateOrUpdateMerchantInfoRequest)(nil),      // 22: pb.CreateOrUpdateMerchantInfoRequest
+	(*CreateOrUpdateMerchantDetailsResponse)(nil),  // 23: pb.CreateOrUpdateMerchantDetailsResponse
+	(*GetMerchantDetailsRequest)(nil),              // 24: pb.GetMerchantDetailsRequest
+	(*GetMerchantDetailsResponse)(nil),             // 25: pb.GetMerchantDetailsResponse
+	(*CreateOrUpdateProductRequest)(nil),           // 26: pb.CreateOrUpdateProductRequest
+	(*CreateOrUpdateProductResponse)(nil),          // 27: pb.CreateOrUpdateProductResponse
+	(*ListProductsRequest)(nil),                    // 28: pb.ListProductsRequest
+	(*ListProductsResponse)(nil),                   // 29: pb.ListProductsResponse
+	(*CreateOrUpdateGradeRequest)(nil),             // 30: pb.CreateOrUpdateGradeRequest
+	(*CreateOrUpdateGradeResponse)(nil),            // 31: pb.CreateOrUpdateGradeResponse
+	(*ListGradesByProductIdRequest)(nil),           // 32: pb.ListGradesByProductIdRequest
+	(*ListGradesByProductIdResponse)(nil),          // 33: pb.ListGradesByProductIdResponse
+	(*CreateOrUpdateDailyPriceRequest)(nil),        // 34: pb.CreateOrUpdateDailyPriceRequest
+	(*CreateOrUpdateDailyPriceResponse)(nil),       // 35: pb.CreateOrUpdateDailyPriceResponse
+	(*ListDailyPricesRequest)(nil),                 // 36: pb.ListDailyPricesRequest
+	(*ListDailyPricesResponse)(nil),                // 37: pb.ListDailyPricesResponse
+	(*GetTodaysPriceRequest)(nil),                  // 38: pb.GetTodaysPriceRequest
+	(*GetTodaysPriceResponse)(nil),                 // 39: pb.GetTodaysPriceResponse
+	(*GetTodaysByProductIdRequest)(nil),            // 40: pb.GetTodaysByProductIdRequest
+	(*GetTodaysByProductIdResponse)(nil),           // 41: pb.GetTodaysByProductIdResponse
+	(*GetProductsWithGradesAndPricesRequest)(nil),  // 42: pb.GetProductsWithGradesAndPricesRequest
+	(*GetProductsWithGradesAndPricesResponse)(nil), // 43: pb.GetProductsWithGradesAndPricesResponse
+	(*GetAccountInfoRequest)(nil),                  // 44: pb.GetAccountInfoRequest
+	(*GetMerchantInfoRequest)(nil),                 // 45: pb.GetMerchantInfoRequest
 }
 var file_control_proto_depIdxs = []int32{
-	0,  // 0: pb.CreateOrUpdateAccountResponse.account:type_name -> pb.Account
-	0,  // 1: pb.GetAccountByIDResponse.account:type_name -> pb.Account
-	0,  // 2: pb.ListAccountsResponse.accounts:type_name -> pb.Account
-	0,  // 3: pb.LoginResponse.account:type_name -> pb.Account
-	0,  // 4: pb.RefreshTokenResponse.account:type_name -> pb.Account
-	1,  // 5: pb.CreateOrUpdateMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
-	1,  // 6: pb.GetMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
-	2,  // 7: pb.CreateOrUpdateProductResponse.product:type_name -> pb.Product
-	2,  // 8: pb.ListProductsResponse.products:type_name -> pb.Product
-	3,  // 9: pb.CreateOrUpdateGradeResponse.grade:type_name -> pb.Grade
-	3,  // 10: pb.ListGradesByProductIdResponse.grades:type_name -> pb.Grade
-	4,  // 11: pb.CreateOrUpdateDailyPriceResponse.daily_price:type_name -> pb.DailyPrice
-	4,  // 12: pb.ListDailyPricesResponse.daily_prices:type_name -> pb.DailyPrice
-	4,  // 13: pb.GetTodaysPriceResponse.daily_prices:type_name -> pb.DailyPrice
-	4,  // 14: pb.GetTodaysByProductIdResponse.daily_prices:type_name -> pb.DailyPrice
-	5,  // 15: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
-	7,  // 16: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
-	9,  // 17: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
-	40, // 18: pb.ControlService.GetAccountInfo:input_type -> pb.GetAccountInfoRequest
-	11, // 19: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
-	13, // 20: pb.ControlService.Login:input_type -> pb.LoginRequest
-	15, // 21: pb.ControlService.Logout:input_type -> pb.LogoutRequest
-	17, // 22: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
-	19, // 23: pb.ControlService.CreateOrUpdateMerchantDetails:input_type -> pb.CreateOrUpdateMerchantDetailsRequest
-	22, // 24: pb.ControlService.GetMerchantDetails:input_type -> pb.GetMerchantDetailsRequest
-	41, // 25: pb.ControlService.GetMerchantInfo:input_type -> pb.GetMerchantInfoRequest
-	20, // 26: pb.ControlService.CreateOrUpdateMerchantInfo:input_type -> pb.CreateOrUpdateMerchantInfoRequest
-	24, // 27: pb.ControlService.CreateOrUpdateProduct:input_type -> pb.CreateOrUpdateProductRequest
-	26, // 28: pb.ControlService.ListProducts:input_type -> pb.ListProductsRequest
-	28, // 29: pb.ControlService.CreateOrUpdateGrade:input_type -> pb.CreateOrUpdateGradeRequest
-	30, // 30: pb.ControlService.ListGradesByProductId:input_type -> pb.ListGradesByProductIdRequest
-	32, // 31: pb.ControlService.CreateOrUpdateDailyPrice:input_type -> pb.CreateOrUpdateDailyPriceRequest
-	34, // 32: pb.ControlService.ListDailyPrices:input_type -> pb.ListDailyPricesRequest
-	36, // 33: pb.ControlService.GetTodaysPrice:input_type -> pb.GetTodaysPriceRequest
-	38, // 34: pb.ControlService.GetTodaysByProductId:input_type -> pb.GetTodaysByProductIdRequest
-	6,  // 35: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
-	8,  // 36: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
-	10, // 37: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
-	10, // 38: pb.ControlService.GetAccountInfo:output_type -> pb.GetAccountByIDResponse
-	12, // 39: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
-	14, // 40: pb.ControlService.Login:output_type -> pb.LoginResponse
-	16, // 41: pb.ControlService.Logout:output_type -> pb.LogoutResponse
-	18, // 42: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
-	21, // 43: pb.ControlService.CreateOrUpdateMerchantDetails:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
-	23, // 44: pb.ControlService.GetMerchantDetails:output_type -> pb.GetMerchantDetailsResponse
-	23, // 45: pb.ControlService.GetMerchantInfo:output_type -> pb.GetMerchantDetailsResponse
-	21, // 46: pb.ControlService.CreateOrUpdateMerchantInfo:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
-	25, // 47: pb.ControlService.CreateOrUpdateProduct:output_type -> pb.CreateOrUpdateProductResponse
-	27, // 48: pb.ControlService.ListProducts:output_type -> pb.ListProductsResponse
-	29, // 49: pb.ControlService.CreateOrUpdateGrade:output_type -> pb.CreateOrUpdateGradeResponse
-	31, // 50: pb.ControlService.ListGradesByProductId:output_type -> pb.ListGradesByProductIdResponse
-	33, // 51: pb.ControlService.CreateOrUpdateDailyPrice:output_type -> pb.CreateOrUpdateDailyPriceResponse
-	35, // 52: pb.ControlService.ListDailyPrices:output_type -> pb.ListDailyPricesResponse
-	37, // 53: pb.ControlService.GetTodaysPrice:output_type -> pb.GetTodaysPriceResponse
-	39, // 54: pb.ControlService.GetTodaysByProductId:output_type -> pb.GetTodaysByProductIdResponse
-	35, // [35:55] is the sub-list for method output_type
-	15, // [15:35] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	4,  // 0: pb.ProductWithGrades.grades:type_name -> pb.GradeWithPrice
+	0,  // 1: pb.CreateOrUpdateAccountResponse.account:type_name -> pb.Account
+	0,  // 2: pb.GetAccountByIDResponse.account:type_name -> pb.Account
+	0,  // 3: pb.ListAccountsResponse.accounts:type_name -> pb.Account
+	0,  // 4: pb.LoginResponse.account:type_name -> pb.Account
+	0,  // 5: pb.RefreshTokenResponse.account:type_name -> pb.Account
+	1,  // 6: pb.CreateOrUpdateMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
+	1,  // 7: pb.GetMerchantDetailsResponse.merchant_details:type_name -> pb.MerchantDetails
+	2,  // 8: pb.CreateOrUpdateProductResponse.product:type_name -> pb.Product
+	2,  // 9: pb.ListProductsResponse.products:type_name -> pb.Product
+	3,  // 10: pb.CreateOrUpdateGradeResponse.grade:type_name -> pb.Grade
+	3,  // 11: pb.ListGradesByProductIdResponse.grades:type_name -> pb.Grade
+	6,  // 12: pb.CreateOrUpdateDailyPriceResponse.daily_price:type_name -> pb.DailyPrice
+	6,  // 13: pb.ListDailyPricesResponse.daily_prices:type_name -> pb.DailyPrice
+	6,  // 14: pb.GetTodaysPriceResponse.daily_prices:type_name -> pb.DailyPrice
+	6,  // 15: pb.GetTodaysByProductIdResponse.daily_prices:type_name -> pb.DailyPrice
+	5,  // 16: pb.GetProductsWithGradesAndPricesResponse.products:type_name -> pb.ProductWithGrades
+	7,  // 17: pb.ControlService.CheckEmailExists:input_type -> pb.CheckEmailExistsRequest
+	9,  // 18: pb.ControlService.CreateOrUpdateAccount:input_type -> pb.CreateOrUpdateAccountRequest
+	11, // 19: pb.ControlService.GetAccountByID:input_type -> pb.GetAccountByIDRequest
+	44, // 20: pb.ControlService.GetAccountInfo:input_type -> pb.GetAccountInfoRequest
+	13, // 21: pb.ControlService.ListAccounts:input_type -> pb.ListAccountsRequest
+	15, // 22: pb.ControlService.Login:input_type -> pb.LoginRequest
+	17, // 23: pb.ControlService.Logout:input_type -> pb.LogoutRequest
+	19, // 24: pb.ControlService.RefreshToken:input_type -> pb.RefreshTokenRequest
+	21, // 25: pb.ControlService.CreateOrUpdateMerchantDetails:input_type -> pb.CreateOrUpdateMerchantDetailsRequest
+	24, // 26: pb.ControlService.GetMerchantDetails:input_type -> pb.GetMerchantDetailsRequest
+	45, // 27: pb.ControlService.GetMerchantInfo:input_type -> pb.GetMerchantInfoRequest
+	22, // 28: pb.ControlService.CreateOrUpdateMerchantInfo:input_type -> pb.CreateOrUpdateMerchantInfoRequest
+	26, // 29: pb.ControlService.CreateOrUpdateProduct:input_type -> pb.CreateOrUpdateProductRequest
+	28, // 30: pb.ControlService.ListProducts:input_type -> pb.ListProductsRequest
+	30, // 31: pb.ControlService.CreateOrUpdateGrade:input_type -> pb.CreateOrUpdateGradeRequest
+	32, // 32: pb.ControlService.ListGradesByProductId:input_type -> pb.ListGradesByProductIdRequest
+	34, // 33: pb.ControlService.CreateOrUpdateDailyPrice:input_type -> pb.CreateOrUpdateDailyPriceRequest
+	36, // 34: pb.ControlService.ListDailyPrices:input_type -> pb.ListDailyPricesRequest
+	38, // 35: pb.ControlService.GetTodaysPrice:input_type -> pb.GetTodaysPriceRequest
+	40, // 36: pb.ControlService.GetTodaysByProductId:input_type -> pb.GetTodaysByProductIdRequest
+	42, // 37: pb.ControlService.GetProductsWithGradesAndPrices:input_type -> pb.GetProductsWithGradesAndPricesRequest
+	8,  // 38: pb.ControlService.CheckEmailExists:output_type -> pb.CheckEmailExistsResponse
+	10, // 39: pb.ControlService.CreateOrUpdateAccount:output_type -> pb.CreateOrUpdateAccountResponse
+	12, // 40: pb.ControlService.GetAccountByID:output_type -> pb.GetAccountByIDResponse
+	12, // 41: pb.ControlService.GetAccountInfo:output_type -> pb.GetAccountByIDResponse
+	14, // 42: pb.ControlService.ListAccounts:output_type -> pb.ListAccountsResponse
+	16, // 43: pb.ControlService.Login:output_type -> pb.LoginResponse
+	18, // 44: pb.ControlService.Logout:output_type -> pb.LogoutResponse
+	20, // 45: pb.ControlService.RefreshToken:output_type -> pb.RefreshTokenResponse
+	23, // 46: pb.ControlService.CreateOrUpdateMerchantDetails:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
+	25, // 47: pb.ControlService.GetMerchantDetails:output_type -> pb.GetMerchantDetailsResponse
+	25, // 48: pb.ControlService.GetMerchantInfo:output_type -> pb.GetMerchantDetailsResponse
+	23, // 49: pb.ControlService.CreateOrUpdateMerchantInfo:output_type -> pb.CreateOrUpdateMerchantDetailsResponse
+	27, // 50: pb.ControlService.CreateOrUpdateProduct:output_type -> pb.CreateOrUpdateProductResponse
+	29, // 51: pb.ControlService.ListProducts:output_type -> pb.ListProductsResponse
+	31, // 52: pb.ControlService.CreateOrUpdateGrade:output_type -> pb.CreateOrUpdateGradeResponse
+	33, // 53: pb.ControlService.ListGradesByProductId:output_type -> pb.ListGradesByProductIdResponse
+	35, // 54: pb.ControlService.CreateOrUpdateDailyPrice:output_type -> pb.CreateOrUpdateDailyPriceResponse
+	37, // 55: pb.ControlService.ListDailyPrices:output_type -> pb.ListDailyPricesResponse
+	39, // 56: pb.ControlService.GetTodaysPrice:output_type -> pb.GetTodaysPriceResponse
+	41, // 57: pb.ControlService.GetTodaysByProductId:output_type -> pb.GetTodaysByProductIdResponse
+	43, // 58: pb.ControlService.GetProductsWithGradesAndPrices:output_type -> pb.GetProductsWithGradesAndPricesResponse
+	38, // [38:59] is the sub-list for method output_type
+	17, // [17:38] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_control_proto_init() }
@@ -2712,7 +2996,7 @@ func file_control_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_control_proto_rawDesc), len(file_control_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   42,
+			NumMessages:   46,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

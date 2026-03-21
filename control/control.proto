@@ -39,6 +39,24 @@ message Grade {
   string status = 5;
 }
 
+message GradeWithPrice {
+  string id = 1;
+  string product_id = 2;
+  string name = 3;
+  string description = 4;
+  string status = 5;
+  double price = 6;
+}
+
+message ProductWithGrades {
+  string id = 1;
+  string name = 2;
+  string category = 3;
+  string description = 4;
+  string status = 5;
+  repeated GradeWithPrice grades = 6;
+}
+
 message DailyPrice {
   string id = 1;
   string product_id = 2;
@@ -236,6 +254,14 @@ message GetTodaysByProductIdResponse {
     repeated DailyPrice daily_prices = 1;
 }
 
+message GetProductsWithGradesAndPricesRequest {
+  string date = 1;
+}
+
+message GetProductsWithGradesAndPricesResponse {
+  repeated ProductWithGrades products = 1;
+}
+
 message GetAccountInfoRequest {}
 
 message GetMerchantInfoRequest {}
@@ -268,4 +294,5 @@ service ControlService {
   rpc ListDailyPrices(ListDailyPricesRequest) returns (ListDailyPricesResponse);
   rpc GetTodaysPrice(GetTodaysPriceRequest) returns (GetTodaysPriceResponse);
   rpc GetTodaysByProductId(GetTodaysByProductIdRequest) returns (GetTodaysByProductIdResponse);
+  rpc GetProductsWithGradesAndPrices(GetProductsWithGradesAndPricesRequest) returns (GetProductsWithGradesAndPricesResponse);
 }
