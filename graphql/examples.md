@@ -34,7 +34,8 @@ query GetProducts($date: String) {
 **Variables:**
 ```json
 {
-  "date": "2026-03-21"
+  "date": "2026-03-21",
+  "search":"car"
 }
 ```
 
@@ -53,6 +54,19 @@ mutation CreateProduct($input: CreateProductInput!) {
 }
 ```
 **Variables:**
+Create
+```json
+{
+  "input": {
+    "id": "",
+    "name": "Turmeric",
+    "category": "spice",
+    "description": "Premium Quality Turmeric"
+  }
+}
+```
+
+Update
 ```json
 {
   "input": {
@@ -77,6 +91,18 @@ mutation CreateGrade($input: CreateGradeInput!) {
 }
 ```
 **Variables:**
+Create
+```json
+{
+  "input": {
+    "id": "",
+    "productId": "prod-1",
+    "name": "A Grade",
+    "description": "Superior quality"
+  }
+}
+
+Update
 ```json
 {
   "input": {
@@ -102,6 +128,20 @@ mutation CreateDailyPrice($input: CreateDailyPriceInput!) {
 }
 ```
 **Variables:**
+Create
+```json
+{
+  "input": {
+    "id": "",
+    "productId": "prod-1",
+    "gradeId": "grade-1",
+    "price": 150.5,
+    "date": "2026-03-21",
+    "time": "10:00:00"
+  }
+}
+
+Update
 ```json
 {
   "input": {

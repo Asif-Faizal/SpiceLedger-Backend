@@ -69,7 +69,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Products func(childComplexity int, date *string) int
+		Products func(childComplexity int, date *string, search *string) int
 	}
 }
 
@@ -79,7 +79,7 @@ type MutationResolver interface {
 	CreateDailyPrice(ctx context.Context, input CreateDailyPriceInput) (*DailyPrice, error)
 }
 type QueryResolver interface {
-	Products(ctx context.Context, date *string) ([]*ProductWithGradesAndPrice, error)
+	Products(ctx context.Context, date *string, search *string) ([]*ProductWithGradesAndPrice, error)
 }
 
 type executableSchema graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot]
@@ -251,7 +251,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Query.Products(childComplexity, args["date"].(*string)), true
+		return e.ComplexityRoot.Query.Products(childComplexity, args["date"].(*string), args["search"].(*string)), true
 
 	}
 	return 0, false
@@ -410,6 +410,11 @@ func (ec *executionContext) field_Query_products_args(ctx context.Context, rawAr
 		return nil, err
 	}
 	args["date"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "search", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["search"] = arg1
 	return args, nil
 }
 
@@ -1174,7 +1179,7 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 		ec.fieldContext_Query_products,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Query().Products(ctx, fc.Args["date"].(*string))
+			return ec.Resolvers.Query().Products(ctx, fc.Args["date"].(*string), fc.Args["search"].(*string))
 		},
 		nil,
 		ec.marshalNProduct2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐProductWithGradesAndPriceᚄ,

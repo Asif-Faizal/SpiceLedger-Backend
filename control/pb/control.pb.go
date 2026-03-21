@@ -2493,6 +2493,7 @@ func (x *GetTodaysByProductIdResponse) GetDailyPrices() []*DailyPrice {
 type GetProductsWithGradesAndPricesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Search        string                 `protobuf:"bytes,2,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2530,6 +2531,13 @@ func (*GetProductsWithGradesAndPricesRequest) Descriptor() ([]byte, []int) {
 func (x *GetProductsWithGradesAndPricesRequest) GetDate() string {
 	if x != nil {
 		return x.Date
+	}
+	return ""
+}
+
+func (x *GetProductsWithGradesAndPricesRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
 	}
 	return ""
 }
@@ -2827,9 +2835,10 @@ const file_control_proto_rawDesc = "" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x12\n" +
 	"\x04date\x18\x02 \x01(\tR\x04date\"Q\n" +
 	"\x1cGetTodaysByProductIdResponse\x121\n" +
-	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices\";\n" +
+	"\fdaily_prices\x18\x01 \x03(\v2\x0e.pb.DailyPriceR\vdailyPrices\"S\n" +
 	"%GetProductsWithGradesAndPricesRequest\x12\x12\n" +
-	"\x04date\x18\x01 \x01(\tR\x04date\"[\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x16\n" +
+	"\x06search\x18\x02 \x01(\tR\x06search\"[\n" +
 	"&GetProductsWithGradesAndPricesResponse\x121\n" +
 	"\bproducts\x18\x01 \x03(\v2\x15.pb.ProductWithGradesR\bproducts\"\x17\n" +
 	"\x15GetAccountInfoRequest\"\x18\n" +
@@ -2855,7 +2864,7 @@ const file_control_proto_rawDesc = "" +
 	"\x0fListDailyPrices\x12\x1a.pb.ListDailyPricesRequest\x1a\x1b.pb.ListDailyPricesResponse\x12G\n" +
 	"\x0eGetTodaysPrice\x12\x19.pb.GetTodaysPriceRequest\x1a\x1a.pb.GetTodaysPriceResponse\x12Y\n" +
 	"\x14GetTodaysByProductId\x12\x1f.pb.GetTodaysByProductIdRequest\x1a .pb.GetTodaysByProductIdResponse\x12w\n" +
-	"\x1eGetProductsWithGradesAndPrices\x12).pb.GetProductsWithGradesAndPricesRequest\x1a*.pb.GetProductsWithGradesAndPricesResponseB7Z5github.com/Asif-Faizal/SpiceLedger-Backend/control/pbb\x06proto3"
+	"\x1eGetProductsWithGradesAndPrices\x12).pb.GetProductsWithGradesAndPricesRequest\x1a*.pb.GetProductsWithGradesAndPricesResponseB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_control_proto_rawDescOnce sync.Once

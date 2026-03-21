@@ -599,7 +599,7 @@ func (s *GrpcServer) GetProductsWithGradesAndPrices(ctx context.Context, req *pb
 		}
 	}
 
-	products, err := s.accountService.GetProductsWithGradesAndPrices(ctx, date)
+	products, err := s.accountService.GetProductsWithGradesAndPrices(ctx, date, req.Search)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get products: %v", err)
 	}

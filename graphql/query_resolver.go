@@ -8,7 +8,7 @@ import (
 )
 
 // Products is the resolver for the products field.
-func (r *queryResolver) Products(ctx context.Context, date *string) ([]*ProductWithGradesAndPrice, error) {
+func (r *queryResolver) Products(ctx context.Context, date *string, search *string) ([]*ProductWithGradesAndPrice, error) {
 	dateStr := ""
 	if date != nil {
 		dateStr = *date
@@ -16,8 +16,14 @@ func (r *queryResolver) Products(ctx context.Context, date *string) ([]*ProductW
 		dateStr = time.Now().Format("2006-01-02")
 	}
 
+	searchStr := ""
+	if search != nil {
+		searchStr = *search
+	}
+
 	resp, err := r.server.controlClient.GetProductsWithGradesAndPrices(ctx, &pb.GetProductsWithGradesAndPricesRequest{
-		Date: dateStr,
+		Date:   dateStr,
+		Search: searchStr,
 	})
 	if err != nil {
 		return nil, err

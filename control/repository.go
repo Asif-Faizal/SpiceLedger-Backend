@@ -31,7 +31,7 @@ type Repository interface {
 	// Products
 	CreateOrUpdateProduct(ctx context.Context, product *Product) (*Product, error)
 	ListProducts(ctx context.Context, skip uint, take uint) ([]*Product, error)
-	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error)
+	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time, search string) ([]*ProductWithGrades, error)
 
 	// Grades
 	CreateOrUpdateGrade(ctx context.Context, grade *Grade) (*Grade, error)
@@ -581,7 +581,7 @@ func (repository *MysqlRepository) GetTodaysByGradeId(ctx context.Context, grade
 	return dailyPrices, nil
 }
 
-func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error) {
+func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Context, date time.Time, search string) ([]*ProductWithGrades, error) {
 	start := time.Now()
 	query := `
 		SELECT 
@@ -596,17 +596,25 @@ func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Co
 			g.status as grade_status,
 			dp.price
 		FROM products p
-		LEFT JOIN grade g ON g.product_id = p.id
+		LEFT JOIN grade g ON g.product_id = p.id AND g.status = 'active'
 		LEFT JOIN daily_price dp 
 			ON dp.product_id = p.id 
 			AND dp.grade_id = g.id
 			AND dp.date = ?
 		WHERE p.status = 'active'
-		AND g.status = 'active'
+		AND ( ? = ''
+			OR p.id IN (
+				SELECT DISTINCT p2.id
+				FROM products p2
+				LEFT JOIN grade g2 ON g2.product_id = p2.id
+				WHERE p2.name LIKE Concat('%', ?, '%')
+				OR g2.name LIKE Concat('%', ?, '%')
+			)
+		)
 		ORDER BY p.id, g.id
 	`
 
-	rows, err := repository.db.QueryContext(ctx, query, date.Format("2006-01-02"))
+	rows, err := repository.db.QueryContext(ctx, query, date.Format("2006-01-02"), search, search, search)
 
 	if err != nil {
 		return nil, err

@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "./";
+option go_package = "./pb";
 
 message Account {
   string id = 1;
@@ -256,6 +256,7 @@ message GetTodaysByProductIdResponse {
 
 message GetProductsWithGradesAndPricesRequest {
   string date = 1;
+  string search =2;
 }
 
 message GetProductsWithGradesAndPricesResponse {

@@ -33,7 +33,7 @@ type Service interface {
 	ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error)
 	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
 	GetTodaysByProductId(ctx context.Context, productId string, date time.Time) ([]*DailyPrice, error)
-	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error)
+	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time, search string) ([]*ProductWithGrades, error)
 }
 
 type AccountService struct {
@@ -410,9 +410,9 @@ func (service *AccountService) GetTodaysByProductId(ctx context.Context, product
 	}
 	return dailyPrices, nil
 }
-func (service *AccountService) GetProductsWithGradesAndPrices(ctx context.Context, date time.Time) ([]*ProductWithGrades, error) {
+func (service *AccountService) GetProductsWithGradesAndPrices(ctx context.Context, date time.Time, search string) ([]*ProductWithGrades, error) {
 	if date.IsZero() {
 		date = time.Now()
 	}
-	return service.repository.GetProductsWithGradesAndPrices(ctx, date)
+	return service.repository.GetProductsWithGradesAndPrices(ctx, date, search)
 }
