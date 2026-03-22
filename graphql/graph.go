@@ -66,6 +66,14 @@ func (s *Server) Query() QueryResolver {
 	return &queryResolver{server: s}
 }
 
+func (s *Server) __InputValue() __InputValueResolver {
+	return nil
+}
+
+func (s *Server) __Type() __TypeResolver {
+	return nil
+}
+
 func (s *Server) ToExecutableSchema() graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{Resolvers: s})
 }

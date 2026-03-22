@@ -9,3 +9,7 @@ models:
     model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.ProductWithGradesAndPrice
   Grade:
     model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.GradeWithPrice
+  Transaction:
+    model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.Transaction
+  PositionView:
+    model: github.com/Asif-Faizal/SpiceLedger-Backend/graphql.PositionView

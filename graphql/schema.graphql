@@ -25,14 +25,43 @@ type DailyPrice {
   time: String!
 }
 
+type Transaction {
+  id: ID!
+  userId: ID!
+  spiceGradeId: ID!
+  type: String!
+  quantity: Float!
+  price: Float!
+  tradeDate: String!
+  createdAt: String!
+}
+
+type PositionView {
+  userId: ID!
+  spiceGradeId: ID!
+  totalQty: Float!
+  totalCost: Float!
+  avgCost: Float!
+  todayPrice: Float!
+  realizedPnL: Float!
+  unrealizedPnL: Float!
+  updatedAt: String!
+}
+
 type Query {
   products(date: String, search: String): [Product!]!
+  getGradePosition(spiceGradeId: ID!): PositionView!
+  getPositions: [PositionView!]!
+  listGradeTransactions(spiceGradeId: ID!, skip: Int, take: Int): [Transaction!]!
+  listTransactions(skip: Int, take: Int): [Transaction!]!
 }
 
 type Mutation {
   createProduct(input: CreateProductInput!): Product!
   createGrade(input: CreateGradeInput!): Grade!
   createDailyPrice(input: CreateDailyPriceInput!): DailyPrice!
+  buy(spiceGradeId: ID!, quantity: Float!, price: Float!, tradeDate: String): Transaction!
+  sell(spiceGradeId: ID!, quantity: Float!, price: Float!, tradeDate: String): Transaction!
 }
 
 input CreateProductInput {

@@ -94,3 +94,13 @@ func (r *mutationResolver) CreateDailyPrice(ctx context.Context, input CreateDai
 		Time:      resp.DailyPrice.Time,
 	}, nil
 }
+
+// Buy is the resolver for the buy field.
+func (r *mutationResolver) Buy(ctx context.Context, spiceGradeID string, quantity float64, price float64, tradeDate *string) (*Transaction, error) {
+	panic("not implemented")
+}
+
+// Sell is the resolver for the sell field.
+func (r *mutationResolver) Sell(ctx context.Context, spiceGradeID string, quantity float64, price float64, tradeDate *string) (*Transaction, error) {
+	panic("not implemented")
+}

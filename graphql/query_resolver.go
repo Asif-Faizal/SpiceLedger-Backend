@@ -54,3 +54,23 @@ func (r *queryResolver) Products(ctx context.Context, date *string, search *stri
 	}
 	return products, nil
 }
+
+// GetGradePosition is the resolver for the getGradePosition field.
+func (r *queryResolver) GetGradePosition(ctx context.Context, spiceGradeID string) (*PositionView, error) {
+	panic("not implemented")
+}
+
+// GetPositions is the resolver for the getPositions field.
+func (r *queryResolver) GetPositions(ctx context.Context) ([]*PositionView, error) {
+	panic("not implemented")
+}
+
+// ListGradeTransactions is the resolver for the listGradeTransactions field.
+func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int) ([]*Transaction, error) {
+	panic("not implemented")
+}
+
+// ListTransactions is the resolver for the listTransactions field.
+func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error) {
+	panic("not implemented")
+}
