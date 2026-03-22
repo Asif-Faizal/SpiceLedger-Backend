@@ -47,19 +47,19 @@ The service layer calls `GetDailyPrice(gradeID, today)` from the repository and 
 2. Insert a row into `buy_lots` (`original_qty = remaining_qty = purchased qty`)
 3. Upsert `positions` — add qty and cost
 
-### Example 1 — User 1 buys 10 kg of Grade `grd_01` at ₹200/kg on 2024-01-01
+### Example 1 — User `usr_001` buys 10 kg of Grade `grd_01` at ₹200/kg on 2024-01-01
 
 ```sql
 INSERT INTO transactions (user_id, spice_grade_id, type, quantity, price, trade_date)
-VALUES (1, 5, 'BUY', 10.0000, 200.0000, '2024-01-01');
+VALUES ('usr_001', 'grd_01', 'BUY', 10.0000, 200.0000, '2024-01-01');
 -- → id = 1
 
 INSERT INTO buy_lots (transaction_id, user_id, spice_grade_id, original_qty, remaining_qty, price, trade_date)
-VALUES (1, 1, 5, 10.0000, 10.0000, 200.0000, '2024-01-01');
+VALUES (1, 'usr_001', 'grd_01', 10.0000, 10.0000, 200.0000, '2024-01-01');
 -- → id = 1
 
 INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
-VALUES (1, 5, 10.0000, 2000.0000, 0.0000)
+VALUES ('usr_001', 'grd_01', 10.0000, 2000.0000, 0.0000)
 ON DUPLICATE KEY UPDATE
   total_qty  = total_qty + 10.0000,
   total_cost = total_cost + 2000.0000;
@@ -83,15 +83,15 @@ ON DUPLICATE KEY UPDATE
 
 ```sql
 INSERT INTO transactions (user_id, spice_grade_id, type, quantity, price, trade_date)
-VALUES (1, 5, 'BUY', 6.0000, 220.0000, '2024-01-05');
+VALUES ('usr_001', 'grd_01', 'BUY', 6.0000, 220.0000, '2024-01-05');
 -- → id = 2
 
 INSERT INTO buy_lots (transaction_id, user_id, spice_grade_id, original_qty, remaining_qty, price, trade_date)
-VALUES (2, 1, 5, 6.0000, 6.0000, 220.0000, '2024-01-05');
+VALUES (2, 'usr_001', 'grd_01', 6.0000, 6.0000, 220.0000, '2024-01-05');
 -- → id = 2
 
 INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
-VALUES (1, 5, 6.0000, 1320.0000, 0.0000)
+VALUES ('usr_001', 'grd_01', 6.0000, 1320.0000, 0.0000)
 ON DUPLICATE KEY UPDATE
   total_qty  = total_qty + 6.0000,
   total_cost = total_cost + 1320.0000;
@@ -130,7 +130,7 @@ Open lots (FIFO): Lot 1 (10 kg @ ₹200) → consumed first. 7 kg fits entirely 
 
 ```sql
 INSERT INTO transactions (user_id, spice_grade_id, type, quantity, price, trade_date)
-VALUES (1, 5, 'SELL', 7.0000, 250.0000, '2024-01-10');
+VALUES ('usr_001', 'grd_01', 'SELL', 7.0000, 250.0000, '2024-01-10');
 -- → id = 3
 
 -- Lock open lots (FOR UPDATE inside DB transaction)
@@ -145,7 +145,7 @@ VALUES (3, 1, 7.0000, 200.0000, 250.0000, 350.0000);
 
 -- Position: qty 16→9, cost 3320→1920 (removed 200×7=1400)
 INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
-VALUES (1, 5, -7.0000, -1400.0000, 350.0000)
+VALUES ('usr_001', 'grd_01', -7.0000, -1400.0000, 350.0000)
 ON DUPLICATE KEY UPDATE
   total_qty    = total_qty - 7.0000,
   total_cost   = total_cost - 1400.0000,
@@ -178,7 +178,7 @@ Open lots (FIFO): Lot 1 has **3 kg** left → exhausted. Then 2 kg taken from Lo
 
 ```sql
 INSERT INTO transactions (user_id, spice_grade_id, type, quantity, price, trade_date)
-VALUES (1, 5, 'SELL', 5.0000, 260.0000, '2024-01-15');
+VALUES ('usr_001', 'grd_01', 'SELL', 5.0000, 260.0000, '2024-01-15');
 -- → id = 4
 
 -- Lot 1: consume all 3 remaining kg
@@ -199,7 +199,7 @@ VALUES (4, 2, 2.0000, 220.0000, 260.0000, 80.0000);
 
 -- Position: qty 9→4, cost 1920 − (200×3 + 220×2) = 1920 − 1040 = 880
 INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
-VALUES (1, 5, -5.0000, -1040.0000, 260.0000)
+VALUES ('usr_001', 'grd_01', -5.0000, -1040.0000, 260.0000)
 ON DUPLICATE KEY UPDATE
   total_qty    = total_qty - 5.0000,
   total_cost   = total_cost - 1040.0000,
@@ -261,6 +261,21 @@ unrealized_pnl = (today_price - avg_cost) × total_qty
 | `total_pnl` | **₹690.00** |
 
 > If `GetDailyPrice` returns `ErrNoPriceAvailable` (price not yet published for today), the service returns the position without unrealized P&L rather than failing the request.
+
+---
+
+## gRPC API
+
+The market module is exposed via a gRPC service defined in `market.proto`.
+
+### Service: `MarketService`
+
+| Method | Role |
+|---|---|
+| `Buy` | Records a BUY trade and creates a new inventory lot. |
+| `Sell` | Executes FIFO matching against open buy_lots. |
+| `GetPosition` | Returns aggregate position with live unrealized P&L. |
+| `ListTransactions` | Returns paginated trade history for a user + grade. |
 
 ---
 

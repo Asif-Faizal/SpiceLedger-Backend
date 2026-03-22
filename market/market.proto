@@ -1,0 +1,80 @@
+// protoc --go_out=./pb --go-grpc_out=./pb market.proto
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./pb";
+
+message Transaction {
+  int64 id = 1;
+  string user_id = 2;
+  string spice_grade_id = 3;
+  string type = 4;
+  double quantity = 5;
+  double price = 6;
+  string trade_date = 7; // YYYY-MM-DD
+  string created_at = 8; // YYYY-MM-DD HH:MM:SS
+}
+
+message PositionView {
+  string user_id = 1;
+  string spice_grade_id = 2;
+  double total_qty = 3;
+  double total_cost = 4;
+  double avg_cost = 5;
+  double today_price = 6;
+  double realized_pnl = 7;
+  double unrealized_pnl = 8;
+  string updated_at = 9;
+}
+
+message BuyRequest {
+  string user_id = 1;
+  string spice_grade_id = 2;
+  double quantity = 3;
+  double price = 4;
+  string trade_date = 5; // YYYY-MM-DD
+}
+
+message BuyResponse {
+  Transaction transaction = 1;
+}
+
+message SellRequest {
+  string user_id = 1;
+  string spice_grade_id = 2;
+  double quantity = 3;
+  double price = 4;
+  string trade_date = 5; // YYYY-MM-DD
+}
+
+message SellResponse {
+  Transaction transaction = 1;
+}
+
+message GetPositionRequest {
+  string user_id = 1;
+  string spice_grade_id = 2;
+}
+
+message GetPositionResponse {
+  PositionView position = 1;
+}
+
+message ListTransactionsRequest {
+  string user_id = 1;
+  string spice_grade_id = 2;
+  uint32 skip = 3;
+  uint32 take = 4;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+}
+
+service MarketService {
+  rpc Buy(BuyRequest) returns (BuyResponse);
+  rpc Sell(SellRequest) returns (SellResponse);
+  rpc GetPosition(GetPositionRequest) returns (GetPositionResponse);
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+}
