@@ -25,7 +25,7 @@ type GrpcServer struct {
 }
 
 func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.ControlGrpcPort))
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	pb.RegisterControlServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	logger.Transport().Info().Int("port", config.Port).Msg("gRPC server listening")
+	logger.Transport().Info().Int("port", config.ControlGrpcPort).Msg("gRPC server listening")
 	return grpcServer.Serve(lis)
 }
 

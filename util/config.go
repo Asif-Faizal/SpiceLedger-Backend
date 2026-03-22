@@ -14,11 +14,15 @@ type Config struct {
 	DBPass               string        `envconfig:"DB_PASSWORD" default:"1234"`
 	DBName               string        `envconfig:"DB_NAME" default:"spice_ledger"`
 	JWTSecret            string        `envconfig:"JWT_SECRET" default:"supersecretjwtkey123!"`
-	AccessTokenDuration  time.Duration `envconfig:"ACCESS_TOKEN_DURATION" default:"1m"`
+	AccessTokenDuration  time.Duration `envconfig:"ACCESS_TOKEN_DURATION" default:"30m"`
 	RefreshTokenDuration time.Duration `envconfig:"REFRESH_TOKEN_DURATION" default:"168h"`
 	BasicAuthUser        string        `envconfig:"BASIC_AUTH_USER" default:"admin"`
 	BasicAuthPass        string        `envconfig:"BASIC_AUTH_PASS" default:"secret123"`
-	Port                 int           `envconfig:"PORT" default:"50051"`
+	ControlGrpcPort      int           `envconfig:"CONTROL_GRPC_PORT" default:"50051"`
+	MarketGrpcPort       int           `envconfig:"MARKET_GRPC_PORT" default:"50052"`
+	RestPort             int           `envconfig:"REST_PORT" default:"8082"`
+	GraphqlPort          int           `envconfig:"GRAPHQL_PORT" default:"8081"`
+	ProxyPort            int           `envconfig:"PROXY_PORT" default:"8080"`
 	LogLevel             string        `envconfig:"LOG_LEVEL" default:"debug"`
 }
 

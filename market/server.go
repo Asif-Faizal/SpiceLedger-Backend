@@ -22,7 +22,7 @@ type GrpcServer struct {
 }
 
 func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.MarketGrpcPort))
 	if err != nil {
 		return err
 	}
@@ -30,6 +30,7 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			util.UnaryServerInterceptor(logger),
+			util.AuthInterceptor(config.JWTSecret, config.BasicAuthUser, config.BasicAuthPass),
 		)),
 	)
 
@@ -41,7 +42,7 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	pb.RegisterMarketServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	logger.Transport().Info().Int("port", config.Port).Msg("gRPC server listening")
+	logger.Transport().Info().Int("port", config.MarketGrpcPort).Msg("gRPC server listening")
 	return grpcServer.Serve(lis)
 }
 
@@ -51,7 +52,14 @@ func (server *GrpcServer) Buy(ctx context.Context, req *pb.BuyRequest) (*pb.BuyR
 		tradeDate = time.Now()
 	}
 
-	txn, err := server.marketService.Buy(ctx, req.UserId, req.SpiceGradeId, req.Quantity, req.Price, tradeDate)
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	txn, err := server.marketService.Buy(ctx, userID, req.SpiceGradeId, req.Quantity, req.Price, tradeDate)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +84,14 @@ func (server *GrpcServer) Sell(ctx context.Context, req *pb.SellRequest) (*pb.Se
 		tradeDate = time.Now()
 	}
 
-	txn, err := server.marketService.Sell(ctx, req.UserId, req.SpiceGradeId, req.Quantity, req.Price, tradeDate)
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	txn, err := server.marketService.Sell(ctx, userID, req.SpiceGradeId, req.Quantity, req.Price, tradeDate)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +111,14 @@ func (server *GrpcServer) Sell(ctx context.Context, req *pb.SellRequest) (*pb.Se
 }
 
 func (server *GrpcServer) GetGradePosition(ctx context.Context, req *pb.GetGradePositionRequest) (*pb.GetGradePositionResponse, error) {
-	pos, err := server.marketService.GetGradePosition(ctx, req.UserId, req.SpiceGradeId)
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	pos, err := server.marketService.GetGradePosition(ctx, userID, req.SpiceGradeId)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +139,14 @@ func (server *GrpcServer) GetGradePosition(ctx context.Context, req *pb.GetGrade
 }
 
 func (server *GrpcServer) GetPositions(ctx context.Context, req *pb.GetPositionsRequest) (*pb.GetPositionsResponse, error) {
-	positions, err := server.marketService.GetPositions(ctx, req.UserId)
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	positions, err := server.marketService.GetPositions(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +172,14 @@ func (server *GrpcServer) GetPositions(ctx context.Context, req *pb.GetPositions
 }
 
 func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.ListGradeTransactionsRequest) (*pb.ListGradeTransactionsResponse, error) {
-	txns, err := server.marketService.ListGradeTransactions(ctx, req.UserId, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	txns, err := server.marketService.ListGradeTransactions(ctx, userID, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +204,14 @@ func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.Lis
 }
 
 func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
-	txns, err := server.marketService.ListTransactions(ctx, req.UserId, uint(req.Skip), uint(req.Take))
+	userID := req.UserId
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
+			userID = id
+		}
+	}
+
+	txns, err := server.marketService.ListTransactions(ctx, userID, uint(req.Skip), uint(req.Take))
 	if err != nil {
 		return nil, err
 	}

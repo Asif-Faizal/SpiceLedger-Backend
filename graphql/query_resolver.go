@@ -2,9 +2,11 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
+	marketpb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
 )
 
 // Products is the resolver for the products field.
@@ -42,7 +44,7 @@ func (r *queryResolver) Products(ctx context.Context, date *string, search *stri
 				Price:       g.Price,
 			}
 		}
-		
+
 		products[i] = &ProductWithGradesAndPrice{
 			ID:          p.Id,
 			Name:        p.Name,
@@ -57,20 +59,109 @@ func (r *queryResolver) Products(ctx context.Context, date *string, search *stri
 
 // GetGradePosition is the resolver for the getGradePosition field.
 func (r *queryResolver) GetGradePosition(ctx context.Context, spiceGradeID string) (*PositionView, error) {
-	panic("not implemented")
+	resp, err := r.server.marketClient.GetGradePosition(ctx, &marketpb.GetGradePositionRequest{
+		SpiceGradeId: spiceGradeID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &PositionView{
+		UserID:        resp.Position.UserId,
+		SpiceGradeID:  resp.Position.SpiceGradeId,
+		TotalQty:      resp.Position.TotalQty,
+		TotalCost:     resp.Position.TotalCost,
+		AvgCost:       resp.Position.AvgCost,
+		TodayPrice:    resp.Position.TodayPrice,
+		RealizedPnL:   resp.Position.RealizedPnl,
+		UnrealizedPnL: resp.Position.UnrealizedPnl,
+		UpdatedAt:     resp.Position.UpdatedAt,
+	}, nil
 }
 
 // GetPositions is the resolver for the getPositions field.
 func (r *queryResolver) GetPositions(ctx context.Context) ([]*PositionView, error) {
-	panic("not implemented")
+	resp, err := r.server.marketClient.GetPositions(ctx, &marketpb.GetPositionsRequest{})
+	if err != nil {
+		return nil, err
+	}
+	positions := make([]*PositionView, len(resp.Positions))
+	for i, p := range resp.Positions {
+		positions[i] = &PositionView{
+			UserID:        p.UserId,
+			SpiceGradeID:  p.SpiceGradeId,
+			TotalQty:      p.TotalQty,
+			TotalCost:     p.TotalCost,
+			AvgCost:       p.AvgCost,
+			TodayPrice:    p.TodayPrice,
+			RealizedPnL:   p.RealizedPnl,
+			UnrealizedPnL: p.UnrealizedPnl,
+			UpdatedAt:     p.UpdatedAt,
+		}
+	}
+	return positions, nil
 }
 
 // ListGradeTransactions is the resolver for the listGradeTransactions field.
 func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int) ([]*Transaction, error) {
-	panic("not implemented")
+	var skip32, take32 uint32
+	if skip != nil {
+		skip32 = uint32(*skip)
+	}
+	if take != nil {
+		take32 = uint32(*take)
+	}
+	resp, err := r.server.marketClient.ListGradeTransactions(ctx, &marketpb.ListGradeTransactionsRequest{
+		SpiceGradeId: spiceGradeID,
+		Skip:         skip32,
+		Take:         take32,
+	})
+	if err != nil {
+		return nil, err
+	}
+	transactions := make([]*Transaction, len(resp.Transactions))
+	for i, t := range resp.Transactions {
+		transactions[i] = &Transaction{
+			ID:           fmt.Sprintf("%d", t.Id),
+			UserID:       t.UserId,
+			SpiceGradeID: t.SpiceGradeId,
+			Type:         t.Type,
+			Quantity:     t.Quantity,
+			Price:        t.Price,
+			TradeDate:    t.TradeDate,
+			CreatedAt:    t.CreatedAt,
+		}
+	}
+	return transactions, nil
 }
 
 // ListTransactions is the resolver for the listTransactions field.
 func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error) {
-	panic("not implemented")
+	var skip32, take32 uint32
+	if skip != nil {
+		skip32 = uint32(*skip)
+	}
+	if take != nil {
+		take32 = uint32(*take)
+	}
+	resp, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
+		Skip: skip32,
+		Take: take32,
+	})
+	if err != nil {
+		return nil, err
+	}
+	transactions := make([]*Transaction, len(resp.Transactions))
+	for i, t := range resp.Transactions {
+		transactions[i] = &Transaction{
+			ID:           fmt.Sprintf("%d", t.Id),
+			UserID:       t.UserId,
+			SpiceGradeID: t.SpiceGradeId,
+			Type:         t.Type,
+			Quantity:     t.Quantity,
+			Price:        t.Price,
+			TradeDate:    t.TradeDate,
+			CreatedAt:    t.CreatedAt,
+		}
+	}
+	return transactions, nil
 }

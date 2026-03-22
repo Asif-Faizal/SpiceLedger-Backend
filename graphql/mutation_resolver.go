@@ -2,8 +2,10 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
+	marketpb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
 )
 
 // CreateProduct is the resolver for the createProduct field.
@@ -97,10 +99,54 @@ func (r *mutationResolver) CreateDailyPrice(ctx context.Context, input CreateDai
 
 // Buy is the resolver for the buy field.
 func (r *mutationResolver) Buy(ctx context.Context, spiceGradeID string, quantity float64, price float64, tradeDate *string) (*Transaction, error) {
-	panic("not implemented")
+	dateStr := ""
+	if tradeDate != nil {
+		dateStr = *tradeDate
+	}
+	resp, err := r.server.marketClient.Buy(ctx, &marketpb.BuyRequest{
+		SpiceGradeId: spiceGradeID,
+		Quantity:     quantity,
+		Price:        price,
+		TradeDate:    dateStr,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Transaction{
+		ID:           fmt.Sprintf("%d", resp.Transaction.Id),
+		UserID:       resp.Transaction.UserId,
+		SpiceGradeID: resp.Transaction.SpiceGradeId,
+		Type:         resp.Transaction.Type,
+		Quantity:     resp.Transaction.Quantity,
+		Price:        resp.Transaction.Price,
+		TradeDate:    resp.Transaction.TradeDate,
+		CreatedAt:    resp.Transaction.CreatedAt,
+	}, nil
 }
 
 // Sell is the resolver for the sell field.
 func (r *mutationResolver) Sell(ctx context.Context, spiceGradeID string, quantity float64, price float64, tradeDate *string) (*Transaction, error) {
-	panic("not implemented")
+	dateStr := ""
+	if tradeDate != nil {
+		dateStr = *tradeDate
+	}
+	resp, err := r.server.marketClient.Sell(ctx, &marketpb.SellRequest{
+		SpiceGradeId: spiceGradeID,
+		Quantity:     quantity,
+		Price:        price,
+		TradeDate:    dateStr,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Transaction{
+		ID:           fmt.Sprintf("%d", resp.Transaction.Id),
+		UserID:       resp.Transaction.UserId,
+		SpiceGradeID: resp.Transaction.SpiceGradeId,
+		Type:         resp.Transaction.Type,
+		Quantity:     resp.Transaction.Quantity,
+		Price:        resp.Transaction.Price,
+		TradeDate:    resp.Transaction.TradeDate,
+		CreatedAt:    resp.Transaction.CreatedAt,
+	}, nil
 }

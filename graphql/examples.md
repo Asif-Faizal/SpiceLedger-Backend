@@ -39,6 +39,93 @@ query GetProducts($date: String) {
 }
 ```
 
+### Get Position for a Specific Grade
+```graphql
+query GetGradePosition($spiceGradeId: ID!) {
+  getGradePosition(spiceGradeId: $spiceGradeId) {
+    userId
+    spiceGradeId
+    totalQty
+    totalCost
+    avgCost
+    todayPrice
+    realizedPnL
+    unrealizedPnL
+    updatedAt
+  }
+}
+```
+**Variables:**
+```json
+{
+  "spiceGradeId": "grade-1"
+}
+```
+
+### Get All Portfolio Positions
+```graphql
+query GetPositions {
+  getPositions {
+    userId
+    spiceGradeId
+    totalQty
+    totalCost
+    avgCost
+    todayPrice
+    realizedPnL
+    unrealizedPnL
+    updatedAt
+  }
+}
+```
+
+### List Transactions for a Specific Grade
+```graphql
+query ListGradeTransactions($spiceGradeId: ID!, $skip: Int, $take: Int) {
+  listGradeTransactions(spiceGradeId: $spiceGradeId, skip: $skip, take: $take) {
+    id
+    userId
+    spiceGradeId
+    type
+    quantity
+    price
+    tradeDate
+    createdAt
+  }
+}
+```
+**Variables:**
+```json
+{
+  "spiceGradeId": "grade-1",
+  "skip": 0,
+  "take": 10
+}
+```
+
+### List All User Transactions
+```graphql
+query ListTransactions($skip: Int, $take: Int) {
+  listTransactions(skip: $skip, take: $take) {
+    id
+    userId
+    spiceGradeId
+    type
+    quantity
+    price
+    tradeDate
+    createdAt
+  }
+}
+```
+**Variables:**
+```json
+{
+  "skip": 0,
+  "take": 10
+}
+```
+
 ## Mutations
 
 ### Create or Update Product
@@ -152,6 +239,56 @@ Update
     "date": "2026-03-21",
     "time": "10:00:00"
   }
+}
+```
+
+### Buy Spice Grade
+```graphql
+mutation Buy($spiceGradeId: ID!, $quantity: Float!, $price: Float!, $tradeDate: String) {
+  buy(spiceGradeId: $spiceGradeId, quantity: $quantity, price: $price, tradeDate: $tradeDate) {
+    id
+    userId
+    spiceGradeId
+    type
+    quantity
+    price
+    tradeDate
+    createdAt
+  }
+}
+```
+**Variables:**
+```json
+{
+  "spiceGradeId": "grade-1",
+  "quantity": 100.5,
+  "price": 155.25,
+  "tradeDate": "2026-03-21"
+}
+```
+
+### Sell Spice Grade
+```graphql
+mutation Sell($spiceGradeId: ID!, $quantity: Float!, $price: Float!, $tradeDate: String) {
+  sell(spiceGradeId: $spiceGradeId, quantity: $quantity, price: $price, tradeDate: $tradeDate) {
+    id
+    userId
+    spiceGradeId
+    type
+    quantity
+    price
+    tradeDate
+    createdAt
+  }
+}
+```
+**Variables:**
+```json
+{
+  "spiceGradeId": "grade-1",
+  "quantity": 50.0,
+  "price": 160.0,
+  "tradeDate": "2026-03-22"
 }
 ```
 

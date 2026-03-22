@@ -286,10 +286,13 @@ func (s *MarketService) GetPositions(ctx context.Context, userID string) ([]*Pos
 
 		if pos.TotalQty > 0 {
 			view.AvgCost = pos.TotalCost / pos.TotalQty
-			// Best-effort: fetch today's price for unrealized P&L
-			todayPrice, priceErr := s.repository.GetDailyPrice(ctx, pos.SpiceGradeID, time.Now())
-			if priceErr == nil {
-				view.TodayPrice = todayPrice
+		}
+
+		// Best-effort: fetch today's price for unrealized P&L
+		todayPrice, priceErr := s.repository.GetDailyPrice(ctx, pos.SpiceGradeID, time.Now())
+		if priceErr == nil {
+			view.TodayPrice = todayPrice
+			if pos.TotalQty > 0 {
 				view.UnrealizedPnL = (todayPrice - view.AvgCost) * pos.TotalQty
 			}
 		}

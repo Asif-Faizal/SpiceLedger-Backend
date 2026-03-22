@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
+	controlpb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
+	marketpb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,15 +15,20 @@ import (
 
 // Server represents the high-level GraphQL service instance, managing its own dependencies.
 type Server struct {
-	controlClient pb.ControlServiceClient
-	conn          *grpc.ClientConn
+	controlClient controlpb.ControlServiceClient
+	marketClient  marketpb.MarketServiceClient
+	controlConn   *grpc.ClientConn
+	marketConn    *grpc.ClientConn
 	logger        util.Logger
 }
 
 // NewServer initializes gRPC connections and returns a professional-grade Server instance.
-func NewServer(controlURL string, logger util.Logger) (*Server, error) {
+func NewServer(controlURL, marketURL string, logger util.Logger) (*Server, error) {
 	if controlURL == "" {
-		return nil, fmt.Errorf("ACCOUNT_GRPC_URL must be provided for service connectivity")
+		return nil, fmt.Errorf("CONTROL_GRPC_URL must be provided for service connectivity")
+	}
+	if marketURL == "" {
+		return nil, fmt.Errorf("MARKET_GRPC_URL must be provided for service connectivity")
 	}
 
 	// High-level gRPC interceptor for seamless JWT propagation from GraphQL context.
@@ -33,25 +39,39 @@ func NewServer(controlURL string, logger util.Logger) (*Server, error) {
 		return invoker(ctx, method, req, reply, cc, opts...)
 	}
 
-	conn, err := grpc.Dial(controlURL,
+	controlConn, err := grpc.Dial(controlURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(authInterceptor),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to establish gRPC backbone connection: %w", err)
+		return nil, fmt.Errorf("failed to establish gRPC backbone connection to control: %w", err)
+	}
+
+	marketConn, err := grpc.Dial(marketURL,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(authInterceptor),
+	)
+	if err != nil {
+		controlConn.Close()
+		return nil, fmt.Errorf("failed to establish gRPC backbone connection to market: %w", err)
 	}
 
 	return &Server{
-		controlClient: pb.NewControlServiceClient(conn),
-		conn:          conn,
+		controlClient: controlpb.NewControlServiceClient(controlConn),
+		marketClient:  marketpb.NewMarketServiceClient(marketConn),
+		controlConn:   controlConn,
+		marketConn:    marketConn,
 		logger:        logger,
 	}, nil
 }
 
 // Close ensures the service terminates its outbound connections gracefully.
 func (s *Server) Close() error {
-	if s.conn != nil {
-		return s.conn.Close()
+	if s.controlConn != nil {
+		s.controlConn.Close()
+	}
+	if s.marketConn != nil {
+		s.marketConn.Close()
 	}
 	return nil
 }

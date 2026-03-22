@@ -228,14 +228,27 @@ The system supports two layers of authentication:
 
 ## Run Services
 
-### 1. Rest Service
-ACCOUNT_GRPC_URL=localhost:50051 PORT=8082 go run rest/cmd/rest/main.go
-
-### 2. Control Service (gRPC)
+### 1. Control Service (gRPC)
+```bash
 DB_HOST=localhost go run control/cmd/control/main.go
+```
 
-### 3. GraphQL Service
-go run graphql/cmd/graph/main.go
+### 2. Market Service (gRPC)
+```bash
+DB_HOST=localhost go run market/cmd/market/main.go
+```
 
-### 4. Proxy Service
+### 3. Rest Service
+```bash
+ACCOUNT_GRPC_URL=localhost:50051 PORT=8082 go run rest/cmd/rest/main.go
+```
+
+### 4. GraphQL Service
+```bash
+ACCOUNT_GRPC_URL=localhost:50051 MARKET_GRPC_URL=localhost:50052 go run graphql/cmd/graph/main.go
+```
+
+### 5. Proxy Service
+```bash
 ACCOUNT_SERVICE_URL=http://localhost:8082 GRAPHQL_GATEWAY_URL=http://localhost:8081 PROXY_PORT=8080 go run proxy/main.go
+```

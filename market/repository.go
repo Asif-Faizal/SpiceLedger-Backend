@@ -334,19 +334,35 @@ func (r *MysqlRepository) InsertSellAllocation(ctx context.Context, alloc *SellA
 }
 
 // UpsertPosition inserts or updates the aggregate position for a user + grade.
-// total_qty and total_cost are replaced absolutely; realized_pnl accumulates.
+// total_qty, total_cost, and realized_pnl are updated relatively.
 func (r *MysqlRepository) UpsertPosition(ctx context.Context, pos *Position) error {
 	start := time.Now()
-	query := `INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
-	          VALUES (?, ?, ?, ?, ?)
-	          ON DUPLICATE KEY UPDATE
-	            total_qty    = VALUES(total_qty),
-	            total_cost   = VALUES(total_cost),
-	            realized_pnl = realized_pnl + VALUES(realized_pnl)`
+	var err error
+	var query string
 
-	_, err := r.dbFromContext(ctx).ExecContext(ctx, query,
-		pos.UserID, pos.SpiceGradeID, pos.TotalQty, pos.TotalCost, pos.RealizedPnL,
-	)
+	if pos.TotalQty < 0 {
+		// For SELL (reduction), use a pure UPDATE to avoid violating CHECK constraints on the INSERT attempt.
+		query = `UPDATE positions 
+		          SET total_qty = total_qty + ?, 
+		              total_cost = total_cost + ?, 
+		              realized_pnl = realized_pnl + ?
+		          WHERE user_id = ? AND spice_grade_id = ?`
+		_, err = r.dbFromContext(ctx).ExecContext(ctx, query,
+			pos.TotalQty, pos.TotalCost, pos.RealizedPnL,
+			pos.UserID, pos.SpiceGradeID,
+		)
+	} else {
+		// For BUY (increase), use INSERT ... ON DUPLICATE KEY UPDATE.
+		query = `INSERT INTO positions (user_id, spice_grade_id, total_qty, total_cost, realized_pnl)
+		          VALUES (?, ?, ?, ?, ?)
+		          ON DUPLICATE KEY UPDATE
+		            total_qty    = total_qty + VALUES(total_qty),
+		            total_cost   = total_cost + VALUES(total_cost),
+		            realized_pnl = realized_pnl + VALUES(realized_pnl)`
+		_, err = r.dbFromContext(ctx).ExecContext(ctx, query,
+			pos.UserID, pos.SpiceGradeID, pos.TotalQty, pos.TotalCost, pos.RealizedPnL,
+		)
+	}
 
 	r.logger.Database().Debug().
 		Str("query", query).
@@ -366,8 +382,7 @@ func (r *MysqlRepository) GetGradePosition(ctx context.Context, userID string, s
 
 	row := r.dbFromContext(ctx).QueryRowContext(ctx, query, userID, spiceGradeID)
 	pos := &Position{}
-	var updatedAt string
-	err := row.Scan(&pos.UserID, &pos.SpiceGradeID, &pos.TotalQty, &pos.TotalCost, &pos.RealizedPnL, &updatedAt)
+	err := row.Scan(&pos.UserID, &pos.SpiceGradeID, &pos.TotalQty, &pos.TotalCost, &pos.RealizedPnL, &pos.UpdatedAt)
 
 	r.logger.Database().Debug().
 		Str("query", query).
@@ -378,15 +393,15 @@ func (r *MysqlRepository) GetGradePosition(ctx context.Context, userID string, s
 	if err != nil {
 		return nil, err
 	}
-	pos.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updatedAt)
 	return pos, nil
 }
 
 // GetPositionsByUser returns all positions for a user across all grades.
+// Includes positions with zero quantity if they have realized P&L.
 func (r *MysqlRepository) GetPositionsByUser(ctx context.Context, userID string) ([]*Position, error) {
 	start := time.Now()
 	query := `SELECT user_id, spice_grade_id, total_qty, total_cost, realized_pnl, updated_at
-	          FROM positions WHERE user_id = ? AND total_qty > 0`
+	          FROM positions WHERE user_id = ? AND (total_qty > 0 OR realized_pnl != 0)`
 
 	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID)
 
@@ -404,11 +419,9 @@ func (r *MysqlRepository) GetPositionsByUser(ctx context.Context, userID string)
 	var positions []*Position
 	for rows.Next() {
 		pos := &Position{}
-		var updatedAt string
-		if err := rows.Scan(&pos.UserID, &pos.SpiceGradeID, &pos.TotalQty, &pos.TotalCost, &pos.RealizedPnL, &updatedAt); err != nil {
+		if err := rows.Scan(&pos.UserID, &pos.SpiceGradeID, &pos.TotalQty, &pos.TotalCost, &pos.RealizedPnL, &pos.UpdatedAt); err != nil {
 			return nil, err
 		}
-		pos.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updatedAt)
 		positions = append(positions, pos)
 	}
 	if err := rows.Err(); err != nil {

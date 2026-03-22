@@ -3,37 +3,36 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/graphql"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/99designs/gqlgen/graphql/playground"
 )
-
-// AppConfig defines the orchestration parameters for the high-level service instance.
-type AppConfig struct {
-	AccountGrpcURL string `envconfig:"ACCOUNT_GRPC_URL" default:"localhost:50051"`
-	Port           int    `envconfig:"PORT" default:"8081"`
-	LogLevel       string `envconfig:"LOG_LEVEL" default:"info"`
-}
 
 func main() {
 	// Professional configuration orchestration
-	var cfg AppConfig
-	if err := envconfig.Process("", &cfg); err != nil {
-		log.Fatalf("Critical core configuration failure: %v", err)
-	}
-	
-	logger := util.NewLogger(cfg.LogLevel)
+	config := util.LoadConfig()
+
+	logger := util.NewLogger(config.LogLevel)
 
 	// Initialize the high-level GraphQL server instance
-	appServer, err := graphql.NewServer(cfg.AccountGrpcURL, logger)
+	// Use CONTROL_GRPC_PORT for AccountGrpcURL if not explicitly provided
+	accountGrpcURL := os.Getenv("ACCOUNT_GRPC_URL")
+	if accountGrpcURL == "" {
+		accountGrpcURL = fmt.Sprintf("localhost:%d", config.ControlGrpcPort)
+	}
+
+	marketGrpcURL := os.Getenv("MARKET_GRPC_URL")
+	if marketGrpcURL == "" {
+		marketGrpcURL = fmt.Sprintf("localhost:%d", config.MarketGrpcPort)
+	}
+
+	appServer, err := graphql.NewServer(accountGrpcURL, marketGrpcURL, logger)
 	if err != nil {
 		logger.Service().Fatal().Err(err).Msg("Core service initialization failed")
 	}
@@ -48,12 +47,13 @@ func main() {
 		fmt.Fprintf(w, `{"status":"operational"}`)
 	})
 
+	// Setup server with gracefull shutdown support
 	httpServer := &http.Server{
-		Addr:         fmt.Sprintf(":%d", cfg.Port),
+		Addr:         fmt.Sprintf(":%d", config.GraphqlPort),
 		Handler:      mux,
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 15 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	// Service execution in background
