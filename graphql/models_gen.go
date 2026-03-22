@@ -16,6 +16,7 @@ type CreateGradeInput struct {
 	ProductID   string  `json:"productId"`
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
+	Status      *string `json:"status,omitempty"`
 }
 
 type CreateProductInput struct {
@@ -23,6 +24,7 @@ type CreateProductInput struct {
 	Name        string  `json:"name"`
 	Category    string  `json:"category"`
 	Description *string `json:"description,omitempty"`
+	Status      *string `json:"status,omitempty"`
 }
 
 type DailyPrice struct {

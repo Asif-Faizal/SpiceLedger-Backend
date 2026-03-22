@@ -12,12 +12,20 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input CreateProduc
 	if input.Description != nil {
 		desc = *input.Description
 	}
+	status := ""
+	if input.Status != nil {
+		status = *input.Status
+	}
+	if input.ID == "" && status == "" {
+		status = "active"
+	}
+
 	resp, err := r.server.controlClient.CreateOrUpdateProduct(ctx, &pb.CreateOrUpdateProductRequest{
 		Id:          input.ID,
 		Name:        input.Name,
 		Category:    input.Category,
 		Description: desc,
-		Status:      "active",
+		Status:      status,
 	})
 	if err != nil {
 		return nil, err
@@ -37,12 +45,20 @@ func (r *mutationResolver) CreateGrade(ctx context.Context, input CreateGradeInp
 	if input.Description != nil {
 		desc = *input.Description
 	}
+	status := ""
+	if input.Status != nil {
+		status = *input.Status
+	}
+	if input.ID == "" && status == "" {
+		status = "active"
+	}
+
 	resp, err := r.server.controlClient.CreateOrUpdateGrade(ctx, &pb.CreateOrUpdateGradeRequest{
 		Id:          input.ID,
 		ProductId:   input.ProductID,
 		Name:        input.Name,
 		Description: desc,
-		Status:      "active",
+		Status:      status,
 	})
 	if err != nil {
 		return nil, err

@@ -40,6 +40,7 @@ input CreateProductInput {
   name: String!
   category: String!
   description: String
+  status: String
 }
 
 input CreateGradeInput {
@@ -47,7 +48,9 @@ input CreateGradeInput {
   productId: ID!
   name: String!
   description: String
+  status: String
 }
+
 
 input CreateDailyPriceInput {
   id: ID!

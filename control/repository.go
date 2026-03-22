@@ -596,12 +596,11 @@ func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Co
 			g.status as grade_status,
 			dp.price
 		FROM products p
-		LEFT JOIN grade g ON g.product_id = p.id AND g.status = 'active'
+		LEFT JOIN grade g ON g.product_id = p.id
 		LEFT JOIN daily_price dp 
 			ON dp.product_id = p.id 
 			AND dp.grade_id = g.id
 			AND dp.date = ?
-		WHERE p.status = 'active'
 		AND ( ? = ''
 			OR p.id IN (
 				SELECT DISTINCT p2.id
