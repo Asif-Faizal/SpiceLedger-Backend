@@ -3,7 +3,6 @@ package graphql
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
@@ -13,67 +12,62 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+// Server represents the high-level GraphQL service instance, managing its own dependencies.
 type Server struct {
 	controlClient pb.ControlServiceClient
 	conn          *grpc.ClientConn
+	logger        util.Logger
 }
 
-// NewGraphQLServer initializes and returns a new GraphQL server with all microservice clients
-func NewGraphQLServer(controlURL string) (*Server, error) {
-	// Validate URLs
+// NewServer initializes gRPC connections and returns a professional-grade Server instance.
+func NewServer(controlURL string, logger util.Logger) (*Server, error) {
 	if controlURL == "" {
-		return nil, fmt.Errorf("control service URL must be provided")
+		return nil, fmt.Errorf("ACCOUNT_GRPC_URL must be provided for service connectivity")
 	}
 
-	log.Printf("Connecting to control service at %s", controlURL)
+	// High-level gRPC interceptor for seamless JWT propagation from GraphQL context.
+	authInterceptor := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		if accessToken, ok := ctx.Value(util.AccessTokenKey).(string); ok && accessToken != "" {
+			ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+accessToken)
+		}
+		return invoker(ctx, method, req, reply, cc, opts...)
+	}
 
-	// Initialize Control Client with Auth Interceptor
-	conn, err := grpc.Dial(controlURL, 
+	conn, err := grpc.Dial(controlURL,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
-			accessToken, _ := ctx.Value(util.AccessTokenKey).(string)
-			if accessToken != "" {
-				ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+accessToken)
-			}
-			return invoker(ctx, method, req, reply, cc, opts...)
-		}),
+		grpc.WithUnaryInterceptor(authInterceptor),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to control service: %w", err)
+		return nil, fmt.Errorf("failed to establish gRPC backbone connection: %w", err)
 	}
 
-	controlClient := pb.NewControlServiceClient(conn)
-
 	return &Server{
-		controlClient: controlClient,
+		controlClient: pb.NewControlServiceClient(conn),
 		conn:          conn,
+		logger:        logger,
 	}, nil
 }
 
-// Close gracefully closes all client connections
+// Close ensures the service terminates its outbound connections gracefully.
 func (s *Server) Close() error {
 	if s.conn != nil {
-		s.conn.Close()
+		return s.conn.Close()
 	}
 	return nil
 }
 
+// plumbing for gqlgen ResolverRoot interface
+
 func (s *Server) Mutation() MutationResolver {
-	return &mutationResolver{
-		server: s,
-	}
+	return &mutationResolver{server: s}
 }
 
 func (s *Server) Query() QueryResolver {
-	return &queryResolver{
-		server: s,
-	}
+	return &queryResolver{server: s}
 }
 
 func (s *Server) ToExecutableSchema() graphql.ExecutableSchema {
-	return NewExecutableSchema(Config{
-		Resolvers: s,
-	})
+	return NewExecutableSchema(Config{Resolvers: s})
 }
 
 type mutationResolver struct{ server *Server }

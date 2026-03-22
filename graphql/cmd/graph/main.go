@@ -3,108 +3,78 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/graphql"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
-	"strings"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/99designs/gqlgen/graphql/playground"
 )
 
+// AppConfig defines the orchestration parameters for the high-level service instance.
+type AppConfig struct {
+	AccountGrpcURL string `envconfig:"ACCOUNT_GRPC_URL" default:"localhost:50051"`
+	Port           int    `envconfig:"PORT" default:"8081"`
+	LogLevel       string `envconfig:"LOG_LEVEL" default:"info"`
+}
+
 func main() {
-	// Load configuration
-	config := util.LoadConfig()
-
-	// Initialize Logger
-	logger := util.NewLogger(config.LogLevel)
-
-	controlURL := os.Getenv("ACCOUNT_GRPC_URL")
-	if controlURL == "" {
-		controlURL = "localhost:50051"
+	// Professional configuration orchestration
+	var cfg AppConfig
+	if err := envconfig.Process("", &cfg); err != nil {
+		log.Fatalf("Critical core configuration failure: %v", err)
 	}
+	
+	logger := util.NewLogger(cfg.LogLevel)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8081"
-	}
-
-	// Initialize GraphQL server
-	server, err := graphql.NewGraphQLServer(controlURL)
+	// Initialize the high-level GraphQL server instance
+	appServer, err := graphql.NewServer(cfg.AccountGrpcURL, logger)
 	if err != nil {
-		logger.Service().Fatal().Err(err).Msg("failed to initialize GraphQL server")
+		logger.Service().Fatal().Err(err).Msg("Core service initialization failed")
 	}
-	defer func() {
-		if err := server.Close(); err != nil {
-			logger.Service().Error().Err(err).Msg("error closing server")
-		}
-	}()
+	defer appServer.Close()
 
-	// Create HTTP server
+	// High-level HTTP orchestration matching REST pattern
 	mux := http.NewServeMux()
-
-	// GraphQL endpoint with Auth Middleware
-	mux.Handle("/graphql", AuthMiddleware(handler.NewDefaultServer(server.ToExecutableSchema())))
-
-	// Playground endpoint
-	mux.Handle("/playground", playground.Handler("GraphQL Playground", "/graphql"))
-
-	// Health check endpoint
-	mux.HandleFunc("/health", healthCheckHandler)
+	mux.Handle("/graphql", graphql.NewHandler(appServer))
+	mux.Handle("/playground", playground.Handler("GraphQL Interface", "/graphql"))
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"status":"operational"}`)
+	})
 
 	httpServer := &http.Server{
-		Addr:         fmt.Sprintf(":%s", port),
+		Addr:         fmt.Sprintf(":%d", cfg.Port),
 		Handler:      mux,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Start server in goroutine
+	// Service execution in background
 	go func() {
-		logger.Service().Info().Str("addr", httpServer.Addr).Msg("Starting GraphQL server")
+		logger.Service().Info().Str("addr", httpServer.Addr).Msg("Professional GraphQL entrypoint active")
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Service().Fatal().Err(err).Msg("server error")
+			logger.Service().Fatal().Err(err).Msg("Fatal transport-layer error")
 		}
 	}()
 
-	// Graceful shutdown
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
+	// Signal handling for graceful termination
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	<-stop
 
-	logger.Service().Info().Msg("shutting down server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	logger.Service().Info().Msg("Initiating graceful shutdown sequence")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	if err := httpServer.Shutdown(ctx); err != nil {
-		logger.Service().Fatal().Err(err).Msg("shutdown error")
+		logger.Service().Error().Err(err).Msg("Shutdown orchestration error")
 	}
-
-	logger.Service().Info().Msg("server stopped")
-}
-
-// healthCheckHandler returns OK if the server is running
-func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"status":"ok"}`)
-}
-
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		ctx := context.WithValue(r.Context(), util.AccessTokenKey, tokenString)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+	logger.Service().Info().Msg("Service termination complete")
 }

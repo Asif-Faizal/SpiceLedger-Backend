@@ -225,3 +225,17 @@ curl "http://localhost:8080/rest/daily-prices/product/today/?product_id=prod_001
 The system supports two layers of authentication:
 1. **Internal Basic Auth**: Required by the gRPC service. The REST gateway defaults to `admin:secret123` for internal calls IF no header is passed, but for public API testing via Proxy, you should include the header: `-H "Authorization: Basic YWRtaW46c2VjcmV0MTIz"`.
 2. **Session-based JWT**: Used for authenticated client requests (Logout).
+
+## Run Services
+
+### 1. Rest Service
+ACCOUNT_GRPC_URL=localhost:50051 PORT=8082 go run rest/cmd/rest/main.go
+
+### 2. Control Service (gRPC)
+DB_HOST=localhost go run control/cmd/control/main.go
+
+### 3. GraphQL Service
+go run graphql/cmd/graph/main.go
+
+### 4. Proxy Service
+ACCOUNT_SERVICE_URL=http://localhost:8082 GRAPHQL_GATEWAY_URL=http://localhost:8081 PROXY_PORT=8080 go run proxy/main.go
