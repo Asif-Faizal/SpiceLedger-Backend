@@ -601,19 +601,11 @@ func (repository *MysqlRepository) GetProductsWithGradesAndPrices(ctx context.Co
 			ON dp.product_id = p.id 
 			AND dp.grade_id = g.id
 			AND dp.date = ?
-		AND ( ? = ''
-			OR p.id IN (
-				SELECT DISTINCT p2.id
-				FROM products p2
-				LEFT JOIN grade g2 ON g2.product_id = p2.id
-				WHERE p2.name LIKE Concat('%', ?, '%')
-				OR g2.name LIKE Concat('%', ?, '%')
-			)
-		)
+		WHERE ( ? = '' OR p.name LIKE Concat('%', ?, '%') )
 		ORDER BY p.id, g.id
 	`
 
-	rows, err := repository.db.QueryContext(ctx, query, date.Format("2006-01-02"), search, search, search)
+	rows, err := repository.db.QueryContext(ctx, query, date.Format("2006-01-02"), search, search)
 
 	if err != nil {
 		return nil, err
