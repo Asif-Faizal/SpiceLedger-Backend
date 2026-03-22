@@ -116,6 +116,32 @@ func (server *GrpcServer) GetGradePosition(ctx context.Context, req *pb.GetGrade
 	}, nil
 }
 
+func (server *GrpcServer) GetPositions(ctx context.Context, req *pb.GetPositionsRequest) (*pb.GetPositionsResponse, error) {
+	positions, err := server.marketService.GetPositions(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pbPositions []*pb.PositionView
+	for _, pos := range positions {
+		pbPositions = append(pbPositions, &pb.PositionView{
+			UserId:        pos.UserID,
+			SpiceGradeId:  pos.SpiceGradeID,
+			TotalQty:      pos.TotalQty,
+			TotalCost:     pos.TotalCost,
+			AvgCost:       pos.AvgCost,
+			TodayPrice:    pos.TodayPrice,
+			RealizedPnl:   pos.RealizedPnL,
+			UnrealizedPnl: pos.UnrealizedPnL,
+			UpdatedAt:     pos.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &pb.GetPositionsResponse{
+		Positions: pbPositions,
+	}, nil
+}
+
 func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.ListGradeTransactionsRequest) (*pb.ListGradeTransactionsResponse, error) {
 	txns, err := server.marketService.ListGradeTransactions(ctx, req.UserId, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
 	if err != nil {
@@ -137,6 +163,31 @@ func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.Lis
 	}
 
 	return &pb.ListGradeTransactionsResponse{
+		Transactions: protoTxns,
+	}, nil
+}
+
+func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
+	txns, err := server.marketService.ListTransactions(ctx, req.UserId, uint(req.Skip), uint(req.Take))
+	if err != nil {
+		return nil, err
+	}
+
+	var protoTxns []*pb.Transaction
+	for _, txn := range txns {
+		protoTxns = append(protoTxns, &pb.Transaction{
+			Id:           txn.ID,
+			UserId:       txn.UserID,
+			SpiceGradeId: txn.SpiceGradeID,
+			Type:         txn.Type,
+			Quantity:     txn.Quantity,
+			Price:        txn.Price,
+			TradeDate:    txn.TradeDate.Format("2006-01-02"),
+			CreatedAt:    txn.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &pb.ListTransactionsResponse{
 		Transactions: protoTxns,
 	}, nil
 }

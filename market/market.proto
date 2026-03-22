@@ -61,6 +61,14 @@ message GetGradePositionResponse {
   PositionView position = 1;
 }
 
+message GetPositionsRequest {
+  string user_id = 1;
+}
+
+message GetPositionsResponse {
+  repeated PositionView positions = 1;
+}
+
 message ListGradeTransactionsRequest {
   string user_id = 1;
   string spice_grade_id = 2;
@@ -72,9 +80,21 @@ message ListGradeTransactionsResponse {
   repeated Transaction transactions = 1;
 }
 
+message ListTransactionsRequest {
+  string user_id = 1;
+  uint32 skip = 2;
+  uint32 take = 3;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+}
+
 service MarketService {
   rpc Buy(BuyRequest) returns (BuyResponse);
   rpc Sell(SellRequest) returns (SellResponse);
   rpc GetGradePosition(GetGradePositionRequest) returns (GetGradePositionResponse);
+  rpc GetPositions(GetPositionsRequest) returns (GetPositionsResponse);
   rpc ListGradeTransactions(ListGradeTransactionsRequest) returns (ListGradeTransactionsResponse);
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
 }

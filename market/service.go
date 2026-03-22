@@ -13,7 +13,9 @@ type Service interface {
 	Buy(ctx context.Context, userID string, spiceGradeID string, quantity float64, price float64, tradeDate time.Time) (*Transaction, error)
 	Sell(ctx context.Context, userID string, spiceGradeID string, quantity float64, price float64, tradeDate time.Time) (*Transaction, error)
 	GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*PositionView, error)
+	GetPositions(ctx context.Context, userID string) ([]*PositionView, error)
 	ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
+	ListTransactions(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
 }
 
 type MarketService struct {
@@ -260,6 +262,43 @@ func (s *MarketService) GetGradePosition(ctx context.Context, userID string, spi
 	return view, nil
 }
 
+// GetPositions returns all aggregate positions for a user with live unrealized P&L.
+func (s *MarketService) GetPositions(ctx context.Context, userID string) ([]*PositionView, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+
+	positions, err := s.repository.GetPositionsByUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var views []*PositionView
+	for _, pos := range positions {
+		view := &PositionView{
+			UserID:       pos.UserID,
+			SpiceGradeID: pos.SpiceGradeID,
+			TotalQty:     pos.TotalQty,
+			TotalCost:    pos.TotalCost,
+			RealizedPnL:  pos.RealizedPnL,
+			UpdatedAt:    pos.UpdatedAt,
+		}
+
+		if pos.TotalQty > 0 {
+			view.AvgCost = pos.TotalCost / pos.TotalQty
+			// Best-effort: fetch today's price for unrealized P&L
+			todayPrice, priceErr := s.repository.GetDailyPrice(ctx, pos.SpiceGradeID, time.Now())
+			if priceErr == nil {
+				view.TodayPrice = todayPrice
+				view.UnrealizedPnL = (todayPrice - view.AvgCost) * pos.TotalQty
+			}
+		}
+		views = append(views, view)
+	}
+
+	return views, nil
+}
+
 // ListTransactions returns paginated trade history
 func (s *MarketService) ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
 	if userID == "" {
@@ -272,4 +311,15 @@ func (s *MarketService) ListGradeTransactions(ctx context.Context, userID string
 		take = 100
 	}
 	return s.repository.ListGradeTransactionsByUser(ctx, userID, spiceGradeID, skip, take)
+}
+
+// ListTransactions returns paginated trade history for a user across all grades
+func (s *MarketService) ListTransactions(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+	if take == 0 || take > 100 {
+		take = 100
+	}
+	return s.repository.ListTransactionsByUser(ctx, userID, skip, take)
 }

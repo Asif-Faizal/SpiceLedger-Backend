@@ -54,11 +54,25 @@ func (c *MarketClient) GetGradePosition(ctx context.Context, userID, spiceGradeI
 	})
 }
 
+func (c *MarketClient) GetPositions(ctx context.Context, userID string) (*pb.GetPositionsResponse, error) {
+	return c.client.GetPositions(ctx, &pb.GetPositionsRequest{
+		UserId: userID,
+	})
+}
+
 func (c *MarketClient) ListGradeTransactions(ctx context.Context, userID, spiceGradeID string, skip, take uint32) (*pb.ListGradeTransactionsResponse, error) {
 	return c.client.ListGradeTransactions(ctx, &pb.ListGradeTransactionsRequest{
 		UserId:       userID,
 		SpiceGradeId: spiceGradeID,
 		Skip:         skip,
 		Take:         take,
+	})
+}
+
+func (c *MarketClient) ListTransactions(ctx context.Context, userID string, skip, take uint32) (*pb.ListTransactionsResponse, error) {
+	return c.client.ListTransactions(ctx, &pb.ListTransactionsRequest{
+		UserId: userID,
+		Skip:   skip,
+		Take:   take,
 	})
 }

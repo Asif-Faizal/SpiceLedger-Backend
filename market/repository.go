@@ -15,6 +15,7 @@ type Repository interface {
 	InsertTransaction(ctx context.Context, tx *Transaction) (int64, error)
 	GetTransactionByID(ctx context.Context, id int64) (*Transaction, error)
 	ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
+	ListTransactionsByUser(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
 
 	// Buy Lots (inventory)
 	InsertBuyLot(ctx context.Context, lot *BuyLot) (int64, error)
@@ -29,6 +30,7 @@ type Repository interface {
 	// Positions (aggregate state)
 	UpsertPosition(ctx context.Context, pos *Position) error
 	GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*Position, error)
+	GetPositionsByUser(ctx context.Context, userID string) ([]*Position, error)
 
 	// Daily Price (read from control service's shared table)
 	// Returns ErrNoPriceAvailable when no price is published for that date yet.
@@ -146,6 +148,46 @@ func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userI
 	          LIMIT ? OFFSET ?`
 
 	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID, spiceGradeID, take, skip)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("ListTransactionsByUser")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var txns []*Transaction
+	for rows.Next() {
+		t := &Transaction{}
+		var tradeDate, createdAt string
+		if err := rows.Scan(&t.ID, &t.UserID, &t.SpiceGradeID, &t.Type,
+			&t.Quantity, &t.Price, &tradeDate, &createdAt); err != nil {
+			return nil, err
+		}
+		t.TradeDate, _ = time.Parse("2006-01-02", tradeDate)
+		t.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
+		txns = append(txns, t)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return txns, nil
+}
+
+// ListTransactionsByUser returns paginated transactions for a user across all grades, newest first.
+func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error) {
+	start := time.Now()
+	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
+	          FROM transactions
+	          WHERE user_id = ?
+	          ORDER BY trade_date DESC, id DESC
+	          LIMIT ? OFFSET ?`
+
+	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID, take, skip)
 
 	r.logger.Database().Debug().
 		Str("query", query).
@@ -338,6 +380,41 @@ func (r *MysqlRepository) GetGradePosition(ctx context.Context, userID string, s
 	}
 	pos.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updatedAt)
 	return pos, nil
+}
+
+// GetPositionsByUser returns all positions for a user across all grades.
+func (r *MysqlRepository) GetPositionsByUser(ctx context.Context, userID string) ([]*Position, error) {
+	start := time.Now()
+	query := `SELECT user_id, spice_grade_id, total_qty, total_cost, realized_pnl, updated_at
+	          FROM positions WHERE user_id = ? AND total_qty > 0`
+
+	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetPositionsByUser")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var positions []*Position
+	for rows.Next() {
+		pos := &Position{}
+		var updatedAt string
+		if err := rows.Scan(&pos.UserID, &pos.SpiceGradeID, &pos.TotalQty, &pos.TotalCost, &pos.RealizedPnL, &updatedAt); err != nil {
+			return nil, err
+		}
+		pos.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updatedAt)
+		positions = append(positions, pos)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return positions, nil
 }
 
 // GetDailyPrice returns the canonical market price for a grade on a given date.

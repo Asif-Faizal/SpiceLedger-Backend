@@ -567,6 +567,94 @@ func (x *GetGradePositionResponse) GetPosition() *PositionView {
 	return nil
 }
 
+type GetPositionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionsRequest) Reset() {
+	*x = GetPositionsRequest{}
+	mi := &file_market_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionsRequest) ProtoMessage() {}
+
+func (x *GetPositionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionsRequest.ProtoReflect.Descriptor instead.
+func (*GetPositionsRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetPositionsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetPositionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Positions     []*PositionView        `protobuf:"bytes,1,rep,name=positions,proto3" json:"positions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionsResponse) Reset() {
+	*x = GetPositionsResponse{}
+	mi := &file_market_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionsResponse) ProtoMessage() {}
+
+func (x *GetPositionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionsResponse.ProtoReflect.Descriptor instead.
+func (*GetPositionsResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetPositionsResponse) GetPositions() []*PositionView {
+	if x != nil {
+		return x.Positions
+	}
+	return nil
+}
+
 type ListGradeTransactionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -579,7 +667,7 @@ type ListGradeTransactionsRequest struct {
 
 func (x *ListGradeTransactionsRequest) Reset() {
 	*x = ListGradeTransactionsRequest{}
-	mi := &file_market_proto_msgTypes[8]
+	mi := &file_market_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -591,7 +679,7 @@ func (x *ListGradeTransactionsRequest) String() string {
 func (*ListGradeTransactionsRequest) ProtoMessage() {}
 
 func (x *ListGradeTransactionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_market_proto_msgTypes[8]
+	mi := &file_market_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -604,7 +692,7 @@ func (x *ListGradeTransactionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGradeTransactionsRequest.ProtoReflect.Descriptor instead.
 func (*ListGradeTransactionsRequest) Descriptor() ([]byte, []int) {
-	return file_market_proto_rawDescGZIP(), []int{8}
+	return file_market_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListGradeTransactionsRequest) GetUserId() string {
@@ -644,7 +732,7 @@ type ListGradeTransactionsResponse struct {
 
 func (x *ListGradeTransactionsResponse) Reset() {
 	*x = ListGradeTransactionsResponse{}
-	mi := &file_market_proto_msgTypes[9]
+	mi := &file_market_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -656,7 +744,7 @@ func (x *ListGradeTransactionsResponse) String() string {
 func (*ListGradeTransactionsResponse) ProtoMessage() {}
 
 func (x *ListGradeTransactionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_market_proto_msgTypes[9]
+	mi := &file_market_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -669,10 +757,114 @@ func (x *ListGradeTransactionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListGradeTransactionsResponse.ProtoReflect.Descriptor instead.
 func (*ListGradeTransactionsResponse) Descriptor() ([]byte, []int) {
-	return file_market_proto_rawDescGZIP(), []int{9}
+	return file_market_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListGradeTransactionsResponse) GetTransactions() []*Transaction {
+	if x != nil {
+		return x.Transactions
+	}
+	return nil
+}
+
+type ListTransactionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Skip          uint32                 `protobuf:"varint,2,opt,name=skip,proto3" json:"skip,omitempty"`
+	Take          uint32                 `protobuf:"varint,3,opt,name=take,proto3" json:"take,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTransactionsRequest) Reset() {
+	*x = ListTransactionsRequest{}
+	mi := &file_market_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTransactionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTransactionsRequest) ProtoMessage() {}
+
+func (x *ListTransactionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTransactionsRequest.ProtoReflect.Descriptor instead.
+func (*ListTransactionsRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListTransactionsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ListTransactionsRequest) GetSkip() uint32 {
+	if x != nil {
+		return x.Skip
+	}
+	return 0
+}
+
+func (x *ListTransactionsRequest) GetTake() uint32 {
+	if x != nil {
+		return x.Take
+	}
+	return 0
+}
+
+type ListTransactionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Transactions  []*Transaction         `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTransactionsResponse) Reset() {
+	*x = ListTransactionsResponse{}
+	mi := &file_market_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTransactionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTransactionsResponse) ProtoMessage() {}
+
+func (x *ListTransactionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTransactionsResponse.ProtoReflect.Descriptor instead.
+func (*ListTransactionsResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ListTransactionsResponse) GetTransactions() []*Transaction {
 	if x != nil {
 		return x.Transactions
 	}
@@ -731,19 +923,31 @@ const file_market_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
 	"\x0espice_grade_id\x18\x02 \x01(\tR\fspiceGradeId\"H\n" +
 	"\x18GetGradePositionResponse\x12,\n" +
-	"\bposition\x18\x01 \x01(\v2\x10.pb.PositionViewR\bposition\"\x85\x01\n" +
+	"\bposition\x18\x01 \x01(\v2\x10.pb.PositionViewR\bposition\".\n" +
+	"\x13GetPositionsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"F\n" +
+	"\x14GetPositionsResponse\x12.\n" +
+	"\tpositions\x18\x01 \x03(\v2\x10.pb.PositionViewR\tpositions\"\x85\x01\n" +
 	"\x1cListGradeTransactionsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
 	"\x0espice_grade_id\x18\x02 \x01(\tR\fspiceGradeId\x12\x12\n" +
 	"\x04skip\x18\x03 \x01(\rR\x04skip\x12\x12\n" +
 	"\x04take\x18\x04 \x01(\rR\x04take\"T\n" +
 	"\x1dListGradeTransactionsResponse\x123\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x0f.pb.TransactionR\ftransactions2\x8f\x02\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x0f.pb.TransactionR\ftransactions\"Z\n" +
+	"\x17ListTransactionsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04skip\x18\x02 \x01(\rR\x04skip\x12\x12\n" +
+	"\x04take\x18\x03 \x01(\rR\x04take\"O\n" +
+	"\x18ListTransactionsResponse\x123\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x0f.pb.TransactionR\ftransactions2\xa1\x03\n" +
 	"\rMarketService\x12&\n" +
 	"\x03Buy\x12\x0e.pb.BuyRequest\x1a\x0f.pb.BuyResponse\x12)\n" +
 	"\x04Sell\x12\x0f.pb.SellRequest\x1a\x10.pb.SellResponse\x12M\n" +
-	"\x10GetGradePosition\x12\x1b.pb.GetGradePositionRequest\x1a\x1c.pb.GetGradePositionResponse\x12\\\n" +
-	"\x15ListGradeTransactions\x12 .pb.ListGradeTransactionsRequest\x1a!.pb.ListGradeTransactionsResponseB\x06Z\x04./pbb\x06proto3"
+	"\x10GetGradePosition\x12\x1b.pb.GetGradePositionRequest\x1a\x1c.pb.GetGradePositionResponse\x12A\n" +
+	"\fGetPositions\x12\x17.pb.GetPositionsRequest\x1a\x18.pb.GetPositionsResponse\x12\\\n" +
+	"\x15ListGradeTransactions\x12 .pb.ListGradeTransactionsRequest\x1a!.pb.ListGradeTransactionsResponse\x12M\n" +
+	"\x10ListTransactions\x12\x1b.pb.ListTransactionsRequest\x1a\x1c.pb.ListTransactionsResponseB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_market_proto_rawDescOnce sync.Once
@@ -757,7 +961,7 @@ func file_market_proto_rawDescGZIP() []byte {
 	return file_market_proto_rawDescData
 }
 
-var file_market_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_market_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_market_proto_goTypes = []any{
 	(*Transaction)(nil),                   // 0: pb.Transaction
 	(*PositionView)(nil),                  // 1: pb.PositionView
@@ -767,27 +971,37 @@ var file_market_proto_goTypes = []any{
 	(*SellResponse)(nil),                  // 5: pb.SellResponse
 	(*GetGradePositionRequest)(nil),       // 6: pb.GetGradePositionRequest
 	(*GetGradePositionResponse)(nil),      // 7: pb.GetGradePositionResponse
-	(*ListGradeTransactionsRequest)(nil),  // 8: pb.ListGradeTransactionsRequest
-	(*ListGradeTransactionsResponse)(nil), // 9: pb.ListGradeTransactionsResponse
+	(*GetPositionsRequest)(nil),           // 8: pb.GetPositionsRequest
+	(*GetPositionsResponse)(nil),          // 9: pb.GetPositionsResponse
+	(*ListGradeTransactionsRequest)(nil),  // 10: pb.ListGradeTransactionsRequest
+	(*ListGradeTransactionsResponse)(nil), // 11: pb.ListGradeTransactionsResponse
+	(*ListTransactionsRequest)(nil),       // 12: pb.ListTransactionsRequest
+	(*ListTransactionsResponse)(nil),      // 13: pb.ListTransactionsResponse
 }
 var file_market_proto_depIdxs = []int32{
-	0, // 0: pb.BuyResponse.transaction:type_name -> pb.Transaction
-	0, // 1: pb.SellResponse.transaction:type_name -> pb.Transaction
-	1, // 2: pb.GetGradePositionResponse.position:type_name -> pb.PositionView
-	0, // 3: pb.ListGradeTransactionsResponse.transactions:type_name -> pb.Transaction
-	2, // 4: pb.MarketService.Buy:input_type -> pb.BuyRequest
-	4, // 5: pb.MarketService.Sell:input_type -> pb.SellRequest
-	6, // 6: pb.MarketService.GetGradePosition:input_type -> pb.GetGradePositionRequest
-	8, // 7: pb.MarketService.ListGradeTransactions:input_type -> pb.ListGradeTransactionsRequest
-	3, // 8: pb.MarketService.Buy:output_type -> pb.BuyResponse
-	5, // 9: pb.MarketService.Sell:output_type -> pb.SellResponse
-	7, // 10: pb.MarketService.GetGradePosition:output_type -> pb.GetGradePositionResponse
-	9, // 11: pb.MarketService.ListGradeTransactions:output_type -> pb.ListGradeTransactionsResponse
-	8, // [8:12] is the sub-list for method output_type
-	4, // [4:8] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0,  // 0: pb.BuyResponse.transaction:type_name -> pb.Transaction
+	0,  // 1: pb.SellResponse.transaction:type_name -> pb.Transaction
+	1,  // 2: pb.GetGradePositionResponse.position:type_name -> pb.PositionView
+	1,  // 3: pb.GetPositionsResponse.positions:type_name -> pb.PositionView
+	0,  // 4: pb.ListGradeTransactionsResponse.transactions:type_name -> pb.Transaction
+	0,  // 5: pb.ListTransactionsResponse.transactions:type_name -> pb.Transaction
+	2,  // 6: pb.MarketService.Buy:input_type -> pb.BuyRequest
+	4,  // 7: pb.MarketService.Sell:input_type -> pb.SellRequest
+	6,  // 8: pb.MarketService.GetGradePosition:input_type -> pb.GetGradePositionRequest
+	8,  // 9: pb.MarketService.GetPositions:input_type -> pb.GetPositionsRequest
+	10, // 10: pb.MarketService.ListGradeTransactions:input_type -> pb.ListGradeTransactionsRequest
+	12, // 11: pb.MarketService.ListTransactions:input_type -> pb.ListTransactionsRequest
+	3,  // 12: pb.MarketService.Buy:output_type -> pb.BuyResponse
+	5,  // 13: pb.MarketService.Sell:output_type -> pb.SellResponse
+	7,  // 14: pb.MarketService.GetGradePosition:output_type -> pb.GetGradePositionResponse
+	9,  // 15: pb.MarketService.GetPositions:output_type -> pb.GetPositionsResponse
+	11, // 16: pb.MarketService.ListGradeTransactions:output_type -> pb.ListGradeTransactionsResponse
+	13, // 17: pb.MarketService.ListTransactions:output_type -> pb.ListTransactionsResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_market_proto_init() }
@@ -801,7 +1015,7 @@ func file_market_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_market_proto_rawDesc), len(file_market_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

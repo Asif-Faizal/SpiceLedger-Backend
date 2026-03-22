@@ -24,7 +24,9 @@ const (
 	MarketService_Buy_FullMethodName                   = "/pb.MarketService/Buy"
 	MarketService_Sell_FullMethodName                  = "/pb.MarketService/Sell"
 	MarketService_GetGradePosition_FullMethodName      = "/pb.MarketService/GetGradePosition"
+	MarketService_GetPositions_FullMethodName          = "/pb.MarketService/GetPositions"
 	MarketService_ListGradeTransactions_FullMethodName = "/pb.MarketService/ListGradeTransactions"
+	MarketService_ListTransactions_FullMethodName      = "/pb.MarketService/ListTransactions"
 )
 
 // MarketServiceClient is the client API for MarketService service.
@@ -34,7 +36,9 @@ type MarketServiceClient interface {
 	Buy(ctx context.Context, in *BuyRequest, opts ...grpc.CallOption) (*BuyResponse, error)
 	Sell(ctx context.Context, in *SellRequest, opts ...grpc.CallOption) (*SellResponse, error)
 	GetGradePosition(ctx context.Context, in *GetGradePositionRequest, opts ...grpc.CallOption) (*GetGradePositionResponse, error)
+	GetPositions(ctx context.Context, in *GetPositionsRequest, opts ...grpc.CallOption) (*GetPositionsResponse, error)
 	ListGradeTransactions(ctx context.Context, in *ListGradeTransactionsRequest, opts ...grpc.CallOption) (*ListGradeTransactionsResponse, error)
+	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 }
 
 type marketServiceClient struct {
@@ -75,10 +79,30 @@ func (c *marketServiceClient) GetGradePosition(ctx context.Context, in *GetGrade
 	return out, nil
 }
 
+func (c *marketServiceClient) GetPositions(ctx context.Context, in *GetPositionsRequest, opts ...grpc.CallOption) (*GetPositionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPositionsResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetPositions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *marketServiceClient) ListGradeTransactions(ctx context.Context, in *ListGradeTransactionsRequest, opts ...grpc.CallOption) (*ListGradeTransactionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListGradeTransactionsResponse)
 	err := c.cc.Invoke(ctx, MarketService_ListGradeTransactions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketServiceClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTransactionsResponse)
+	err := c.cc.Invoke(ctx, MarketService_ListTransactions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +116,9 @@ type MarketServiceServer interface {
 	Buy(context.Context, *BuyRequest) (*BuyResponse, error)
 	Sell(context.Context, *SellRequest) (*SellResponse, error)
 	GetGradePosition(context.Context, *GetGradePositionRequest) (*GetGradePositionResponse, error)
+	GetPositions(context.Context, *GetPositionsRequest) (*GetPositionsResponse, error)
 	ListGradeTransactions(context.Context, *ListGradeTransactionsRequest) (*ListGradeTransactionsResponse, error)
+	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
 	mustEmbedUnimplementedMarketServiceServer()
 }
 
@@ -112,8 +138,14 @@ func (UnimplementedMarketServiceServer) Sell(context.Context, *SellRequest) (*Se
 func (UnimplementedMarketServiceServer) GetGradePosition(context.Context, *GetGradePositionRequest) (*GetGradePositionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetGradePosition not implemented")
 }
+func (UnimplementedMarketServiceServer) GetPositions(context.Context, *GetPositionsRequest) (*GetPositionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPositions not implemented")
+}
 func (UnimplementedMarketServiceServer) ListGradeTransactions(context.Context, *ListGradeTransactionsRequest) (*ListGradeTransactionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListGradeTransactions not implemented")
+}
+func (UnimplementedMarketServiceServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTransactions not implemented")
 }
 func (UnimplementedMarketServiceServer) mustEmbedUnimplementedMarketServiceServer() {}
 func (UnimplementedMarketServiceServer) testEmbeddedByValue()                       {}
@@ -190,6 +222,24 @@ func _MarketService_GetGradePosition_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketService_GetPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPositionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetPositions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetPositions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetPositions(ctx, req.(*GetPositionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MarketService_ListGradeTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListGradeTransactionsRequest)
 	if err := dec(in); err != nil {
@@ -204,6 +254,24 @@ func _MarketService_ListGradeTransactions_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketServiceServer).ListGradeTransactions(ctx, req.(*ListGradeTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketService_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).ListTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_ListTransactions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -228,8 +296,16 @@ var MarketService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketService_GetGradePosition_Handler,
 		},
 		{
+			MethodName: "GetPositions",
+			Handler:    _MarketService_GetPositions_Handler,
+		},
+		{
 			MethodName: "ListGradeTransactions",
 			Handler:    _MarketService_ListGradeTransactions_Handler,
+		},
+		{
+			MethodName: "ListTransactions",
+			Handler:    _MarketService_ListTransactions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
