@@ -95,13 +95,13 @@ func (server *GrpcServer) Sell(ctx context.Context, req *pb.SellRequest) (*pb.Se
 	}, nil
 }
 
-func (server *GrpcServer) GetPosition(ctx context.Context, req *pb.GetPositionRequest) (*pb.GetPositionResponse, error) {
-	pos, err := server.marketService.GetPosition(ctx, req.UserId, req.SpiceGradeId)
+func (server *GrpcServer) GetGradePosition(ctx context.Context, req *pb.GetGradePositionRequest) (*pb.GetGradePositionResponse, error) {
+	pos, err := server.marketService.GetGradePosition(ctx, req.UserId, req.SpiceGradeId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetPositionResponse{
+	return &pb.GetGradePositionResponse{
 		Position: &pb.PositionView{
 			UserId:        pos.UserID,
 			SpiceGradeId:  pos.SpiceGradeID,
@@ -116,8 +116,8 @@ func (server *GrpcServer) GetPosition(ctx context.Context, req *pb.GetPositionRe
 	}, nil
 }
 
-func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
-	txns, err := server.marketService.ListTransactions(ctx, req.UserId, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
+func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.ListGradeTransactionsRequest) (*pb.ListGradeTransactionsResponse, error) {
+	txns, err := server.marketService.ListGradeTransactions(ctx, req.UserId, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTran
 		})
 	}
 
-	return &pb.ListTransactionsResponse{
+	return &pb.ListGradeTransactionsResponse{
 		Transactions: protoTxns,
 	}, nil
 }

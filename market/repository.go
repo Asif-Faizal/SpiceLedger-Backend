@@ -14,7 +14,7 @@ type Repository interface {
 	// Transactions
 	InsertTransaction(ctx context.Context, tx *Transaction) (int64, error)
 	GetTransactionByID(ctx context.Context, id int64) (*Transaction, error)
-	ListTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
+	ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
 
 	// Buy Lots (inventory)
 	InsertBuyLot(ctx context.Context, lot *BuyLot) (int64, error)
@@ -28,7 +28,7 @@ type Repository interface {
 
 	// Positions (aggregate state)
 	UpsertPosition(ctx context.Context, pos *Position) error
-	GetPosition(ctx context.Context, userID string, spiceGradeID string) (*Position, error)
+	GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*Position, error)
 
 	// Daily Price (read from control service's shared table)
 	// Returns ErrNoPriceAvailable when no price is published for that date yet.
@@ -137,7 +137,7 @@ func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id int64) (*Tr
 }
 
 // ListTransactionsByUser returns paginated transactions for a user + grade, newest first.
-func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
+func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
 	start := time.Now()
 	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
 	          FROM transactions
@@ -317,7 +317,7 @@ func (r *MysqlRepository) UpsertPosition(ctx context.Context, pos *Position) err
 
 // GetPosition returns the current position for a user + grade.
 // Returns sql.ErrNoRows if the user has never traded this grade.
-func (r *MysqlRepository) GetPosition(ctx context.Context, userID string, spiceGradeID string) (*Position, error) {
+func (r *MysqlRepository) GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*Position, error) {
 	start := time.Now()
 	query := `SELECT user_id, spice_grade_id, total_qty, total_cost, realized_pnl, updated_at
 	          FROM positions WHERE user_id = ? AND spice_grade_id = ?`

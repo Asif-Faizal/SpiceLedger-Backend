@@ -47,15 +47,15 @@ func (c *MarketClient) Sell(ctx context.Context, userID, spiceGradeID string, qu
 	})
 }
 
-func (c *MarketClient) GetPosition(ctx context.Context, userID, spiceGradeID string) (*pb.GetPositionResponse, error) {
-	return c.client.GetPosition(ctx, &pb.GetPositionRequest{
+func (c *MarketClient) GetGradePosition(ctx context.Context, userID, spiceGradeID string) (*pb.GetGradePositionResponse, error) {
+	return c.client.GetGradePosition(ctx, &pb.GetGradePositionRequest{
 		UserId:       userID,
 		SpiceGradeId: spiceGradeID,
 	})
 }
 
-func (c *MarketClient) ListTransactions(ctx context.Context, userID, spiceGradeID string, skip, take uint32) (*pb.ListTransactionsResponse, error) {
-	return c.client.ListTransactions(ctx, &pb.ListTransactionsRequest{
+func (c *MarketClient) ListGradeTransactions(ctx context.Context, userID, spiceGradeID string, skip, take uint32) (*pb.ListGradeTransactionsResponse, error) {
+	return c.client.ListGradeTransactions(ctx, &pb.ListGradeTransactionsRequest{
 		UserId:       userID,
 		SpiceGradeId: spiceGradeID,
 		Skip:         skip,

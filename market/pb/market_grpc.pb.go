@@ -21,10 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MarketService_Buy_FullMethodName              = "/pb.MarketService/Buy"
-	MarketService_Sell_FullMethodName             = "/pb.MarketService/Sell"
-	MarketService_GetPosition_FullMethodName      = "/pb.MarketService/GetPosition"
-	MarketService_ListTransactions_FullMethodName = "/pb.MarketService/ListTransactions"
+	MarketService_Buy_FullMethodName                   = "/pb.MarketService/Buy"
+	MarketService_Sell_FullMethodName                  = "/pb.MarketService/Sell"
+	MarketService_GetGradePosition_FullMethodName      = "/pb.MarketService/GetGradePosition"
+	MarketService_ListGradeTransactions_FullMethodName = "/pb.MarketService/ListGradeTransactions"
 )
 
 // MarketServiceClient is the client API for MarketService service.
@@ -33,8 +33,8 @@ const (
 type MarketServiceClient interface {
 	Buy(ctx context.Context, in *BuyRequest, opts ...grpc.CallOption) (*BuyResponse, error)
 	Sell(ctx context.Context, in *SellRequest, opts ...grpc.CallOption) (*SellResponse, error)
-	GetPosition(ctx context.Context, in *GetPositionRequest, opts ...grpc.CallOption) (*GetPositionResponse, error)
-	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
+	GetGradePosition(ctx context.Context, in *GetGradePositionRequest, opts ...grpc.CallOption) (*GetGradePositionResponse, error)
+	ListGradeTransactions(ctx context.Context, in *ListGradeTransactionsRequest, opts ...grpc.CallOption) (*ListGradeTransactionsResponse, error)
 }
 
 type marketServiceClient struct {
@@ -65,20 +65,20 @@ func (c *marketServiceClient) Sell(ctx context.Context, in *SellRequest, opts ..
 	return out, nil
 }
 
-func (c *marketServiceClient) GetPosition(ctx context.Context, in *GetPositionRequest, opts ...grpc.CallOption) (*GetPositionResponse, error) {
+func (c *marketServiceClient) GetGradePosition(ctx context.Context, in *GetGradePositionRequest, opts ...grpc.CallOption) (*GetGradePositionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPositionResponse)
-	err := c.cc.Invoke(ctx, MarketService_GetPosition_FullMethodName, in, out, cOpts...)
+	out := new(GetGradePositionResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetGradePosition_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *marketServiceClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
+func (c *marketServiceClient) ListGradeTransactions(ctx context.Context, in *ListGradeTransactionsRequest, opts ...grpc.CallOption) (*ListGradeTransactionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTransactionsResponse)
-	err := c.cc.Invoke(ctx, MarketService_ListTransactions_FullMethodName, in, out, cOpts...)
+	out := new(ListGradeTransactionsResponse)
+	err := c.cc.Invoke(ctx, MarketService_ListGradeTransactions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +91,8 @@ func (c *marketServiceClient) ListTransactions(ctx context.Context, in *ListTran
 type MarketServiceServer interface {
 	Buy(context.Context, *BuyRequest) (*BuyResponse, error)
 	Sell(context.Context, *SellRequest) (*SellResponse, error)
-	GetPosition(context.Context, *GetPositionRequest) (*GetPositionResponse, error)
-	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
+	GetGradePosition(context.Context, *GetGradePositionRequest) (*GetGradePositionResponse, error)
+	ListGradeTransactions(context.Context, *ListGradeTransactionsRequest) (*ListGradeTransactionsResponse, error)
 	mustEmbedUnimplementedMarketServiceServer()
 }
 
@@ -109,11 +109,11 @@ func (UnimplementedMarketServiceServer) Buy(context.Context, *BuyRequest) (*BuyR
 func (UnimplementedMarketServiceServer) Sell(context.Context, *SellRequest) (*SellResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Sell not implemented")
 }
-func (UnimplementedMarketServiceServer) GetPosition(context.Context, *GetPositionRequest) (*GetPositionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetPosition not implemented")
+func (UnimplementedMarketServiceServer) GetGradePosition(context.Context, *GetGradePositionRequest) (*GetGradePositionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetGradePosition not implemented")
 }
-func (UnimplementedMarketServiceServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListTransactions not implemented")
+func (UnimplementedMarketServiceServer) ListGradeTransactions(context.Context, *ListGradeTransactionsRequest) (*ListGradeTransactionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListGradeTransactions not implemented")
 }
 func (UnimplementedMarketServiceServer) mustEmbedUnimplementedMarketServiceServer() {}
 func (UnimplementedMarketServiceServer) testEmbeddedByValue()                       {}
@@ -172,38 +172,38 @@ func _MarketService_Sell_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketService_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPositionRequest)
+func _MarketService_GetGradePosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGradePositionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketServiceServer).GetPosition(ctx, in)
+		return srv.(MarketServiceServer).GetGradePosition(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MarketService_GetPosition_FullMethodName,
+		FullMethod: MarketService_GetGradePosition_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketServiceServer).GetPosition(ctx, req.(*GetPositionRequest))
+		return srv.(MarketServiceServer).GetGradePosition(ctx, req.(*GetGradePositionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MarketService_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTransactionsRequest)
+func _MarketService_ListGradeTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGradeTransactionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MarketServiceServer).ListTransactions(ctx, in)
+		return srv.(MarketServiceServer).ListGradeTransactions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MarketService_ListTransactions_FullMethodName,
+		FullMethod: MarketService_ListGradeTransactions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MarketServiceServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
+		return srv.(MarketServiceServer).ListGradeTransactions(ctx, req.(*ListGradeTransactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -224,12 +224,12 @@ var MarketService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MarketService_Sell_Handler,
 		},
 		{
-			MethodName: "GetPosition",
-			Handler:    _MarketService_GetPosition_Handler,
+			MethodName: "GetGradePosition",
+			Handler:    _MarketService_GetGradePosition_Handler,
 		},
 		{
-			MethodName: "ListTransactions",
-			Handler:    _MarketService_ListTransactions_Handler,
+			MethodName: "ListGradeTransactions",
+			Handler:    _MarketService_ListGradeTransactions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

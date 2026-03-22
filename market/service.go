@@ -12,8 +12,8 @@ import (
 type Service interface {
 	Buy(ctx context.Context, userID string, spiceGradeID string, quantity float64, price float64, tradeDate time.Time) (*Transaction, error)
 	Sell(ctx context.Context, userID string, spiceGradeID string, quantity float64, price float64, tradeDate time.Time) (*Transaction, error)
-	GetPosition(ctx context.Context, userID string, spiceGradeID string) (*PositionView, error)
-	ListTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
+	GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*PositionView, error)
+	ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
 }
 
 type MarketService struct {
@@ -220,7 +220,7 @@ func (s *MarketService) Sell(ctx context.Context, userID string, spiceGradeID st
 
 // GetPosition returns the aggregate position with live unrealized P&L from today's daily_price.
 // If today's price is not yet published, UnrealizedPnL and TodayPrice are left as zero.
-func (s *MarketService) GetPosition(ctx context.Context, userID string, spiceGradeID string) (*PositionView, error) {
+func (s *MarketService) GetGradePosition(ctx context.Context, userID string, spiceGradeID string) (*PositionView, error) {
 	if userID == "" {
 		return nil, errors.New("user_id is required")
 	}
@@ -228,7 +228,7 @@ func (s *MarketService) GetPosition(ctx context.Context, userID string, spiceGra
 		return nil, errors.New("spice_grade_id is required")
 	}
 
-	pos, err := s.repository.GetPosition(ctx, userID, spiceGradeID)
+	pos, err := s.repository.GetGradePosition(ctx, userID, spiceGradeID)
 	if err == sql.ErrNoRows {
 		return nil, errors.New("no position found for this user and grade")
 	}
@@ -261,7 +261,7 @@ func (s *MarketService) GetPosition(ctx context.Context, userID string, spiceGra
 }
 
 // ListTransactions returns paginated trade history
-func (s *MarketService) ListTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
+func (s *MarketService) ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
 	if userID == "" {
 		return nil, errors.New("user_id is required")
 	}
@@ -271,5 +271,5 @@ func (s *MarketService) ListTransactions(ctx context.Context, userID string, spi
 	if take == 0 || take > 100 {
 		take = 100
 	}
-	return s.repository.ListTransactionsByUser(ctx, userID, spiceGradeID, skip, take)
+	return s.repository.ListGradeTransactionsByUser(ctx, userID, spiceGradeID, skip, take)
 }
