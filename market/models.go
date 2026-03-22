@@ -44,3 +44,16 @@ type Position struct {
 	RealizedPnL  float64
 	UpdatedAt    time.Time
 }
+
+// PositionView extends Position with unrealised P&L computed at read time.
+type PositionView struct {
+	UserID        string
+	SpiceGradeID  string
+	TotalQty      float64
+	TotalCost     float64
+	AvgCost       float64 // total_cost / total_qty
+	TodayPrice    float64 // from daily_price; 0 if not yet published
+	RealizedPnL   float64
+	UnrealizedPnL float64 // (today_price - avg_cost) × total_qty
+	UpdatedAt     time.Time
+}
