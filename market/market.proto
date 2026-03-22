@@ -6,7 +6,7 @@ package pb;
 option go_package = "./pb";
 
 message Transaction {
-  int64 id = 1;
+  string id = 1;
   string user_id = 2;
   string spice_grade_id = 3;
   string type = 4;

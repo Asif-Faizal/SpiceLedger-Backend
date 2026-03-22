@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
 	marketpb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
@@ -113,7 +112,7 @@ func (r *mutationResolver) Buy(ctx context.Context, spiceGradeID string, quantit
 		return nil, err
 	}
 	return &Transaction{
-		ID:           fmt.Sprintf("%d", resp.Transaction.Id),
+		ID:           resp.Transaction.Id,
 		UserID:       resp.Transaction.UserId,
 		SpiceGradeID: resp.Transaction.SpiceGradeId,
 		Type:         resp.Transaction.Type,
@@ -140,7 +139,7 @@ func (r *mutationResolver) Sell(ctx context.Context, spiceGradeID string, quanti
 		return nil, err
 	}
 	return &Transaction{
-		ID:           fmt.Sprintf("%d", resp.Transaction.Id),
+		ID:           resp.Transaction.Id,
 		UserID:       resp.Transaction.UserId,
 		SpiceGradeID: resp.Transaction.SpiceGradeId,
 		Type:         resp.Transaction.Type,

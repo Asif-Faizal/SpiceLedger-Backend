@@ -3,7 +3,7 @@ package market
 import "time"
 
 type Transaction struct {
-	ID           int64
+	ID           string
 	UserID       string
 	SpiceGradeID string
 	Type         string
@@ -14,8 +14,8 @@ type Transaction struct {
 }
 
 type BuyLot struct {
-	ID            int64
-	TransactionID int64
+	ID            string
+	TransactionID string
 	UserID        string
 	SpiceGradeID  string
 	OriginalQty   float64
@@ -26,9 +26,9 @@ type BuyLot struct {
 }
 
 type SellAllocation struct {
-	ID                int64
-	SellTransactionID int64
-	BuyLotID          int64
+	ID                string
+	SellTransactionID string
+	BuyLotID          string
 	Quantity          float64
 	BuyPrice          float64
 	SellPrice         float64

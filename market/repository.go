@@ -12,17 +12,17 @@ type Repository interface {
 	Close()
 
 	// Transactions
-	InsertTransaction(ctx context.Context, tx *Transaction) (int64, error)
-	GetTransactionByID(ctx context.Context, id int64) (*Transaction, error)
+	InsertTransaction(ctx context.Context, tx *Transaction) (string, error)
+	GetTransactionByID(ctx context.Context, id string) (*Transaction, error)
 	ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
 	ListTransactionsByUser(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
 
 	// Buy Lots (inventory)
-	InsertBuyLot(ctx context.Context, lot *BuyLot) (int64, error)
+	InsertBuyLot(ctx context.Context, lot *BuyLot) (string, error)
 	// GetOpenBuyLots returns lots with remaining_qty > 0 in FIFO order (oldest trade_date first).
 	// Uses FOR UPDATE — must be called inside a DB transaction.
 	GetOpenBuyLots(ctx context.Context, userID string, spiceGradeID string) ([]*BuyLot, error)
-	DeductBuyLotQty(ctx context.Context, lotID int64, deductQty float64) error
+	DeductBuyLotQty(ctx context.Context, lotID string, deductQty float64) error
 
 	// Sell Allocations (FIFO audit trail)
 	InsertSellAllocation(ctx context.Context, alloc *SellAllocation) error
@@ -90,13 +90,13 @@ func (r *MysqlRepository) BeginTx(ctx context.Context) (context.Context, *sql.Tx
 }
 
 // InsertTransaction inserts an immutable BUY or SELL record and returns its new ID.
-func (r *MysqlRepository) InsertTransaction(ctx context.Context, t *Transaction) (int64, error) {
+func (r *MysqlRepository) InsertTransaction(ctx context.Context, t *Transaction) (string, error) {
 	start := time.Now()
-	query := `INSERT INTO transactions (user_id, spice_grade_id, type, quantity, price, trade_date)
-	          VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO transactions (id, user_id, spice_grade_id, type, quantity, price, trade_date)
+	          VALUES (?, ?, ?, ?, ?, ?, ?)`
 
-	res, err := r.dbFromContext(ctx).ExecContext(ctx, query,
-		t.UserID, t.SpiceGradeID, t.Type, t.Quantity, t.Price,
+	_, err := r.dbFromContext(ctx).ExecContext(ctx, query,
+		t.ID, t.UserID, t.SpiceGradeID, t.Type, t.Quantity, t.Price,
 		t.TradeDate.Format("2006-01-02"),
 	)
 
@@ -107,13 +107,13 @@ func (r *MysqlRepository) InsertTransaction(ctx context.Context, t *Transaction)
 		Msg("InsertTransaction")
 
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return res.LastInsertId()
+	return t.ID, nil
 }
 
 // GetTransactionByID fetches a single transaction by its primary key.
-func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id int64) (*Transaction, error) {
+func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id string) (*Transaction, error) {
 	start := time.Now()
 	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
 	          FROM transactions WHERE id = ?`
@@ -210,13 +210,13 @@ func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID str
 }
 
 // InsertBuyLot creates a new inventory lot from a BUY transaction and returns its ID.
-func (r *MysqlRepository) InsertBuyLot(ctx context.Context, lot *BuyLot) (int64, error) {
+func (r *MysqlRepository) InsertBuyLot(ctx context.Context, lot *BuyLot) (string, error) {
 	start := time.Now()
-	query := `INSERT INTO buy_lots (transaction_id, user_id, spice_grade_id, original_qty, remaining_qty, price, trade_date)
-	          VALUES (?, ?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO buy_lots (id, transaction_id, user_id, spice_grade_id, original_qty, remaining_qty, price, trade_date)
+	          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
-	res, err := r.dbFromContext(ctx).ExecContext(ctx, query,
-		lot.TransactionID, lot.UserID, lot.SpiceGradeID,
+	_, err := r.dbFromContext(ctx).ExecContext(ctx, query,
+		lot.ID, lot.TransactionID, lot.UserID, lot.SpiceGradeID,
 		lot.OriginalQty, lot.RemainingQty, lot.Price,
 		lot.TradeDate.Format("2006-01-02"),
 	)
@@ -228,9 +228,9 @@ func (r *MysqlRepository) InsertBuyLot(ctx context.Context, lot *BuyLot) (int64,
 		Msg("InsertBuyLot")
 
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return res.LastInsertId()
+	return lot.ID, nil
 }
 
 func (r *MysqlRepository) GetOpenBuyLots(ctx context.Context, userID string, spiceGradeID string) ([]*BuyLot, error) {
@@ -271,7 +271,7 @@ func (r *MysqlRepository) GetOpenBuyLots(ctx context.Context, userID string, spi
 
 // DeductBuyLotQty subtracts deductQty from a lot's remaining_qty.
 // The WHERE remaining_qty >= ? guard is the last-line defence against oversell.
-func (r *MysqlRepository) DeductBuyLotQty(ctx context.Context, lotID int64, deductQty float64) error {
+func (r *MysqlRepository) DeductBuyLotQty(ctx context.Context, lotID string, deductQty float64) error {
 	start := time.Now()
 	query := `UPDATE buy_lots SET remaining_qty = remaining_qty - ? WHERE id = ? AND remaining_qty >= ?`
 
@@ -299,11 +299,11 @@ func (r *MysqlRepository) DeductBuyLotQty(ctx context.Context, lotID int64, dedu
 // InsertSellAllocation records one FIFO pairing between a SELL transaction and a BuyLot.
 func (r *MysqlRepository) InsertSellAllocation(ctx context.Context, alloc *SellAllocation) error {
 	start := time.Now()
-	query := `INSERT INTO sell_allocations (sell_transaction_id, buy_lot_id, quantity, buy_price, sell_price, realized_pnl)
-	          VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO sell_allocations (id, sell_transaction_id, buy_lot_id, quantity, buy_price, sell_price, realized_pnl)
+	          VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	_, err := r.dbFromContext(ctx).ExecContext(ctx, query,
-		alloc.SellTransactionID, alloc.BuyLotID,
+		alloc.ID, alloc.SellTransactionID, alloc.BuyLotID,
 		alloc.Quantity, alloc.BuyPrice, alloc.SellPrice, alloc.RealizedPnL,
 	)
 

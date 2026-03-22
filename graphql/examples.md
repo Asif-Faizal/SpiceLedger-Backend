@@ -14,8 +14,8 @@ The GraphQL service is running at `http://localhost:8081/graphql`.
 
 ### List Products with Grades and Prices
 ```graphql
-query GetProducts($date: String) {
-  products(date: $date) {
+query GetProducts($date: String, $search: String) {
+  products(date: $date, search: $search) {
     id
     name
     category

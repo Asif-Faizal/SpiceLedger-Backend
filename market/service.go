@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
+	"github.com/segmentio/ksuid"
 )
 
 type Service interface {
@@ -60,6 +61,7 @@ func (s *MarketService) Buy(ctx context.Context, userID string, spiceGradeID str
 
 	// 1. Record the immutable transaction.
 	t := &Transaction{
+		ID:           ksuid.New().String(),
 		UserID:       userID,
 		SpiceGradeID: spiceGradeID,
 		Type:         "BUY",
@@ -67,15 +69,14 @@ func (s *MarketService) Buy(ctx context.Context, userID string, spiceGradeID str
 		Price:        price,
 		TradeDate:    tradeDate,
 	}
-	txnID, err := s.repository.InsertTransaction(txCtx, t)
-	if err != nil {
+	if _, err = s.repository.InsertTransaction(txCtx, t); err != nil {
 		return nil, err
 	}
-	t.ID = txnID
 
 	// 2. Create the inventory lot (original_qty = remaining_qty = full purchase qty).
 	lot := &BuyLot{
-		TransactionID: txnID,
+		ID:            ksuid.New().String(),
+		TransactionID: t.ID,
 		UserID:        userID,
 		SpiceGradeID:  spiceGradeID,
 		OriginalQty:   quantity,
@@ -152,6 +153,7 @@ func (s *MarketService) Sell(ctx context.Context, userID string, spiceGradeID st
 
 	// 2. Record the immutable SELL transaction.
 	t := &Transaction{
+		ID:           ksuid.New().String(),
 		UserID:       userID,
 		SpiceGradeID: spiceGradeID,
 		Type:         "SELL",
@@ -159,11 +161,9 @@ func (s *MarketService) Sell(ctx context.Context, userID string, spiceGradeID st
 		Price:        price,
 		TradeDate:    tradeDate,
 	}
-	txnID, err := s.repository.InsertTransaction(txCtx, t)
-	if err != nil {
+	if _, err = s.repository.InsertTransaction(txCtx, t); err != nil {
 		return nil, err
 	}
-	t.ID = txnID
 
 	// 3. Walk lots oldest→newest, consuming until the sell quantity is filled.
 	remaining := quantity
@@ -186,7 +186,8 @@ func (s *MarketService) Sell(ctx context.Context, userID string, spiceGradeID st
 
 		lotPnL := (price - lot.Price) * consume
 		alloc := &SellAllocation{
-			SellTransactionID: txnID,
+			ID:                ksuid.New().String(),
+			SellTransactionID: t.ID,
 			BuyLotID:          lot.ID,
 			Quantity:          consume,
 			BuyPrice:          lot.Price,

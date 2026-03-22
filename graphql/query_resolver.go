@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
@@ -121,7 +120,7 @@ func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID 
 	transactions := make([]*Transaction, len(resp.Transactions))
 	for i, t := range resp.Transactions {
 		transactions[i] = &Transaction{
-			ID:           fmt.Sprintf("%d", t.Id),
+			ID:           t.Id,
 			UserID:       t.UserId,
 			SpiceGradeID: t.SpiceGradeId,
 			Type:         t.Type,
@@ -153,7 +152,7 @@ func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *i
 	transactions := make([]*Transaction, len(resp.Transactions))
 	for i, t := range resp.Transactions {
 		transactions[i] = &Transaction{
-			ID:           fmt.Sprintf("%d", t.Id),
+			ID:           t.Id,
 			UserID:       t.UserId,
 			SpiceGradeID: t.SpiceGradeId,
 			Type:         t.Type,

@@ -4,7 +4,7 @@
 -- PKs on high-volume tables stay BIGINT AUTO_INCREMENT for insert performance.
 
 CREATE TABLE IF NOT EXISTS transactions (
-  id             BIGINT       PRIMARY KEY AUTO_INCREMENT,
+  id             CHAR(27)     PRIMARY KEY,
   user_id        CHAR(27)     NOT NULL,
   spice_grade_id CHAR(27)     NOT NULL,
   type           ENUM('BUY','SELL') NOT NULL,
@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS transactions (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS buy_lots (
-  id             BIGINT        PRIMARY KEY AUTO_INCREMENT,
-  transaction_id BIGINT        NOT NULL,
+  id             CHAR(27)      PRIMARY KEY,
+  transaction_id CHAR(27)      NOT NULL,
   user_id        CHAR(27)      NOT NULL,
   spice_grade_id CHAR(27)      NOT NULL,
   original_qty   DECIMAL(15,4) NOT NULL CHECK (original_qty > 0),
@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS buy_lots (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS sell_allocations (
-  id                  BIGINT        PRIMARY KEY AUTO_INCREMENT,
-  sell_transaction_id BIGINT        NOT NULL,
-  buy_lot_id          BIGINT        NOT NULL,
+  id                  CHAR(27)      PRIMARY KEY,
+  sell_transaction_id CHAR(27)      NOT NULL,
+  buy_lot_id          CHAR(27)      NOT NULL,
   quantity            DECIMAL(15,4) NOT NULL CHECK (quantity > 0),
   buy_price           DECIMAL(15,4) NOT NULL CHECK (buy_price > 0),
   sell_price          DECIMAL(15,4) NOT NULL CHECK (sell_price > 0),
