@@ -69,11 +69,11 @@ func (repository *MysqlRepository) GetTodaysByProductId(ctx context.Context, pro
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
+		var timeBytes []byte
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeBytes); err != nil {
 			return nil, err
 		}
-		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", string(timeBytes))
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
 	return dailyPrices, nil
@@ -541,11 +541,11 @@ func (repository *MysqlRepository) ListDailyPricesByGradeId(ctx context.Context,
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
+		var timeBytes []byte
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeBytes); err != nil {
 			return nil, err
 		}
-		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", string(timeBytes))
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
 	return dailyPrices, nil
@@ -571,11 +571,11 @@ func (repository *MysqlRepository) GetTodaysByGradeId(ctx context.Context, grade
 	dailyPrices := []*DailyPrice{}
 	for rows.Next() {
 		dailyPrice := &DailyPrice{}
-		var timeStr string
-		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeStr); err != nil {
+		var timeBytes []byte
+		if err := rows.Scan(&dailyPrice.ID, &dailyPrice.ProductID, &dailyPrice.GradeID, &dailyPrice.Price, &dailyPrice.Date, &timeBytes); err != nil {
 			return nil, err
 		}
-		dailyPrice.Time, _ = time.Parse("15:04:05", timeStr)
+		dailyPrice.Time, _ = time.Parse("15:04:05", string(timeBytes))
 		dailyPrices = append(dailyPrices, dailyPrice)
 	}
 	return dailyPrices, nil

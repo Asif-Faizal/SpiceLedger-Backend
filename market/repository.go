@@ -120,9 +120,8 @@ func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id int64) (*Tr
 
 	row := r.dbFromContext(ctx).QueryRowContext(ctx, query, id)
 	t := &Transaction{}
-	var tradeDate, createdAt string
 	err := row.Scan(&t.ID, &t.UserID, &t.SpiceGradeID, &t.Type,
-		&t.Quantity, &t.Price, &tradeDate, &createdAt)
+		&t.Quantity, &t.Price, &t.TradeDate, &t.CreatedAt)
 
 	r.logger.Database().Debug().
 		Str("query", query).
@@ -133,8 +132,6 @@ func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id int64) (*Tr
 	if err != nil {
 		return nil, err
 	}
-	t.TradeDate, _ = time.Parse("2006-01-02", tradeDate)
-	t.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
 	return t, nil
 }
 
@@ -163,13 +160,10 @@ func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userI
 	var txns []*Transaction
 	for rows.Next() {
 		t := &Transaction{}
-		var tradeDate, createdAt string
 		if err := rows.Scan(&t.ID, &t.UserID, &t.SpiceGradeID, &t.Type,
-			&t.Quantity, &t.Price, &tradeDate, &createdAt); err != nil {
+			&t.Quantity, &t.Price, &t.TradeDate, &t.CreatedAt); err != nil {
 			return nil, err
 		}
-		t.TradeDate, _ = time.Parse("2006-01-02", tradeDate)
-		t.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
 		txns = append(txns, t)
 	}
 	if err := rows.Err(); err != nil {
@@ -203,13 +197,10 @@ func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID str
 	var txns []*Transaction
 	for rows.Next() {
 		t := &Transaction{}
-		var tradeDate, createdAt string
 		if err := rows.Scan(&t.ID, &t.UserID, &t.SpiceGradeID, &t.Type,
-			&t.Quantity, &t.Price, &tradeDate, &createdAt); err != nil {
+			&t.Quantity, &t.Price, &t.TradeDate, &t.CreatedAt); err != nil {
 			return nil, err
 		}
-		t.TradeDate, _ = time.Parse("2006-01-02", tradeDate)
-		t.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
 		txns = append(txns, t)
 	}
 	if err := rows.Err(); err != nil {
@@ -242,8 +233,6 @@ func (r *MysqlRepository) InsertBuyLot(ctx context.Context, lot *BuyLot) (int64,
 	return res.LastInsertId()
 }
 
-// GetOpenBuyLots fetches all lots with remaining_qty > 0 in FIFO order (oldest first).
-// Uses SELECT … FOR UPDATE — MUST be called within a DB transaction.
 func (r *MysqlRepository) GetOpenBuyLots(ctx context.Context, userID string, spiceGradeID string) ([]*BuyLot, error) {
 	start := time.Now()
 	query := `SELECT id, transaction_id, user_id, spice_grade_id, original_qty, remaining_qty, price, trade_date, created_at
@@ -267,18 +256,12 @@ func (r *MysqlRepository) GetOpenBuyLots(ctx context.Context, userID string, spi
 
 	var lots []*BuyLot
 	for rows.Next() {
-		lot := &BuyLot{}
-		var tradeDate, createdAt string
-		if err := rows.Scan(
-			&lot.ID, &lot.TransactionID, &lot.UserID, &lot.SpiceGradeID,
-			&lot.OriginalQty, &lot.RemainingQty, &lot.Price,
-			&tradeDate, &createdAt,
-		); err != nil {
+		l := &BuyLot{}
+		if err := rows.Scan(&l.ID, &l.TransactionID, &l.UserID, &l.SpiceGradeID,
+			&l.OriginalQty, &l.RemainingQty, &l.Price, &l.TradeDate, &l.CreatedAt); err != nil {
 			return nil, err
 		}
-		lot.TradeDate, _ = time.Parse("2006-01-02", tradeDate)
-		lot.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
-		lots = append(lots, lot)
+		lots = append(lots, l)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
