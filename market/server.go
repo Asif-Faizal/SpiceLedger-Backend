@@ -227,13 +227,17 @@ func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.Lis
 
 func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
 	userID := req.UserId
+	var txns []*Transaction
+	var err error
+
 	if userID == "" {
-		if id, ok := ctx.Value(util.AccountIDKey).(string); ok {
-			userID = id
-		}
+		// Admin view: list all transactions across all users
+		txns, err = server.marketService.ListAllTransactions(ctx, uint(req.Skip), uint(req.Take))
+	} else {
+		// User view: list only their own transactions
+		txns, err = server.marketService.ListTransactions(ctx, userID, uint(req.Skip), uint(req.Take))
 	}
 
-	txns, err := server.marketService.ListTransactions(ctx, userID, uint(req.Skip), uint(req.Take))
 	if err != nil {
 		return nil, err
 	}

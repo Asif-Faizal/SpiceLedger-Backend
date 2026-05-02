@@ -44,6 +44,7 @@ type Repository interface {
 		GradeName   string
 		Volume      float64
 	}, error)
+	ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error)
 }
 
 type MysqlRepository struct {
@@ -68,6 +69,38 @@ func NewMysqlRepository(url string, logger util.Logger) (Repository, error) {
 
 func (r *MysqlRepository) Close() {
 	r.db.Close()
+}
+
+func (r *MysqlRepository) ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error) {
+	start := time.Now()
+	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
+	          FROM transactions
+	          ORDER BY trade_date DESC, created_at DESC, id DESC
+	          LIMIT ? OFFSET ?`
+
+	rows, err := r.db.QueryContext(ctx, query, take, skip)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("ListAllTransactions")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var txns []*Transaction
+	for rows.Next() {
+		t := &Transaction{}
+		if err := rows.Scan(&t.ID, &t.UserID, &t.SpiceGradeID, &t.Type,
+			&t.Quantity, &t.Price, &t.TradeDate, &t.CreatedAt); err != nil {
+			return nil, err
+		}
+		txns = append(txns, t)
+	}
+	return txns, nil
 }
 
 func (r *MysqlRepository) GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {

@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
@@ -147,16 +148,16 @@ func (r *queryResolver) AdminDashboard(ctx context.Context) (*AdminDashboard, er
 		return nil, err
 	}
 
-	// 3. Get recent transactions (last 10)
-	txnsResp, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
+	// 3. Get recent transactions (last 10 across all users for admin)
+	txns, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
 		Take: 10,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	recentTransactions := make([]*Transaction, len(txnsResp.Transactions))
-	for i, t := range txnsResp.Transactions {
+	recentTransactions := make([]*Transaction, len(txns.Transactions))
+	for i, t := range txns.Transactions {
 		recentTransactions[i] = &Transaction{
 			ID:           t.Id,
 			UserID:       t.UserId,
@@ -172,9 +173,8 @@ func (r *queryResolver) AdminDashboard(ctx context.Context) (*AdminDashboard, er
 	topProducts := make([]*TopProduct, len(marketResp.TopProducts))
 	for i, p := range marketResp.TopProducts {
 		topProducts[i] = &TopProduct{
-			ProductName: p.ProductName,
-			GradeName:   p.GradeName,
-			Volume:      p.Volume,
+			Name:   fmt.Sprintf("%s - %s", p.ProductName, p.GradeName),
+			Volume: p.Volume,
 		}
 	}
 

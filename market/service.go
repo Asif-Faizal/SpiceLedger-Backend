@@ -17,6 +17,7 @@ type Service interface {
 	GetPositions(ctx context.Context, userID string) ([]*PositionView, error)
 	ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
 	ListTransactions(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
+	ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error)
 	GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {
 		ProductName string
 		GradeName   string
@@ -34,6 +35,13 @@ func NewMarketService(repository Repository, logger util.Logger) Service {
 		repository: repository,
 		logger:     logger,
 	}
+}
+
+func (s *MarketService) ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error) {
+	if take == 0 || take > 100 {
+		take = 100
+	}
+	return s.repository.ListAllTransactions(ctx, skip, take)
 }
 
 func (s *MarketService) GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {

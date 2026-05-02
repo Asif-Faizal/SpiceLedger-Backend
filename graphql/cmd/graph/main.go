@@ -24,12 +24,12 @@ func main() {
 	// Use CONTROL_GRPC_PORT for AccountGrpcURL if not explicitly provided
 	accountGrpcURL := os.Getenv("ACCOUNT_GRPC_URL")
 	if accountGrpcURL == "" {
-		accountGrpcURL = fmt.Sprintf("localhost:%d", config.ControlGrpcPort)
+		accountGrpcURL = fmt.Sprintf("127.0.0.1:%d", config.ControlGrpcPort)
 	}
 
 	marketGrpcURL := os.Getenv("MARKET_GRPC_URL")
 	if marketGrpcURL == "" {
-		marketGrpcURL = fmt.Sprintf("localhost:%d", config.MarketGrpcPort)
+		marketGrpcURL = fmt.Sprintf("127.0.0.1:%d", config.MarketGrpcPort)
 	}
 
 	appServer, err := graphql.NewServer(accountGrpcURL, marketGrpcURL, logger)

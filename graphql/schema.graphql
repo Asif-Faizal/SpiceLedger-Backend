@@ -67,8 +67,7 @@ type AdminDashboard {
 }
 
 type TopProduct {
-  productName: String!
-  gradeName: String!
+  name: String!
   volume: Float!
 }
 
