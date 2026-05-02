@@ -133,6 +133,61 @@ func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID 
 	return transactions, nil
 }
 
+// AdminDashboard is the resolver for the adminDashboard field.
+func (r *queryResolver) AdminDashboard(ctx context.Context) (*AdminDashboard, error) {
+	// 1. Get system metrics (users, products)
+	systemResp, err := r.server.controlClient.GetSystemMetrics(ctx, &pb.GetSystemMetricsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Get market metrics (transactions, volume, top products)
+	marketResp, err := r.server.marketClient.GetMarketMetrics(ctx, &marketpb.GetMarketMetricsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. Get recent transactions (last 10)
+	txnsResp, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
+		Take: 10,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	recentTransactions := make([]*Transaction, len(txnsResp.Transactions))
+	for i, t := range txnsResp.Transactions {
+		recentTransactions[i] = &Transaction{
+			ID:           t.Id,
+			UserID:       t.UserId,
+			SpiceGradeID: t.SpiceGradeId,
+			Type:         t.Type,
+			Quantity:     t.Quantity,
+			Price:        t.Price,
+			TradeDate:    t.TradeDate,
+			CreatedAt:    t.CreatedAt,
+		}
+	}
+
+	topProducts := make([]*TopProduct, len(marketResp.TopProducts))
+	for i, p := range marketResp.TopProducts {
+		topProducts[i] = &TopProduct{
+			ProductName: p.ProductName,
+			GradeName:   p.GradeName,
+			Volume:      p.Volume,
+		}
+	}
+
+	return &AdminDashboard{
+		TotalUsers:         int(systemResp.TotalUsers),
+		TotalProducts:      int(systemResp.TotalProducts),
+		TotalTransactions:  int(marketResp.TotalTransactions),
+		TotalVolume:        marketResp.TotalVolume,
+		RecentTransactions: recentTransactions,
+		TopProducts:        topProducts,
+	}, nil
+}
+
 // ListTransactions is the resolver for the listTransactions field.
 func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error) {
 	var skip32, take32 uint32

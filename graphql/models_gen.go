@@ -2,6 +2,15 @@
 
 package graphql
 
+type AdminDashboard struct {
+	TotalUsers         int            `json:"totalUsers"`
+	TotalProducts      int            `json:"totalProducts"`
+	TotalTransactions  int            `json:"totalTransactions"`
+	TotalVolume        float64        `json:"totalVolume"`
+	RecentTransactions []*Transaction `json:"recentTransactions"`
+	TopProducts        []*TopProduct  `json:"topProducts"`
+}
+
 type CreateDailyPriceInput struct {
 	ID        string  `json:"id"`
 	ProductID string  `json:"productId"`
@@ -40,4 +49,9 @@ type Mutation struct {
 }
 
 type Query struct {
+}
+
+type TopProduct struct {
+	Name   string  `json:"name"`
+	Volume float64 `json:"volume"`
 }

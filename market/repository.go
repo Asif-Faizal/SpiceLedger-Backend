@@ -39,6 +39,11 @@ type Repository interface {
 	// BeginTx starts a DB transaction and returns a context carrying it.
 	// The service layer calls this to wrap multi-step FIFO operations atomically.
 	BeginTx(ctx context.Context) (context.Context, *sql.Tx, error)
+	GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {
+		ProductName string
+		GradeName   string
+		Volume      float64
+	}, error)
 }
 
 type MysqlRepository struct {
@@ -63,6 +68,56 @@ func NewMysqlRepository(url string, logger util.Logger) (Repository, error) {
 
 func (r *MysqlRepository) Close() {
 	r.db.Close()
+}
+
+func (r *MysqlRepository) GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {
+	ProductName string
+	GradeName   string
+	Volume      float64
+}, error) {
+	var totalTx uint32
+	var totalVol float64
+
+	// Total transactions and volume
+	err := r.db.QueryRowContext(ctx, "SELECT COUNT(*), COALESCE(SUM(quantity), 0) FROM transactions").Scan(&totalTx, &totalVol)
+	if err != nil {
+		return 0, 0, nil, err
+	}
+
+	// Top products by volume with both Product Name and Grade Name
+	query := `SELECT p.name as product_name, g.name as grade_name, SUM(t.quantity) as vol
+	          FROM transactions t
+	          JOIN grade g ON t.spice_grade_id = g.id
+	          JOIN products p ON g.product_id = p.id
+	          GROUP BY p.name, g.name
+	          ORDER BY vol DESC
+	          LIMIT 5`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return totalTx, totalVol, nil, err
+	}
+	defer rows.Close()
+
+	var tops []struct {
+		ProductName string
+		GradeName   string
+		Volume      float64
+	}
+	for rows.Next() {
+		var pName, gName string
+		var vol float64
+		if err := rows.Scan(&pName, &gName, &vol); err != nil {
+			return totalTx, totalVol, nil, err
+		}
+		tops = append(tops, struct {
+			ProductName string
+			GradeName   string
+			Volume      float64
+		}{pName, gName, vol})
+	}
+
+	return totalTx, totalVol, tops, nil
 }
 
 // execer is satisfied by both *sql.DB and *sql.Tx.

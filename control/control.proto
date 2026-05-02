@@ -189,6 +189,13 @@ message ListProductsResponse {
     repeated Product products = 1;
 }
 
+message GetSystemMetricsRequest {}
+
+message GetSystemMetricsResponse {
+  uint32 total_users = 1;
+  uint32 total_products = 2;
+}
+
 // Grades
 message CreateOrUpdateGradeRequest {
     string id = 1;
@@ -296,4 +303,5 @@ service ControlService {
   rpc GetTodaysPrice(GetTodaysPriceRequest) returns (GetTodaysPriceResponse);
   rpc GetTodaysByProductId(GetTodaysByProductIdRequest) returns (GetTodaysByProductIdResponse);
   rpc GetProductsWithGradesAndPrices(GetProductsWithGradesAndPricesRequest) returns (GetProductsWithGradesAndPricesResponse);
+  rpc GetSystemMetrics(GetSystemMetricsRequest) returns (GetSystemMetricsResponse);
 }

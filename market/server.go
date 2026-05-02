@@ -46,6 +46,28 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	return grpcServer.Serve(lis)
 }
 
+func (server *GrpcServer) GetMarketMetrics(ctx context.Context, req *pb.GetMarketMetricsRequest) (*pb.GetMarketMetricsResponse, error) {
+	totalTx, totalVol, tops, err := server.marketService.GetMarketMetrics(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var pbTops []*pb.GetMarketMetricsResponse_TopProduct
+	for _, top := range tops {
+		pbTops = append(pbTops, &pb.GetMarketMetricsResponse_TopProduct{
+			ProductName: top.ProductName,
+			GradeName:   top.GradeName,
+			Volume:      top.Volume,
+		})
+	}
+
+	return &pb.GetMarketMetricsResponse{
+		TotalTransactions: totalTx,
+		TotalVolume:       totalVol,
+		TopProducts:       pbTops,
+	}, nil
+}
+
 func (server *GrpcServer) Buy(ctx context.Context, req *pb.BuyRequest) (*pb.BuyResponse, error) {
 	tradeDate, err := time.Parse("2006-01-02", req.TradeDate)
 	if err != nil {

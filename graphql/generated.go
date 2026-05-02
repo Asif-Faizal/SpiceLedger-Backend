@@ -48,6 +48,15 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AdminDashboard struct {
+		RecentTransactions func(childComplexity int) int
+		TopProducts        func(childComplexity int) int
+		TotalProducts      func(childComplexity int) int
+		TotalTransactions  func(childComplexity int) int
+		TotalUsers         func(childComplexity int) int
+		TotalVolume        func(childComplexity int) int
+	}
+
 	DailyPrice struct {
 		Date      func(childComplexity int) int
 		GradeID   func(childComplexity int) int
@@ -96,11 +105,17 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		AdminDashboard        func(childComplexity int) int
 		GetGradePosition      func(childComplexity int, spiceGradeID string) int
 		GetPositions          func(childComplexity int) int
 		ListGradeTransactions func(childComplexity int, spiceGradeID string, skip *int, take *int) int
 		ListTransactions      func(childComplexity int, skip *int, take *int) int
 		Products              func(childComplexity int, date *string, search *string) int
+	}
+
+	TopProduct struct {
+		Name   func(childComplexity int) int
+		Volume func(childComplexity int) int
 	}
 
 	Transaction struct {
@@ -128,6 +143,7 @@ type QueryResolver interface {
 	GetPositions(ctx context.Context) ([]*PositionView, error)
 	ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int) ([]*Transaction, error)
 	ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error)
+	AdminDashboard(ctx context.Context) (*AdminDashboard, error)
 }
 type __InputValueResolver interface {
 	IsDeprecated(ctx context.Context, obj *introspection.InputValue) (bool, error)
@@ -155,6 +171,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AdminDashboard.recentTransactions":
+		if e.complexity.AdminDashboard.RecentTransactions == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.RecentTransactions(childComplexity), true
+
+	case "AdminDashboard.topProducts":
+		if e.complexity.AdminDashboard.TopProducts == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.TopProducts(childComplexity), true
+
+	case "AdminDashboard.totalProducts":
+		if e.complexity.AdminDashboard.TotalProducts == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.TotalProducts(childComplexity), true
+
+	case "AdminDashboard.totalTransactions":
+		if e.complexity.AdminDashboard.TotalTransactions == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.TotalTransactions(childComplexity), true
+
+	case "AdminDashboard.totalUsers":
+		if e.complexity.AdminDashboard.TotalUsers == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.TotalUsers(childComplexity), true
+
+	case "AdminDashboard.totalVolume":
+		if e.complexity.AdminDashboard.TotalVolume == nil {
+			break
+		}
+
+		return e.complexity.AdminDashboard.TotalVolume(childComplexity), true
 
 	case "DailyPrice.date":
 		if e.complexity.DailyPrice.Date == nil {
@@ -405,6 +463,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Status(childComplexity), true
 
+	case "Query.adminDashboard":
+		if e.complexity.Query.AdminDashboard == nil {
+			break
+		}
+
+		return e.complexity.Query.AdminDashboard(childComplexity), true
+
 	case "Query.getGradePosition":
 		if e.complexity.Query.GetGradePosition == nil {
 			break
@@ -459,6 +524,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Products(childComplexity, args["date"].(*string), args["search"].(*string)), true
+
+	case "TopProduct.name":
+		if e.complexity.TopProduct.Name == nil {
+			break
+		}
+
+		return e.complexity.TopProduct.Name(childComplexity), true
+
+	case "TopProduct.volume":
+		if e.complexity.TopProduct.Volume == nil {
+			break
+		}
+
+		return e.complexity.TopProduct.Volume(childComplexity), true
 
 	case "Transaction.createdAt":
 		if e.complexity.Transaction.CreatedAt == nil {
@@ -950,6 +1029,294 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AdminDashboard_totalUsers(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_totalUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalUsers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_totalUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminDashboard_totalProducts(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_totalProducts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_totalProducts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminDashboard_totalTransactions(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_totalTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalTransactions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_totalTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminDashboard_totalVolume(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_totalVolume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalVolume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_totalVolume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminDashboard_recentTransactions(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_recentTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecentTransactions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Transaction)
+	fc.Result = res
+	return ec.marshalNTransaction2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_recentTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Transaction_userId(ctx, field)
+			case "spiceGradeId":
+				return ec.fieldContext_Transaction_spiceGradeId(ctx, field)
+			case "type":
+				return ec.fieldContext_Transaction_type(ctx, field)
+			case "quantity":
+				return ec.fieldContext_Transaction_quantity(ctx, field)
+			case "price":
+				return ec.fieldContext_Transaction_price(ctx, field)
+			case "tradeDate":
+				return ec.fieldContext_Transaction_tradeDate(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Transaction_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminDashboard_topProducts(ctx context.Context, field graphql.CollectedField, obj *AdminDashboard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminDashboard_topProducts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TopProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*TopProduct)
+	fc.Result = res
+	return ec.marshalNTopProduct2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTopProductᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminDashboard_topProducts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminDashboard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_TopProduct_name(ctx, field)
+			case "volume":
+				return ec.fieldContext_TopProduct_volume(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TopProduct", field.Name)
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _DailyPrice_id(ctx context.Context, field graphql.CollectedField, obj *DailyPrice) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_DailyPrice_id(ctx, field)
@@ -2860,6 +3227,64 @@ func (ec *executionContext) fieldContext_Query_listTransactions(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_adminDashboard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_adminDashboard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AdminDashboard(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*AdminDashboard)
+	fc.Result = res
+	return ec.marshalNAdminDashboard2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐAdminDashboard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_adminDashboard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "totalUsers":
+				return ec.fieldContext_AdminDashboard_totalUsers(ctx, field)
+			case "totalProducts":
+				return ec.fieldContext_AdminDashboard_totalProducts(ctx, field)
+			case "totalTransactions":
+				return ec.fieldContext_AdminDashboard_totalTransactions(ctx, field)
+			case "totalVolume":
+				return ec.fieldContext_AdminDashboard_totalVolume(ctx, field)
+			case "recentTransactions":
+				return ec.fieldContext_AdminDashboard_recentTransactions(ctx, field)
+			case "topProducts":
+				return ec.fieldContext_AdminDashboard_topProducts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AdminDashboard", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query___type(ctx, field)
 	if err != nil {
@@ -2986,6 +3411,94 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TopProduct_name(ctx context.Context, field graphql.CollectedField, obj *TopProduct) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TopProduct_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TopProduct_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TopProduct",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TopProduct_volume(ctx context.Context, field graphql.CollectedField, obj *TopProduct) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TopProduct_volume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Volume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TopProduct_volume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TopProduct",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5474,6 +5987,70 @@ func (ec *executionContext) unmarshalInputCreateProductInput(ctx context.Context
 
 // region    **************************** object.gotpl ****************************
 
+var adminDashboardImplementors = []string{"AdminDashboard"}
+
+func (ec *executionContext) _AdminDashboard(ctx context.Context, sel ast.SelectionSet, obj *AdminDashboard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, adminDashboardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AdminDashboard")
+		case "totalUsers":
+			out.Values[i] = ec._AdminDashboard_totalUsers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalProducts":
+			out.Values[i] = ec._AdminDashboard_totalProducts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalTransactions":
+			out.Values[i] = ec._AdminDashboard_totalTransactions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalVolume":
+			out.Values[i] = ec._AdminDashboard_totalVolume(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "recentTransactions":
+			out.Values[i] = ec._AdminDashboard_recentTransactions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "topProducts":
+			out.Values[i] = ec._AdminDashboard_topProducts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var dailyPriceImplementors = []string{"DailyPrice"}
 
 func (ec *executionContext) _DailyPrice(ctx context.Context, sel ast.SelectionSet, obj *DailyPrice) graphql.Marshaler {
@@ -5951,6 +6528,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "adminDashboard":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_adminDashboard(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -5959,6 +6558,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var topProductImplementors = []string{"TopProduct"}
+
+func (ec *executionContext) _TopProduct(ctx context.Context, sel ast.SelectionSet, obj *TopProduct) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topProductImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TopProduct")
+		case "name":
+			out.Values[i] = ec._TopProduct_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "volume":
+			out.Values[i] = ec._TopProduct_volume(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6484,6 +7127,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAdminDashboard2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐAdminDashboard(ctx context.Context, sel ast.SelectionSet, v AdminDashboard) graphql.Marshaler {
+	return ec._AdminDashboard(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAdminDashboard2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐAdminDashboard(ctx context.Context, sel ast.SelectionSet, v *AdminDashboard) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AdminDashboard(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6608,6 +7265,21 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6745,6 +7417,60 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNTopProduct2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTopProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*TopProduct) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopProduct2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTopProduct(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTopProduct2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTopProduct(ctx context.Context, sel ast.SelectionSet, v *TopProduct) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TopProduct(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTransaction2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐTransaction(ctx context.Context, sel ast.SelectionSet, v Transaction) graphql.Marshaler {

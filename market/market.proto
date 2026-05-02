@@ -90,6 +90,19 @@ message ListTransactionsResponse {
   repeated Transaction transactions = 1;
 }
 
+message GetMarketMetricsRequest {}
+
+message GetMarketMetricsResponse {
+  uint32 total_transactions = 1;
+  double total_volume = 2;
+  message TopProduct {
+    string product_name = 1;
+    string grade_name = 2;
+    double volume = 3;
+  }
+  repeated TopProduct top_products = 3;
+}
+
 service MarketService {
   rpc Buy(BuyRequest) returns (BuyResponse);
   rpc Sell(SellRequest) returns (SellResponse);
@@ -97,4 +110,5 @@ service MarketService {
   rpc GetPositions(GetPositionsRequest) returns (GetPositionsResponse);
   rpc ListGradeTransactions(ListGradeTransactionsRequest) returns (ListGradeTransactionsResponse);
   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+  rpc GetMarketMetrics(GetMarketMetricsRequest) returns (GetMarketMetricsResponse);
 }

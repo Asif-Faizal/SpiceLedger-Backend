@@ -34,6 +34,7 @@ type Service interface {
 	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
 	GetTodaysByProductId(ctx context.Context, productId string, date time.Time) ([]*DailyPrice, error)
 	GetProductsWithGradesAndPrices(ctx context.Context, date time.Time, search string) ([]*ProductWithGrades, error)
+	GetSystemMetrics(ctx context.Context) (uint32, uint32, error)
 }
 
 type AccountService struct {
@@ -55,6 +56,10 @@ func NewAccountService(
 		accessTokenExpiry:  accessTokenExpiry,
 		refreshTokenExpiry: refreshTokenExpiry,
 	}
+}
+
+func (service *AccountService) GetSystemMetrics(ctx context.Context) (uint32, uint32, error) {
+	return service.repository.GetCounts(ctx)
 }
 
 func (service *AccountService) CheckEmailExists(ctx context.Context, email string) (bool, error) {

@@ -42,6 +42,7 @@ type Repository interface {
 	GetTodaysByProductId(ctx context.Context, productId string, date time.Time) ([]*DailyPrice, error)
 	ListDailyPricesByGradeId(ctx context.Context, gradeId string, date time.Time, duration int) ([]*DailyPrice, error)
 	GetTodaysByGradeId(ctx context.Context, gradeId string, date time.Time) ([]*DailyPrice, error)
+	GetCounts(ctx context.Context) (uint32, uint32, error)
 }
 
 type MysqlRepository struct {
@@ -96,6 +97,12 @@ func NewMysqlRepository(url string, logger util.Logger) (Repository, error) {
 
 func (repository *MysqlRepository) Close() {
 	repository.db.Close()
+}
+
+func (repository *MysqlRepository) GetCounts(ctx context.Context) (uint32, uint32, error) {
+	var userCount, productCount uint32
+	err := repository.db.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM accounts), (SELECT COUNT(*) FROM products)").Scan(&userCount, &productCount)
+	return userCount, productCount, err
 }
 
 func (repository *MysqlRepository) CheckEmailExists(ctx context.Context, email string) (bool, error) {

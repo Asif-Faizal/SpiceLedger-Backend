@@ -95,6 +95,20 @@ func (server *GrpcServer) checkAuthenticated(ctx context.Context) error {
 	return nil
 }
 
+func (server *GrpcServer) GetSystemMetrics(ctx context.Context, request *pb.GetSystemMetricsRequest) (*pb.GetSystemMetricsResponse, error) {
+	if err := server.checkAdmin(ctx); err != nil {
+		return nil, err
+	}
+	userCount, productCount, err := server.accountService.GetSystemMetrics(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetSystemMetricsResponse{
+		TotalUsers:    userCount,
+		TotalProducts: productCount,
+	}, nil
+}
+
 func (server *GrpcServer) CheckEmailExists(ctx context.Context, request *pb.CheckEmailExistsRequest) (*pb.CheckEmailExistsResponse, error) {
 	if err := server.checkAuthenticated(ctx); err != nil {
 		return nil, err

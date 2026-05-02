@@ -54,6 +54,22 @@ type Query {
   getPositions: [PositionView!]!
   listGradeTransactions(spiceGradeId: ID!, skip: Int, take: Int): [Transaction!]!
   listTransactions(skip: Int, take: Int): [Transaction!]!
+  adminDashboard: AdminDashboard!
+}
+
+type AdminDashboard {
+  totalUsers: Int!
+  totalProducts: Int!
+  totalTransactions: Int!
+  totalVolume: Float!
+  recentTransactions: [Transaction!]!
+  topProducts: [TopProduct!]!
+}
+
+type TopProduct {
+  productName: String!
+  gradeName: String!
+  volume: Float!
 }
 
 type Mutation {

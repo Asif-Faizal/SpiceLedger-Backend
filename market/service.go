@@ -17,6 +17,11 @@ type Service interface {
 	GetPositions(ctx context.Context, userID string) ([]*PositionView, error)
 	ListGradeTransactions(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
 	ListTransactions(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
+	GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {
+		ProductName string
+		GradeName   string
+		Volume      float64
+	}, error)
 }
 
 type MarketService struct {
@@ -29,6 +34,14 @@ func NewMarketService(repository Repository, logger util.Logger) Service {
 		repository: repository,
 		logger:     logger,
 	}
+}
+
+func (s *MarketService) GetMarketMetrics(ctx context.Context) (uint32, float64, []struct {
+	ProductName string
+	GradeName   string
+	Volume      float64
+}, error) {
+	return s.repository.GetMarketMetrics(ctx)
 }
 
 // Buy records a BUY transaction and creates a new buy_lot.
