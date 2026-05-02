@@ -47,8 +47,8 @@ func main() {
 	authProxy := httputil.NewSingleHostReverseProxy(authTarget)
 	gqlProxy := httputil.NewSingleHostReverseProxy(gqlTarget)
 
-	http.HandleFunc("/auth/", func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/auth")
+	http.HandleFunc("/rest/", func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/rest")
 		authProxy.ServeHTTP(w, r)
 	})
 
