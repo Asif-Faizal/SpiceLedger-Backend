@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env.docker.example
+**/*_test.go
+.vscode
+.DS_Store
+*.md
+!README.md

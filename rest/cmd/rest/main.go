@@ -17,13 +17,7 @@ func main() {
 	config := util.LoadConfig()
 	logger := util.NewLogger(config.LogLevel)
 
-	// Use CONTROL_GRPC_PORT for AccountGrpcURL if not explicitly provided
-	accountGrpcURL := os.Getenv("ACCOUNT_GRPC_URL")
-	if accountGrpcURL == "" {
-		accountGrpcURL = fmt.Sprintf("localhost:%d", config.ControlGrpcPort)
-	}
-
-	server, err := rest.NewServer(accountGrpcURL, config.BasicAuthUser, config.BasicAuthPass, logger)
+	server, err := rest.NewServer(config.ResolveAccountGrpcURL(), config.BasicAuthUser, config.BasicAuthPass, logger)
 	if err != nil {
 		logger.Service().Fatal().Err(err).Msg("failed to initialize REST gateway")
 	}

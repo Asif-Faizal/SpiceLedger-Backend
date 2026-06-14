@@ -1,3 +1,6 @@
+-- DEPRECATED: Use versioned migrations in migrations/ instead.
+-- Apply with: make migrate-up  OR  make db-init
+
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS sessions;

@@ -1,7 +1,5 @@
 FROM mysql:8.0
 
-# Copy the initialization script
-COPY control/up.sql /docker-entrypoint-initdb.d/
-
-# Ensure the script is readable
-RUN chmod 644 /docker-entrypoint-initdb.d/up.sql
+# Schema is managed by versioned migrations (see migrations/ and cmd/migrate).
+# MYSQL_DATABASE from docker-compose creates an empty database on first boot.
+# Data persists in the mysql_data volume across compose down/restart.

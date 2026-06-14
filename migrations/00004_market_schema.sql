@@ -1,0 +1,67 @@
+-- +goose Up
+CREATE TABLE IF NOT EXISTS transactions (
+  id             CHAR(27)     PRIMARY KEY,
+  user_id        CHAR(27)     NOT NULL,
+  spice_grade_id CHAR(27)     NOT NULL,
+  type           ENUM('BUY','SELL') NOT NULL,
+  quantity       DECIMAL(15,4) NOT NULL CHECK (quantity > 0),
+  price          DECIMAL(15,4) NOT NULL CHECK (price > 0),
+  trade_date     DATE          NOT NULL,
+  created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  INDEX idx_txn_user_grade (user_id, spice_grade_id),
+  INDEX idx_txn_trade_date (trade_date)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS buy_lots (
+  id             CHAR(27)      PRIMARY KEY,
+  transaction_id CHAR(27)      NOT NULL,
+  user_id        CHAR(27)      NOT NULL,
+  spice_grade_id CHAR(27)      NOT NULL,
+  original_qty   DECIMAL(15,4) NOT NULL CHECK (original_qty > 0),
+  remaining_qty  DECIMAL(15,4) NOT NULL CHECK (remaining_qty >= 0),
+  price          DECIMAL(15,4) NOT NULL CHECK (price > 0),
+  trade_date     DATE          NOT NULL,
+  created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  INDEX idx_lots_fifo (user_id, spice_grade_id, remaining_qty, trade_date, id),
+
+  CONSTRAINT fk_lot_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS sell_allocations (
+  id                  CHAR(27)      PRIMARY KEY,
+  sell_transaction_id CHAR(27)      NOT NULL,
+  buy_lot_id          CHAR(27)      NOT NULL,
+  quantity            DECIMAL(15,4) NOT NULL CHECK (quantity > 0),
+  buy_price           DECIMAL(15,4) NOT NULL CHECK (buy_price > 0),
+  sell_price          DECIMAL(15,4) NOT NULL CHECK (sell_price > 0),
+  realized_pnl        DECIMAL(15,4) NOT NULL,
+  created_at          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  INDEX idx_alloc_sell_txn (sell_transaction_id),
+  INDEX idx_alloc_buy_lot  (buy_lot_id),
+
+  CONSTRAINT fk_alloc_sell_txn FOREIGN KEY (sell_transaction_id) REFERENCES transactions(id),
+  CONSTRAINT fk_alloc_buy_lot  FOREIGN KEY (buy_lot_id)          REFERENCES buy_lots(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS positions (
+  user_id        CHAR(27)      NOT NULL,
+  spice_grade_id CHAR(27)      NOT NULL,
+  total_qty      DECIMAL(15,4) NOT NULL DEFAULT 0 CHECK (total_qty >= 0),
+  total_cost     DECIMAL(15,4) NOT NULL DEFAULT 0 CHECK (total_cost >= 0),
+  realized_pnl   DECIMAL(15,4) NOT NULL DEFAULT 0,
+  updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (user_id, spice_grade_id)
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO schema_migrations (version, name, description)
+VALUES (4, 'market_schema', 'Market FIFO tables: transactions, buy_lots, sell_allocations, positions');
+
+-- +goose Down
+DROP TABLE IF EXISTS sell_allocations;
+DROP TABLE IF EXISTS buy_lots;
+DROP TABLE IF EXISTS positions;
+DROP TABLE IF EXISTS transactions;

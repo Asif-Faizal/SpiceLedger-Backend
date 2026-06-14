@@ -1,29 +1,28 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
-WORKDIR /app
+RUN apk add --no-cache git
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
+WORKDIR /build
 
-# Download all dependencies
-RUN go mod download
-
-# Copy source code
 COPY . .
 
-# Build the application
+RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o graphql-service ./graphql/cmd/graph
 
-FROM alpine:latest
+FROM alpine:3.19
+
+RUN apk add --no-cache ca-certificates curl
 
 WORKDIR /app
 
-# Copy the binary from builder
-COPY --from=builder /app/graphql-service .
+COPY --from=builder /build/graphql-service .
 
-# Create non-root user
-RUN adduser -D user
-USER user
+RUN addgroup -g 1000 app && adduser -D -u 1000 -G app app
+USER app
 
-# Command to run
+EXPOSE 8081
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=10s \
+    CMD curl -f http://localhost:8081/health || exit 1
+
 CMD ["./graphql-service"]

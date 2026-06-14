@@ -4,23 +4,25 @@ RUN apk add --no-cache git
 
 WORKDIR /build
 
-# Copy entire project for internal dependencies
 COPY . .
 
 RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -o proxy-server ./proxy/main.go
 
-# Build proxy server
-RUN CGO_ENABLED=0 GOOS=linux go build -o /build/proxy-server ./proxy/main.go
-
-# Runtime stage
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates wget
 
 WORKDIR /app
 
 COPY --from=builder /build/proxy-server .
 
-EXPOSE 80
+RUN addgroup -g 1000 app && adduser -D -u 1000 -G app app
+USER app
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=10s \
+    CMD wget -qO- http://localhost:8080/health || exit 1
 
 CMD ["./proxy-server"]

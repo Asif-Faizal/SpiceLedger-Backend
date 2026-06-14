@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control"
@@ -17,9 +16,7 @@ func main() {
 	logger := util.NewLogger(config.LogLevel)
 
 	// 3. Initialize Repository
-	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		config.DBUser, config.DBPass, config.DBHost, config.DBPort, config.DBName)
-	repo, err := control.NewMysqlRepository(dbURL, logger)
+	repo, err := control.NewMysqlRepository(config.DSN(), logger)
 	if err != nil {
 		log.Fatalf("could not create database repository: %v", err)
 	}

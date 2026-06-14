@@ -1,3 +1,6 @@
+-- DEPRECATED: Use versioned migrations in migrations/ instead.
+-- Apply with: make migrate-up  OR  make db-init
+
 -- Market FIFO Trading Engine Schema
 -- user_id and spice_grade_id mirror the CHAR(27) IDs from the control service
 -- (accounts.id → user_id, grade.id → spice_grade_id)
