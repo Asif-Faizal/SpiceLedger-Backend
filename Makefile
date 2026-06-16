@@ -22,8 +22,11 @@ env-docker: ## Create .env for Docker Compose from template
 	@cp .env.docker.example .env
 	@echo "Using .env (Docker service hostnames)"
 
-db-init: ## Apply pending migrations (local MySQL)
+db-init: ## Apply pending migrations (local Homebrew MySQL)
 	@./scripts/init-db.sh local
+
+db-init-docker: ## Apply pending migrations (Docker MySQL — db must be running)
+	@docker compose --profile infra run --rm migrate up
 
 db-reset: ## Wipe Docker DB volume and re-apply all migrations
 	@echo "WARNING: This deletes all Docker MySQL data"
@@ -33,17 +36,17 @@ db-reset: ## Wipe Docker DB volume and re-apply all migrations
 	@docker compose --profile infra run --rm migrate up
 	@echo "Database reset complete"
 
-migrate-up: ## Apply pending migrations (local)
-	@go run ./cmd/migrate/main.go up
+migrate-up: ## Apply pending migrations
+	@docker compose --profile infra run --rm migrate up
 
 migrate-status: ## Show applied migration status
-	@go run ./cmd/migrate/main.go status
+	@docker compose --profile infra run --rm migrate status
 
 migrate-version: ## Print current migration version
-	@go run ./cmd/migrate/main.go version
+	@docker compose --profile infra run --rm migrate version
 
-migrate-down: ## Roll back the last migration (local)
-	@go run ./cmd/migrate/main.go down
+migrate-down: ## Roll back the last migration
+	@docker compose --profile infra run --rm migrate down
 
 up-db: ## Start MySQL in Docker and run migrations
 	$(COMPOSE_INFRA) up db -d

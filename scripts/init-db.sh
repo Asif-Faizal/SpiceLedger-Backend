@@ -13,6 +13,7 @@ fi
 
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-3306}"
+DB_HOST_PORT="${DB_HOST_PORT:-3307}"
 DB_USER="${DB_USER:-root}"
 DB_PASSWORD="${DB_PASSWORD:-1234}"
 DB_NAME="${DB_NAME:-spice_ledger}"
@@ -23,6 +24,12 @@ for arg in "$@"; do
     local|docker) MODE="$arg" ;;
   esac
 done
+
+# When using Docker MySQL from the host, connect via mapped port
+if [[ "$MODE" == "local" && "$DB_HOST" == "db" ]]; then
+  DB_HOST="127.0.0.1"
+  DB_PORT="$DB_HOST_PORT"
+fi
 
 mysql_exec() {
   if [[ "$MODE" == "docker" ]]; then
@@ -47,6 +54,10 @@ done
 mysql_exec -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
 
 echo "Applying versioned migrations..."
-go run ./cmd/migrate/main.go up
+if [[ "$MODE" == "docker" || "$DB_HOST" == "127.0.0.1" && "$DB_PORT" == "$DB_HOST_PORT" ]]; then
+  docker compose --profile infra run --rm migrate up
+else
+  go run ./cmd/migrate/main.go up
+fi
 
 echo "Database '${DB_NAME}' is ready. View versions: make migrate-status"

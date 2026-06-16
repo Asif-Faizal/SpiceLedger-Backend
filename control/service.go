@@ -384,7 +384,10 @@ func (service *AccountService) CreateOrUpdateDailyPrice(ctx context.Context, dai
 }
 
 func (service *AccountService) ListDailyPricesByGradeId(ctx context.Context, gradeId string, today time.Time, duration int) ([]*DailyPrice, error) {
-	if duration > 100 || (today.Equal(time.Time{}) && duration == 0) {
+	if today.IsZero() {
+		today = time.Now()
+	}
+	if duration > 100 || duration == 0 {
 		duration = 100
 	}
 	dailyPrices, err := service.repository.ListDailyPricesByGradeId(ctx, gradeId, today, duration)

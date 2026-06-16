@@ -83,11 +83,13 @@ Key variables:
 Schema changes are versioned in `migrations/` and tracked in the `schema_migrations` table (version, name, description, applied_at). Goose uses `goose_migrations` internally to apply only pending updates.
 
 ```bash
-make migrate-up        # apply pending migrations (local)
+make migrate-up        # apply pending migrations (via Docker)
 make migrate-status    # list applied / pending
-make migrate-version   # current version number
-make db-init           # create DB + migrate (local MySQL)
+make migrate-version   # current version number (via Docker)
+make db-init           # create DB + migrate
 ```
+
+Migration commands run **inside Docker** (`docker compose run migrate`) so they work with `DB_HOST=db` in `.env`. Ensure the DB container is running first (`make up-db` or `make up-full`).
 
 **Adding a new migration:** create `migrations/00006_your_change.sql`:
 
