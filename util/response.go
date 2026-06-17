@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,7 +12,7 @@ import (
 type Response struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
+	Data    interface{} `json:"data"`
 }
 
 func WriteJSONResponse(w http.ResponseWriter, code int, success bool, message string, data interface{}) {
@@ -24,6 +25,56 @@ func WriteJSONResponse(w http.ResponseWriter, code int, success bool, message st
 	})
 }
 
+func HTTPStatusFromGRPCCode(code codes.Code) int {
+	switch code {
+	case codes.Unauthenticated:
+		return http.StatusUnauthorized
+	case codes.PermissionDenied:
+		return http.StatusForbidden
+	case codes.InvalidArgument:
+		return http.StatusBadRequest
+	case codes.NotFound:
+		return http.StatusNotFound
+	case codes.AlreadyExists:
+		return http.StatusConflict
+	case codes.DeadlineExceeded:
+		return http.StatusGatewayTimeout
+	case codes.Unimplemented:
+		return http.StatusNotImplemented
+	default:
+		return http.StatusInternalServerError
+	}
+}
+
+func HTTPStatusFromGRPCCodeName(codeName string) int {
+	switch codeName {
+	case codes.Unauthenticated.String():
+		return http.StatusUnauthorized
+	case codes.PermissionDenied.String():
+		return http.StatusForbidden
+	case codes.InvalidArgument.String():
+		return http.StatusBadRequest
+	case codes.NotFound.String():
+		return http.StatusNotFound
+	case codes.AlreadyExists.String():
+		return http.StatusConflict
+	case codes.DeadlineExceeded.String():
+		return http.StatusGatewayTimeout
+	case codes.Unimplemented.String():
+		return http.StatusNotImplemented
+	default:
+		return http.StatusInternalServerError
+	}
+}
+
+// CleanErrorMessage strips gRPC wrappers like "rpc error: code = X desc = Y".
+func CleanErrorMessage(msg string) string {
+	if idx := strings.Index(msg, "desc = "); idx >= 0 {
+		return strings.TrimSpace(msg[idx+len("desc = "):])
+	}
+	return msg
+}
+
 func WriteGRPCErrorResponse(w http.ResponseWriter, err error) {
 	st, ok := status.FromError(err)
 	if !ok {
@@ -31,23 +82,5 @@ func WriteGRPCErrorResponse(w http.ResponseWriter, err error) {
 		return
 	}
 
-	code := http.StatusInternalServerError
-	switch st.Code() {
-	case codes.Unauthenticated:
-		code = http.StatusUnauthorized
-	case codes.PermissionDenied:
-		code = http.StatusForbidden
-	case codes.InvalidArgument:
-		code = http.StatusBadRequest
-	case codes.NotFound:
-		code = http.StatusNotFound
-	case codes.AlreadyExists:
-		code = http.StatusConflict
-	case codes.DeadlineExceeded:
-		code = http.StatusGatewayTimeout
-	case codes.Unimplemented:
-		code = http.StatusNotImplemented
-	}
-
-	WriteJSONResponse(w, code, false, st.Message(), nil)
+	WriteJSONResponse(w, HTTPStatusFromGRPCCode(st.Code()), false, st.Message(), nil)
 }
