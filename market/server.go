@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	pb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
+	"github.com/Asif-Faizal/SpiceLedger-Backend/internal/platform"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
 )
 
@@ -41,9 +42,9 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	}
 	pb.RegisterMarketServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
+	platform.RegisterHealth(grpcServer, "market")
 
-	logger.Transport().Info().Int("port", config.MarketGrpcPort).Msg("gRPC server listening")
-	return grpcServer.Serve(lis)
+	return platform.RunGRPC(lis, grpcServer, logger, "market")
 }
 
 func (server *GrpcServer) GetMarketMetrics(ctx context.Context, req *pb.GetMarketMetricsRequest) (*pb.GetMarketMetricsResponse, error) {

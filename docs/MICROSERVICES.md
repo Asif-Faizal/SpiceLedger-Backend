@@ -1,19 +1,19 @@
 # Microservices Architecture
 
-SpiceLedger Backend is a Go microservices system with two gRPC domain services, two HTTP gateways, a reverse proxy, and a shared MySQL database.
+SpiceLedger Backend is a Go microservices system with two gRPC domain services, a unified HTTP gateway, and a shared MySQL database.
 
 ## Service overview
 
 ```
                          ┌─────────────────────────────────────────┐
-                         │           proxy (:8080)                 │
+                         │         gateway (:8080)                 │
                          │  /health  /rest/*  /graphql  /playground│
+                         │  (in-process REST + GraphQL handlers)   │
                          └───────────┬─────────────┬─────────────────┘
                                      │             │
-                    /rest/*          │             │  /graphql
                                      ▼             ▼
                          ┌───────────────┐  ┌──────────────────┐
-                         │  rest (:8082) │  │ graphql (:8081)  │
+                         │  rest package │  │ graphql package  │
                          │  HTTP → gRPC  │  │ gqlgen → gRPC    │
                          └───────┬───────┘  └────────┬─────────┘
                                  │                   │
@@ -39,13 +39,13 @@ SpiceLedger Backend is a Go microservices system with two gRPC domain services, 
 
 | Service | Type | Port (default) | Responsibility |
 |---------|------|----------------|----------------|
-| **proxy** | HTTP reverse proxy | 8080 | Single public entrypoint; routes `/rest` → REST, `/graphql` → GraphQL |
-| **rest** | HTTP gateway | 8082 | REST API for accounts, products, grades, daily prices |
-| **graphql** | HTTP + gqlgen | 8081 | GraphQL API; aggregates control + market |
+| **gateway** | HTTP edge | 8080 | Single public entrypoint; mounts REST + GraphQL |
 | **control** | gRPC | 50051 | Identity, sessions, catalog (products/grades), daily prices |
 | **market** | gRPC | 50052 | Buy/sell, FIFO inventory, positions, P&L, transaction history |
-| **db** | MySQL 8 | 3306 (3307 on host) | Persistent storage |
+| **db** | MySQL 8 | 3306 (3306 on host) | Persistent storage |
 | **migrate** | One-shot job | — | Applies goose migrations on startup |
+
+`rest/` and `graphql/` are Go packages used by gateway — not separate containers in Docker Compose.
 
 ---
 
@@ -108,18 +108,19 @@ JWT from the HTTP `Authorization` header is stored in context and re-attached to
 
 Market handlers read `user_id` from gRPC context (`AccountIDKey`) when the GraphQL resolver does not pass it explicitly.
 
-### 3. Proxy → gateways
+### 3. Gateway (unified HTTP edge)
 
-[`proxy/main.go`](../proxy/main.go) is a path-based reverse proxy:
+[`gateway/`](../gateway/) mounts REST and GraphQL handlers in one process ([`gateway/server.go`](../gateway/server.go)):
 
-| Path | Target |
-|------|--------|
-| `/rest/*` | `ACCOUNT_SERVICE_URL` (rest:8082), strips `/rest` prefix |
-| `/graphql` | `GRAPHQL_GATEWAY_URL` (graphql:8081) |
+| Path | Handler |
+|------|---------|
+| `/rest/*` | `rest.NewHandler` with `/rest` prefix stripped |
+| `/graphql` | gqlgen executable schema |
 | `/playground` | GraphQL playground UI |
-| `/health` | Local proxy health |
+| `/health` | Gateway liveness |
+| `/ready` | Readiness stub (extend with upstream checks) |
 
-No business logic — headers (including `Authorization`) pass through unchanged.
+No reverse-proxy hop — outbound gRPC connections are owned by the gateway process. See [ENGINEERING.md](./ENGINEERING.md) for ADRs.
 
 ---
 
@@ -131,10 +132,8 @@ From [`docker-compose.yaml`](../docker-compose.yaml):
 db (healthy)
   └─ migrate (completed)
        ├─ control (started)
-       │    └─ rest (healthy)
        └─ market (started, after control)
-            └─ graphql (healthy, needs control + market)
-                 └─ proxy (healthy, needs rest + graphql)
+            └─ gateway (needs control + market)
 ```
 
 Environment overrides inside Docker:
@@ -142,10 +141,9 @@ Environment overrides inside Docker:
 - `DB_HOST=db`
 - `ACCOUNT_GRPC_URL=control:50051`
 - `MARKET_GRPC_URL=market:50052`
-- `ACCOUNT_SERVICE_URL=http://rest:8082`
-- `GRAPHQL_GATEWAY_URL=http://graphql:8081`
+- `PROXY_PORT=8080`
 
-Host port mapping (defaults): proxy **8080**, graphql **8081**, rest **8082**, control **50051**, market **50052**, MySQL **3307**→3306 when `DB_HOST_PORT=3307`.
+Host port mapping (defaults): gateway **8080**, control **50051**, market **50052**, MySQL **3306**→3306 when `DB_HOST_PORT=3306`.
 
 ---
 
@@ -193,8 +191,8 @@ See [MIDDLEWARE_AND_UTIL.md](./MIDDLEWARE_AND_UTIL.md) for error mapping details
 
 | Mode | MySQL | Services | Entry URL |
 |------|-------|----------|-----------|
-| Full local | Homebrew `:3306` | `make run-*` | `http://localhost:8080` (with proxy) |
-| Full Docker | Container `:3307` host | `make up-full-build` | `http://localhost:8080` |
+| Full local | Homebrew `:3306` | `make run-gateway` (+ control/market) | `http://localhost:8080` |
+| Full Docker | Container `:3306` host | `make up-full-build` | `http://localhost:8080` |
 | Hybrid | Docker DB only | `make up-db` + `make run-*` | Same |
 
 Use `make up-full-build` after code changes — `make up-full` alone does not rebuild images.

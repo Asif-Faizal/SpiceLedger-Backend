@@ -1,6 +1,6 @@
 # GraphQL Example Queries and Mutations
 
-The GraphQL service is running at `http://localhost:8081/graphql`. 
+The GraphQL service is running at `http://localhost:8080/graphql`. 
 
 > [!IMPORTANT]
 > In the GraphQL Playground, you must provide headers in the **HTTP HEADERS** tab (bottom left) as a **JSON object**:

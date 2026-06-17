@@ -33,7 +33,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 	email := r.URL.Query().Get("email")
 	if email == "" {
-		http.Error(w, "email is required", http.StatusBadRequest)
+		util.WriteBadRequest(w, "email is required")
 		return
 	}
 
@@ -58,7 +58,7 @@ func (s *Server) handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -79,7 +79,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -106,7 +106,7 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleRefreshToken(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -132,7 +132,7 @@ func (s *Server) handleAccounts(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		s.handleListAccounts(w, r)
 	default:
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 	}
 }
 
@@ -182,13 +182,13 @@ func (s *Server) handleListAccounts(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
 	id := strings.TrimPrefix(r.URL.Path, "/accounts/")
 	if id == "" {
-		http.Error(w, "id is required", http.StatusBadRequest)
+		util.WriteBadRequest(w, "id is required")
 		return
 	}
 
@@ -208,7 +208,7 @@ func (s *Server) handleAccountByID(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleGetAccountInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -233,7 +233,7 @@ func (s *Server) handleMerchantDetails(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		s.handleCreateOrUpdateMerchantDetails(w, r)
 	default:
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 	}
 }
 
@@ -269,7 +269,7 @@ func (s *Server) handleMerchantInfo(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		s.handleCreateOrUpdateMerchantInfo(w, r)
 	default:
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 	}
 }
 
@@ -308,7 +308,7 @@ func (s *Server) handleGetMerchantDetails(w http.ResponseWriter, r *http.Request
 
 	id := strings.TrimPrefix(r.URL.Path, "/accounts/merchant-details/")
 	if id == "" {
-		http.Error(w, "id is required", http.StatusBadRequest)
+		util.WriteBadRequest(w, "id is required")
 		return
 	}
 
@@ -357,7 +357,7 @@ func (s *Server) handleGetMerchantInfo(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleCreateOrUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -384,7 +384,7 @@ func (s *Server) handleCreateOrUpdateProduct(w http.ResponseWriter, r *http.Requ
 
 func (s *Server) handleListProducts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -413,7 +413,7 @@ func (s *Server) handleListProducts(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleCreateOrUpdateGrade(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -440,7 +440,7 @@ func (s *Server) handleCreateOrUpdateGrade(w http.ResponseWriter, r *http.Reques
 
 func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -470,7 +470,7 @@ func (s *Server) handleListGradesByProductId(w http.ResponseWriter, r *http.Requ
 
 func (s *Server) handleCreateOrUpdateDailyPrice(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -498,7 +498,7 @@ func (s *Server) handleCreateOrUpdateDailyPrice(w http.ResponseWriter, r *http.R
 
 func (s *Server) handleListDailyPricesByGradeId(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -537,7 +537,7 @@ func (s *Server) handleListDailyPricesByGradeId(w http.ResponseWriter, r *http.R
 
 func (s *Server) handleGetTodaysByGradeId(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 
@@ -570,7 +570,7 @@ func (s *Server) handleGetTodaysByGradeId(w http.ResponseWriter, r *http.Request
 
 func (s *Server) handleGetTodaysByProductId(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		util.WriteMethodNotAllowed(w)
 		return
 	}
 

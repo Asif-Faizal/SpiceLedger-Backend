@@ -13,7 +13,7 @@ fi
 
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-3306}"
-DB_HOST_PORT="${DB_HOST_PORT:-3307}"
+DB_HOST_PORT="${DB_HOST_PORT:-3306}"
 DB_USER="${DB_USER:-root}"
 DB_PASSWORD="${DB_PASSWORD:-1234}"
 DB_NAME="${DB_NAME:-spice_ledger}"

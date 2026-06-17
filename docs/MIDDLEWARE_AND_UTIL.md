@@ -37,7 +37,7 @@ All services call `util.LoadConfig()` at startup. Key fields:
 | `ACCOUNT_GRPC_URL` | `localhost:50051` | Control service address |
 | `MARKET_GRPC_URL` | `localhost:50052` | Market service address |
 
-Helper methods: `DSN()`, `ResolveAccountGrpcURL()`, `ResolveMarketGrpcURL()`, `ResolveAccountServiceURL()`, `ResolveGraphqlGatewayURL()`.
+Helper methods: `DSN()`, `ResolveAccountGrpcURL()`, `ResolveMarketGrpcURL()`.
 
 ---
 
@@ -170,15 +170,15 @@ Converts gRPC errors to clean messages (no `rpc error:` prefix) and adds `grpc_c
 Client
   │  Authorization: Bearer <jwt>
   ▼
-Proxy (:8080) ── forwards headers unchanged
+Gateway (:8080)
   │
-  ├─ REST (:8082) ── withAuth() ── gRPC metadata ──► Control (:50051)
+  ├─ REST (/rest/*) ── withAuth() ── gRPC metadata ──► Control (:50051)
   │                                                    AuthInterceptor
   │                                                    SessionInterceptor
   │
-  └─ GraphQL (:8081) ── authMiddleware (context)
-                         gRPC client interceptor ──► Control / Market
-                                                    AuthInterceptor
+  └─ GraphQL (/graphql) ── authMiddleware (context)
+                           gRPC client interceptor ──► Control / Market
+                                                      AuthInterceptor
 ```
 
 Bearer tokens carry user identity end-to-end. Basic auth is used for bootstrap operations (login, public list endpoints) and internal service-to-service calls when no Bearer token is provided.

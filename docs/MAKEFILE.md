@@ -7,7 +7,7 @@ The [Makefile](../Makefile) is the main entry point for local development, Docke
 | Profile | Services | Use case |
 |---------|----------|----------|
 | `infra` | `db`, `migrate` | Database only |
-| `full` | `db`, `migrate`, `control`, `market`, `rest`, `graphql`, `proxy` | Complete stack |
+| `full` | `db`, `migrate`, `control`, `market`, `gateway` | Complete stack |
 
 Variables used internally:
 
@@ -68,7 +68,7 @@ See [MIGRATIONS.md](./MIGRATIONS.md) for how migrations work.
 | First time / fresh clone | `make setup-docker && make up-full-build` |
 | Code changed (Go, Dockerfiles) | `make up-full-build` or `docker compose --profile full build <service>` |
 | Only `.env` or migrations changed | `make up-full` or `make migrate-up` |
-| GraphQL/REST behavior not updating | Rebuild the specific service image — `make up-full` alone reuses old images |
+| GraphQL/REST behavior not updating | Rebuild gateway — `make up-full` alone reuses old images |
 
 ---
 
@@ -80,11 +80,9 @@ Run these in **separate terminals** (or use VS Code **Full Stack (local)**). Req
 |--------|---------|--------------|
 | `make run-control` | Control gRPC | 50051 |
 | `make run-market` | Market gRPC | 50052 |
-| `make run-rest` | REST gateway | 8082 |
-| `make run-graphql` | GraphQL gateway | 8081 |
-| `make run-proxy` | Reverse proxy | 8080 |
+| `make run-gateway` | Unified HTTP (REST + GraphQL) | 8080 |
 
-Startup order: `control` → `market` → `rest` + `graphql` → `proxy`.
+Startup order: `control` → `market` → `gateway`.
 
 ---
 
@@ -107,9 +105,7 @@ brew services start mysql
 make setup
 make run-control    # terminal 1
 make run-market     # terminal 2
-make run-rest       # terminal 3
-make run-graphql    # terminal 4
-make run-proxy      # terminal 5
+make run-gateway    # terminal 3
 ```
 
 ### Full Docker stack
@@ -124,7 +120,7 @@ make up-full-build
 
 ```bash
 make up-db
-# Set .env: DB_HOST=127.0.0.1, DB_HOST_PORT=3307 (if 3306 is taken by Homebrew MySQL)
+# Set .env: DB_HOST=127.0.0.1, DB_HOST_PORT=3306 (if 3306 is taken by Homebrew MySQL)
 make run-control
 # ... other run-* targets
 ```

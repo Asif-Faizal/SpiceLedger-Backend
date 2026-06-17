@@ -1,6 +1,6 @@
 # GraphQL API Reference
 
-GraphQL is served at **`POST /graphql`** (via proxy: `http://localhost:8080/graphql`, direct: `http://localhost:8081/graphql`).
+GraphQL is served at **`POST /graphql`** on the gateway: `http://localhost:8080/graphql`.
 
 Schema: [`graphql/schema.graphql`](../graphql/schema.graphql)  
 Resolvers: [`graphql/query_resolver.go`](../graphql/query_resolver.go), [`graphql/mutation_resolver.go`](../graphql/mutation_resolver.go)
@@ -444,7 +444,7 @@ curl -X POST http://localhost:8080/graphql \
 
 ## Playground
 
-`http://localhost:8080/playground` (or `:8081/playground` direct) serves the gqlgen playground UI. Because responses use the REST envelope, the playground may not display results correctly — use [Bruno `SpiceLedger-API`](../../SpiceLedger-API/) or curl for testing.
+`http://localhost:8080/playground` serves the gqlgen playground UI. Because responses use the REST envelope, the playground may not display results correctly — use [Bruno `SpiceLedger-API`](../../SpiceLedger-API/) or curl for testing.
 
 ## Related docs
 

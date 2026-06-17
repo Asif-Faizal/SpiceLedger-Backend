@@ -57,7 +57,7 @@ up-full: ## Start full stack (uses existing images; no registry pull)
 	$(COMPOSE) up db -d
 	@sleep 3
 	$(COMPOSE) run --rm migrate up
-	$(COMPOSE) up -d control market rest graphql proxy
+	$(COMPOSE) up -d control market gateway
 
 up-full-build: ## Rebuild images then start (use when code changed)
 	DOCKER_BUILDKIT=1 $(COMPOSE) build --pull=false
@@ -88,7 +88,7 @@ lint: ## Verify module builds
 
 clean: ## Remove build artifacts
 	go clean -cache
-	rm -f control-server market-server rest-server graphql-service proxy-server migrate
+	rm -f control-server market-server gateway-server migrate
 
 install-docker: ## Install Docker Desktop (macOS)
 	@command -v docker >/dev/null 2>&1 && echo "Docker CLI already available" || (brew install --cask docker && echo "Open Docker Desktop from Applications, then re-run make up-full")
@@ -99,11 +99,5 @@ run-control: ## Run control gRPC service locally
 run-market: ## Run market gRPC service locally
 	go run ./market/cmd/market/main.go
 
-run-rest: ## Run REST gateway locally
-	go run ./rest/cmd/rest/main.go
-
-run-graphql: ## Run GraphQL gateway locally
-	go run ./graphql/cmd/graph/main.go
-
-run-proxy: ## Run reverse proxy locally
-	go run ./proxy/main.go
+run-gateway: ## Run unified API gateway locally (REST + GraphQL on :8080)
+	go run ./gateway/cmd/gateway/main.go

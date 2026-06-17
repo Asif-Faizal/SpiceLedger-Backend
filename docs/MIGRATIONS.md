@@ -54,7 +54,7 @@ make db-init            # scripts/init-db.sh local
 
 - Waits for MySQL to accept connections
 - Creates `spice_ledger` database if missing
-- If `.env` has `DB_HOST=db`, connects via `127.0.0.1` and `DB_HOST_PORT` (default **3307**) from the host
+- If `.env` has `DB_HOST=db`, connects via `127.0.0.1` and `DB_HOST_PORT` (default **3306**) from the host
 - Runs migrations through Docker when targeting Docker MySQL; otherwise `go run ./cmd/migrate/main.go up`
 
 ### Direct CLI (host, local MySQL only)

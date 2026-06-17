@@ -84,3 +84,11 @@ func WriteGRPCErrorResponse(w http.ResponseWriter, err error) {
 
 	WriteJSONResponse(w, HTTPStatusFromGRPCCode(st.Code()), false, st.Message(), nil)
 }
+
+func WriteBadRequest(w http.ResponseWriter, message string) {
+	WriteJSONResponse(w, http.StatusBadRequest, false, message, nil)
+}
+
+func WriteMethodNotAllowed(w http.ResponseWriter) {
+	WriteJSONResponse(w, http.StatusMethodNotAllowed, false, "method not allowed", nil)
+}

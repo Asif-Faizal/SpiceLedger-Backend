@@ -18,27 +18,11 @@
             "envFile": "${workspaceFolder}/.env"
         },
         {
-            "name": "REST Gateway",
+            "name": "Gateway (REST + GraphQL)",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/rest/cmd/rest/main.go",
-            "envFile": "${workspaceFolder}/.env"
-        },
-        {
-            "name": "GraphQL Gateway",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/graphql/cmd/graph/main.go",
-            "envFile": "${workspaceFolder}/.env"
-        },
-        {
-            "name": "Proxy",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/proxy/main.go",
+            "program": "${workspaceFolder}/gateway/cmd/gateway/main.go",
             "envFile": "${workspaceFolder}/.env"
         }
     ],
@@ -48,9 +32,7 @@
             "configurations": [
                 "Control (gRPC)",
                 "Market (gRPC)",
-                "REST Gateway",
-                "GraphQL Gateway",
-                "Proxy"
+                "Gateway (REST + GraphQL)"
             ],
             "stopAll": true
         }

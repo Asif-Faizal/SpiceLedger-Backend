@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
+	"github.com/Asif-Faizal/SpiceLedger-Backend/internal/platform"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
 )
 
@@ -45,9 +46,9 @@ func ListenGrpcServer(service Service, logger util.Logger, config *util.Config) 
 	}
 	pb.RegisterControlServiceServer(grpcServer, server)
 	reflection.Register(grpcServer)
+	platform.RegisterHealth(grpcServer, "control")
 
-	logger.Transport().Info().Int("port", config.ControlGrpcPort).Msg("gRPC server listening")
-	return grpcServer.Serve(lis)
+	return platform.RunGRPC(lis, grpcServer, logger, "control")
 }
 
 func SessionInterceptor(service Service, logger util.Logger) grpc.UnaryServerInterceptor {

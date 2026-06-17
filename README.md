@@ -5,23 +5,24 @@ Microservices backend for spice trading: accounts, catalog, daily prices, and FI
 ## Architecture
 
 ```
-Client → proxy (:8080) → REST (:8082) → control gRPC (:50051) → MySQL
-                       → GraphQL (:8081) → control + market gRPC (:50052) → MySQL
+Client → gateway (:8080) → REST handler → control gRPC (:50051) → MySQL
+                        → GraphQL      → control + market gRPC (:50052) → MySQL
 ```
 
 | Service | Role | Port |
 |---------|------|------|
-| **proxy** | Unified HTTP entrypoint | 8080 |
-| **rest** | REST → control gRPC | 8082 |
-| **graphql** | GraphQL → control + market gRPC | 8081 |
+| **gateway** | Unified HTTP edge (REST + GraphQL) | 8080 |
 | **control** | Accounts, auth, products, prices | 50051 |
 | **market** | FIFO trading engine | 50052 |
-| **db** | MySQL (host **3307** when using Docker alongside Homebrew MySQL) | 3306 |
+| **db** | MySQL (host **3306** when using Docker alongside Homebrew MySQL) | 3306 |
+
+`rest/` and `graphql/` are **libraries** mounted by `gateway` — not separate processes.
 
 **Detailed docs:**
 
 | Topic | Document |
 |-------|----------|
+| Engineering & ADRs | [docs/ENGINEERING.md](docs/ENGINEERING.md) |
 | Makefile commands | [docs/MAKEFILE.md](docs/MAKEFILE.md) |
 | Database migrations | [docs/MIGRATIONS.md](docs/MIGRATIONS.md) |
 | Middleware & `util` package | [docs/MIDDLEWARE_AND_UTIL.md](docs/MIDDLEWARE_AND_UTIL.md) |
@@ -40,12 +41,10 @@ brew services start mysql
 make setup                         # .env + migrations
 make run-control                   # or VS Code "Full Stack (local)"
 make run-market
-make run-rest
-make run-graphql
-make run-proxy
+make run-gateway                   # REST + GraphQL on :8080
 ```
 
-Entry URL: `http://localhost:8080`
+Entry URL: `http://localhost:8080` (`/rest/*`, `/graphql`, `/playground`)
 
 ### Option B — Full Docker stack
 
@@ -58,10 +57,10 @@ make up-full-build                 # rebuild images + start all services
 
 > **Important:** `make up-full` reuses existing images and does **not** rebuild after code changes. Use `make up-full-build` when Go code or Dockerfiles change.
 
-Docker MySQL on host port **3307** (configurable via `DB_HOST_PORT`) to avoid conflicting with Homebrew MySQL on 3306:
+Docker MySQL on host port **3306** (configurable via `DB_HOST_PORT`) to avoid conflicting with Homebrew MySQL on 3306:
 
 ```bash
-mysql -h 127.0.0.1 -P 3307 -u root -p
+mysql -h 127.0.0.1 -P 3306 -u root -p
 ```
 
 ### Option C — Docker DB only, services native
@@ -69,7 +68,7 @@ mysql -h 127.0.0.1 -P 3307 -u root -p
 ```bash
 make up-db
 make db-init
-# set .env: DB_HOST=127.0.0.1, DB_HOST_PORT=3307 if using Docker MySQL from host
+# set .env: DB_HOST=127.0.0.1, DB_HOST_PORT=3306 if using Docker MySQL from host
 make run-control
 # ... other run-* targets
 ```
@@ -217,9 +216,10 @@ Full guide: [docs/MIGRATIONS.md](docs/MIGRATIONS.md).
 SpiceLedger-Backend/
 ├── control/          # gRPC: accounts, auth, catalog, prices
 ├── market/           # gRPC: FIFO trading, positions
-├── rest/             # REST HTTP gateway → control
-├── graphql/          # GraphQL gateway → control + market
-├── proxy/            # Reverse proxy entrypoint
+├── gateway/          # Unified HTTP edge (REST + GraphQL)
+├── rest/             # REST handlers (library; mounted by gateway)
+├── graphql/          # GraphQL resolvers (library; mounted by gateway)
+├── internal/platform/# Shared HTTP/gRPC lifecycle
 ├── util/             # Config, auth, logging, responses
 ├── migrations/       # Versioned SQL (goose)
 ├── cmd/migrate/      # Migration CLI
@@ -241,4 +241,4 @@ make clean             # remove build artifacts
 
 After changing Go code used in Docker: `make up-full-build`.
 
-Individual services: `make run-control`, `make run-market`, `make run-rest`, `make run-graphql`, `make run-proxy` — see [docs/MAKEFILE.md](docs/MAKEFILE.md).
+Individual services: `make run-control`, `make run-market`, `make run-gateway` — see [docs/MAKEFILE.md](docs/MAKEFILE.md) and [docs/ENGINEERING.md](docs/ENGINEERING.md).
