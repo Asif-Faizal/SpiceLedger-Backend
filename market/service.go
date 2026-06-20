@@ -23,6 +23,11 @@ type Service interface {
 		GradeName   string
 		Volume      float64
 	}, error)
+	GetEnrichedHoldings(ctx context.Context, userID string) ([]EnrichedHoldingRow, error)
+	GetDailyRealizedPnLByUser(ctx context.Context, userID string, days uint) ([]DailyRealizedPnLRow, error)
+	GetDailyActivityByUser(ctx context.Context, userID string, days uint) ([]DailyActivityRow, error)
+	GetPeriodTradeStats(ctx context.Context, userID string, days uint) (*PeriodTradeStats, error)
+	GetPriceSnapshotsForHoldings(ctx context.Context, userID string) ([]PriceSnapshot, error)
 }
 
 type MarketService struct {
@@ -347,4 +352,56 @@ func (s *MarketService) ListTransactions(ctx context.Context, userID string, ski
 		take = 100
 	}
 	return s.repository.ListTransactionsByUser(ctx, userID, skip, take)
+}
+
+func (s *MarketService) GetEnrichedHoldings(ctx context.Context, userID string) ([]EnrichedHoldingRow, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+	return s.repository.GetEnrichedHoldings(ctx, userID)
+}
+
+func (s *MarketService) GetDailyRealizedPnLByUser(ctx context.Context, userID string, days uint) ([]DailyRealizedPnLRow, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+
+	if days == 0 {
+		days = DefaultDashboardDays
+	} else if days > MaxDashboardDays {
+		days = MaxDashboardDays
+	}
+
+	return s.repository.GetDailyRealizedPnLByUser(ctx, userID, days)
+}
+
+func (s *MarketService) GetDailyActivityByUser(ctx context.Context, userID string, days uint) ([]DailyActivityRow, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+	if days == 0 {
+		days = DefaultDashboardDays
+	} else if days > MaxDashboardDays {
+		days = MaxDashboardDays
+	}
+	return s.repository.GetDailyActivityByUser(ctx, userID, days)
+}
+
+func (s *MarketService) GetPeriodTradeStats(ctx context.Context, userID string, days uint) (*PeriodTradeStats, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+	if days == 0 {
+		days = DefaultDashboardDays
+	} else if days > MaxDashboardDays {
+		days = MaxDashboardDays
+	}
+	return s.repository.GetPeriodTradeStats(ctx, userID, days)
+}
+
+func (s *MarketService) GetPriceSnapshotsForHoldings(ctx context.Context, userID string) ([]PriceSnapshot, error) {
+	if userID == "" {
+		return nil, errors.New("user_id is required")
+	}
+	return s.repository.GetPriceSnapshotsForHoldings(ctx, userID)
 }
