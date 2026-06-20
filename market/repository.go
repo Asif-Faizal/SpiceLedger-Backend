@@ -45,6 +45,13 @@ type Repository interface {
 		Volume      float64
 	}, error)
 	ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error)
+
+	// Merchant dashboard (all queries scoped by userID from JWT)
+	GetEnrichedHoldings(ctx context.Context, userID string) ([]EnrichedHoldingRow, error)
+	GetDailyRealizedPnLByUser(ctx context.Context, userID string, days uint) ([]DailyRealizedPnLRow, error)
+	GetDailyActivityByUser(ctx context.Context, userID string, days uint) ([]DailyActivityRow, error)
+	GetPeriodTradeStats(ctx context.Context, userID string, days uint) (*PeriodTradeStats, error)
+	GetPriceSnapshotsForHoldings(ctx context.Context, userID string) ([]PriceSnapshot, error)
 }
 
 type MysqlRepository struct {
@@ -525,6 +532,215 @@ func (r *MysqlRepository) GetDailyPrice(ctx context.Context, gradeID string, dat
 		return 0, err
 	}
 	return price, nil
+}
+
+func (r *MysqlRepository) GetEnrichedHoldings(ctx context.Context, userID string) ([]EnrichedHoldingRow, error) {
+	start := time.Now()
+	query := `SELECT p.spice_grade_id, pr.name, g.name,
+	                 p.total_qty, p.total_cost, p.realized_pnl,
+	                 COALESCE(dp.price, 0)
+	          FROM positions p
+	          INNER JOIN grade g ON g.id = p.spice_grade_id
+	          INNER JOIN products pr ON pr.id = g.product_id
+	          LEFT JOIN daily_price dp ON dp.grade_id = p.spice_grade_id AND dp.date = CURDATE()
+	          WHERE p.user_id = ? AND p.total_qty > 0
+	          ORDER BY p.total_qty DESC, pr.name, g.name`
+
+	rows, err := r.db.QueryContext(ctx, query, userID)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("user_id", userID).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetEnrichedHoldings")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var holdings []EnrichedHoldingRow
+	for rows.Next() {
+		var row EnrichedHoldingRow
+		if err := rows.Scan(
+			&row.SpiceGradeID,
+			&row.ProductName,
+			&row.GradeName,
+			&row.TotalQty,
+			&row.TotalCost,
+			&row.RealizedPnL,
+			&row.TodayPrice,
+		); err != nil {
+			return nil, err
+		}
+		holdings = append(holdings, row)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return holdings, nil
+}
+
+// GetDailyRealizedPnLByUser returns realized P&L grouped by sell-allocation day for a merchant.
+func (r *MysqlRepository) GetDailyRealizedPnLByUser(ctx context.Context, userID string, days uint) ([]DailyRealizedPnLRow, error) {
+	start := time.Now()
+	query := `SELECT DATE(sa.created_at) AS d, COALESCE(SUM(sa.realized_pnl), 0)
+	          FROM sell_allocations sa
+	          INNER JOIN transactions t ON t.id = sa.sell_transaction_id
+	          WHERE t.user_id = ?
+	            AND DATE(sa.created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+	          GROUP BY DATE(sa.created_at)
+	          ORDER BY d ASC`
+
+	rows, err := r.db.QueryContext(ctx, query, userID, days)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("user_id", userID).
+		Int("days", int(days)).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetDailyRealizedPnLByUser")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []DailyRealizedPnLRow
+	for rows.Next() {
+		var row DailyRealizedPnLRow
+		if err := rows.Scan(&row.Date, &row.DailyRealizedPnL); err != nil {
+			return nil, err
+		}
+		result = append(result, row)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// GetDailyActivityByUser returns buy/sell quantity and counts grouped by trade date for a merchant.
+func (r *MysqlRepository) GetDailyActivityByUser(ctx context.Context, userID string, days uint) ([]DailyActivityRow, error) {
+	start := time.Now()
+	query := `SELECT trade_date, type, COALESCE(SUM(quantity), 0), COUNT(*)
+	          FROM transactions
+	          WHERE user_id = ?
+	            AND trade_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+	          GROUP BY trade_date, type
+	          ORDER BY trade_date ASC`
+
+	rows, err := r.db.QueryContext(ctx, query, userID, days)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("user_id", userID).
+		Int("days", int(days)).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetDailyActivityByUser")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []DailyActivityRow
+	for rows.Next() {
+		var row DailyActivityRow
+		if err := rows.Scan(&row.Date, &row.Type, &row.Quantity, &row.Count); err != nil {
+			return nil, err
+		}
+		result = append(result, row)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// GetPeriodTradeStats aggregates trade count and buy/sell volume for a merchant over a date window.
+func (r *MysqlRepository) GetPeriodTradeStats(ctx context.Context, userID string, days uint) (*PeriodTradeStats, error) {
+	start := time.Now()
+	query := `SELECT COUNT(*),
+	                 COALESCE(SUM(CASE WHEN type = 'BUY' THEN quantity ELSE 0 END), 0),
+	                 COALESCE(SUM(CASE WHEN type = 'SELL' THEN quantity ELSE 0 END), 0)
+	          FROM transactions
+	          WHERE user_id = ?
+	            AND trade_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)`
+
+	stats := &PeriodTradeStats{}
+	err := r.db.QueryRowContext(ctx, query, userID, days).Scan(
+		&stats.TradesInPeriod,
+		&stats.BuyVolumeInPeriod,
+		&stats.SellVolumeInPeriod,
+	)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("user_id", userID).
+		Int("days", int(days)).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetPeriodTradeStats")
+
+	if err != nil {
+		return nil, err
+	}
+	return stats, nil
+}
+
+// GetPriceSnapshotsForHoldings returns today vs yesterday daily_price for grades the merchant holds.
+func (r *MysqlRepository) GetPriceSnapshotsForHoldings(ctx context.Context, userID string) ([]PriceSnapshot, error) {
+	start := time.Now()
+	query := `SELECT p.spice_grade_id, pr.name, g.name,
+	                 COALESCE(dp_today.price, 0),
+	                 COALESCE(dp_yesterday.price, 0)
+	          FROM positions p
+	          INNER JOIN grade g ON g.id = p.spice_grade_id
+	          INNER JOIN products pr ON pr.id = g.product_id
+	          LEFT JOIN daily_price dp_today
+	            ON dp_today.grade_id = p.spice_grade_id AND dp_today.date = CURDATE()
+	          LEFT JOIN daily_price dp_yesterday
+	            ON dp_yesterday.grade_id = p.spice_grade_id
+	           AND dp_yesterday.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+	          WHERE p.user_id = ? AND p.total_qty > 0
+	          ORDER BY pr.name, g.name`
+
+	rows, err := r.db.QueryContext(ctx, query, userID)
+
+	r.logger.Database().Debug().
+		Str("query", query).
+		Str("user_id", userID).
+		Str("duration", time.Since(start).String()).
+		Bool("success", err == nil).
+		Msg("GetPriceSnapshotsForHoldings")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var snapshots []PriceSnapshot
+	for rows.Next() {
+		var snap PriceSnapshot
+		if err := rows.Scan(
+			&snap.SpiceGradeID,
+			&snap.ProductName,
+			&snap.GradeName,
+			&snap.TodayPrice,
+			&snap.PreviousPrice,
+		); err != nil {
+			return nil, err
+		}
+		snapshots = append(snapshots, snap)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return snapshots, nil
 }
 
 // --- Sentinel Errors ---
