@@ -28,6 +28,11 @@ const (
 	MarketService_ListGradeTransactions_FullMethodName = "/pb.MarketService/ListGradeTransactions"
 	MarketService_ListTransactions_FullMethodName      = "/pb.MarketService/ListTransactions"
 	MarketService_GetMarketMetrics_FullMethodName      = "/pb.MarketService/GetMarketMetrics"
+	MarketService_GetHoldings_FullMethodName           = "/pb.MarketService/GetHoldings"
+	MarketService_GetRealizedPnLHistory_FullMethodName = "/pb.MarketService/GetRealizedPnLHistory"
+	MarketService_GetTradeActivity_FullMethodName      = "/pb.MarketService/GetTradeActivity"
+	MarketService_GetTradeStats_FullMethodName         = "/pb.MarketService/GetTradeStats"
+	MarketService_GetPriceSnapshots_FullMethodName     = "/pb.MarketService/GetPriceSnapshots"
 )
 
 // MarketServiceClient is the client API for MarketService service.
@@ -41,6 +46,11 @@ type MarketServiceClient interface {
 	ListGradeTransactions(ctx context.Context, in *ListGradeTransactionsRequest, opts ...grpc.CallOption) (*ListGradeTransactionsResponse, error)
 	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 	GetMarketMetrics(ctx context.Context, in *GetMarketMetricsRequest, opts ...grpc.CallOption) (*GetMarketMetricsResponse, error)
+	GetHoldings(ctx context.Context, in *GetHoldingsRequest, opts ...grpc.CallOption) (*GetHoldingsResponse, error)
+	GetRealizedPnLHistory(ctx context.Context, in *GetRealizedPnLHistoryRequest, opts ...grpc.CallOption) (*GetRealizedPnLHistoryResponse, error)
+	GetTradeActivity(ctx context.Context, in *GetTradeActivityRequest, opts ...grpc.CallOption) (*GetTradeActivityResponse, error)
+	GetTradeStats(ctx context.Context, in *GetTradeStatsRequest, opts ...grpc.CallOption) (*GetTradeStatsResponse, error)
+	GetPriceSnapshots(ctx context.Context, in *GetPriceSnapshotsRequest, opts ...grpc.CallOption) (*GetPriceSnapshotsResponse, error)
 }
 
 type marketServiceClient struct {
@@ -121,6 +131,56 @@ func (c *marketServiceClient) GetMarketMetrics(ctx context.Context, in *GetMarke
 	return out, nil
 }
 
+func (c *marketServiceClient) GetHoldings(ctx context.Context, in *GetHoldingsRequest, opts ...grpc.CallOption) (*GetHoldingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetHoldingsResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetHoldings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketServiceClient) GetRealizedPnLHistory(ctx context.Context, in *GetRealizedPnLHistoryRequest, opts ...grpc.CallOption) (*GetRealizedPnLHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRealizedPnLHistoryResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetRealizedPnLHistory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketServiceClient) GetTradeActivity(ctx context.Context, in *GetTradeActivityRequest, opts ...grpc.CallOption) (*GetTradeActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradeActivityResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetTradeActivity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketServiceClient) GetTradeStats(ctx context.Context, in *GetTradeStatsRequest, opts ...grpc.CallOption) (*GetTradeStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradeStatsResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetTradeStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketServiceClient) GetPriceSnapshots(ctx context.Context, in *GetPriceSnapshotsRequest, opts ...grpc.CallOption) (*GetPriceSnapshotsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPriceSnapshotsResponse)
+	err := c.cc.Invoke(ctx, MarketService_GetPriceSnapshots_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketServiceServer is the server API for MarketService service.
 // All implementations must embed UnimplementedMarketServiceServer
 // for forward compatibility.
@@ -132,6 +192,11 @@ type MarketServiceServer interface {
 	ListGradeTransactions(context.Context, *ListGradeTransactionsRequest) (*ListGradeTransactionsResponse, error)
 	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
 	GetMarketMetrics(context.Context, *GetMarketMetricsRequest) (*GetMarketMetricsResponse, error)
+	GetHoldings(context.Context, *GetHoldingsRequest) (*GetHoldingsResponse, error)
+	GetRealizedPnLHistory(context.Context, *GetRealizedPnLHistoryRequest) (*GetRealizedPnLHistoryResponse, error)
+	GetTradeActivity(context.Context, *GetTradeActivityRequest) (*GetTradeActivityResponse, error)
+	GetTradeStats(context.Context, *GetTradeStatsRequest) (*GetTradeStatsResponse, error)
+	GetPriceSnapshots(context.Context, *GetPriceSnapshotsRequest) (*GetPriceSnapshotsResponse, error)
 	mustEmbedUnimplementedMarketServiceServer()
 }
 
@@ -162,6 +227,21 @@ func (UnimplementedMarketServiceServer) ListTransactions(context.Context, *ListT
 }
 func (UnimplementedMarketServiceServer) GetMarketMetrics(context.Context, *GetMarketMetricsRequest) (*GetMarketMetricsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarketMetrics not implemented")
+}
+func (UnimplementedMarketServiceServer) GetHoldings(context.Context, *GetHoldingsRequest) (*GetHoldingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetHoldings not implemented")
+}
+func (UnimplementedMarketServiceServer) GetRealizedPnLHistory(context.Context, *GetRealizedPnLHistoryRequest) (*GetRealizedPnLHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRealizedPnLHistory not implemented")
+}
+func (UnimplementedMarketServiceServer) GetTradeActivity(context.Context, *GetTradeActivityRequest) (*GetTradeActivityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTradeActivity not implemented")
+}
+func (UnimplementedMarketServiceServer) GetTradeStats(context.Context, *GetTradeStatsRequest) (*GetTradeStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTradeStats not implemented")
+}
+func (UnimplementedMarketServiceServer) GetPriceSnapshots(context.Context, *GetPriceSnapshotsRequest) (*GetPriceSnapshotsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPriceSnapshots not implemented")
 }
 func (UnimplementedMarketServiceServer) mustEmbedUnimplementedMarketServiceServer() {}
 func (UnimplementedMarketServiceServer) testEmbeddedByValue()                       {}
@@ -310,6 +390,96 @@ func _MarketService_GetMarketMetrics_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MarketService_GetHoldings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHoldingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetHoldings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetHoldings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetHoldings(ctx, req.(*GetHoldingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketService_GetRealizedPnLHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRealizedPnLHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetRealizedPnLHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetRealizedPnLHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetRealizedPnLHistory(ctx, req.(*GetRealizedPnLHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketService_GetTradeActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTradeActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetTradeActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetTradeActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetTradeActivity(ctx, req.(*GetTradeActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketService_GetTradeStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTradeStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetTradeStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetTradeStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetTradeStats(ctx, req.(*GetTradeStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketService_GetPriceSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPriceSnapshotsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServiceServer).GetPriceSnapshots(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketService_GetPriceSnapshots_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServiceServer).GetPriceSnapshots(ctx, req.(*GetPriceSnapshotsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MarketService_ServiceDesc is the grpc.ServiceDesc for MarketService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -344,6 +514,26 @@ var MarketService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMarketMetrics",
 			Handler:    _MarketService_GetMarketMetrics_Handler,
+		},
+		{
+			MethodName: "GetHoldings",
+			Handler:    _MarketService_GetHoldings_Handler,
+		},
+		{
+			MethodName: "GetRealizedPnLHistory",
+			Handler:    _MarketService_GetRealizedPnLHistory_Handler,
+		},
+		{
+			MethodName: "GetTradeActivity",
+			Handler:    _MarketService_GetTradeActivity_Handler,
+		},
+		{
+			MethodName: "GetTradeStats",
+			Handler:    _MarketService_GetTradeStats_Handler,
+		},
+		{
+			MethodName: "GetPriceSnapshots",
+			Handler:    _MarketService_GetPriceSnapshots_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -103,88 +103,81 @@ message GetMarketMetricsResponse {
   repeated TopProduct top_products = 3;
 }
 
-// --- Merchant dashboard (JWT-scoped: portfolio + transactions belong to authenticated merchant only) ---
+// Portfolio analytics (JWT-scoped; orchestrated by GraphQL like adminDashboard).
 
-message GetMerchantDashboardRequest {
-  // Trend window in days for charts (default 7, max 90). Account identity comes from JWT only.
-  uint32 days = 1;
-}
-
-message MerchantSummary {
-  double portfolio_value = 1;
-  double total_cost = 2;
-  double total_realized_pnl = 3;
-  double total_unrealized_pnl = 4;
-  double net_pnl = 5;
-  uint32 open_positions = 6;
-  double total_quantity_kg = 7;
-  uint32 trades_in_period = 8;
-  double buy_volume_in_period = 9;
-  double sell_volume_in_period = 10;
-}
-
-message MerchantHolding {
+message EnrichedHolding {
   string spice_grade_id = 1;
   string product_name = 2;
   string grade_name = 3;
   double quantity = 4;
-  double avg_cost = 5;
-  double today_price = 6;
-  double market_value = 7;
-  double cost_basis = 8;
-  double unrealized_pnl = 9;
-  double unrealized_pnl_percent = 10;
-  double realized_pnl = 11;
-  double weight_percent = 12;
+  double total_cost = 5;
+  double realized_pnl = 6;
+  double today_price = 7;
 }
 
-message PortfolioSlice {
-  string label = 1;
-  double value = 2;
+message GetHoldingsRequest {
+  string user_id = 1;
+}
+
+message GetHoldingsResponse {
+  repeated EnrichedHolding holdings = 1;
+}
+
+message RealizedPnLRow {
+  string date = 1; // YYYY-MM-DD
+  double amount = 2;
+}
+
+message GetRealizedPnLHistoryRequest {
+  string user_id = 1;
+  uint32 days = 2;
+}
+
+message GetRealizedPnLHistoryResponse {
+  repeated RealizedPnLRow rows = 1;
+}
+
+message TradeActivityRow {
+  string date = 1; // YYYY-MM-DD
+  string type = 2; // BUY or SELL
   double quantity = 3;
+  uint32 count = 4;
 }
 
-message PnLPoint {
-  string date = 1; // YYYY-MM-DD
-  double daily_realized_pnl = 2;
-  double cumulative_realized_pnl = 3;
+message GetTradeActivityRequest {
+  string user_id = 1;
+  uint32 days = 2;
 }
 
-message ActivityDay {
-  string date = 1; // YYYY-MM-DD
-  double buy_quantity = 2;
-  double sell_quantity = 3;
-  uint32 buy_count = 4;
-  uint32 sell_count = 5;
+message GetTradeActivityResponse {
+  repeated TradeActivityRow rows = 1;
 }
 
-message MerchantInsight {
-  string kind = 1; // WINNER, LOSER, STREAK, IDLE, MILESTONE, CONCENTRATION
-  string title = 2;
-  string body = 3;
-  string spice_grade_id = 4; // optional, empty when portfolio-wide
-  string severity = 5; // info, success, warning
+message GetTradeStatsRequest {
+  string user_id = 1;
+  uint32 days = 2;
 }
 
-message PriceMover {
+message GetTradeStatsResponse {
+  uint32 trades_in_period = 1;
+  double buy_volume_in_period = 2;
+  double sell_volume_in_period = 3;
+}
+
+message PriceSnapshot {
   string spice_grade_id = 1;
   string product_name = 2;
   string grade_name = 3;
   double today_price = 4;
   double previous_price = 5;
-  double change_percent = 6;
-  string direction = 7; // UP, DOWN, FLAT
 }
 
-message GetMerchantDashboardResponse {
-  MerchantSummary summary = 1;
-  repeated MerchantHolding holdings = 2;
-  repeated PortfolioSlice portfolio_mix = 3;
-  repeated PnLPoint pnl_trend = 4;
-  repeated ActivityDay activity_trend = 5;
-  repeated Transaction recent_transactions = 6;
-  repeated MerchantInsight insights = 7;
-  repeated PriceMover movers = 8;
+message GetPriceSnapshotsRequest {
+  string user_id = 1;
+}
+
+message GetPriceSnapshotsResponse {
+  repeated PriceSnapshot snapshots = 1;
 }
 
 service MarketService {
@@ -195,6 +188,9 @@ service MarketService {
   rpc ListGradeTransactions(ListGradeTransactionsRequest) returns (ListGradeTransactionsResponse);
   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
   rpc GetMarketMetrics(GetMarketMetricsRequest) returns (GetMarketMetricsResponse);
-  // Returns dashboard data for the authenticated merchant only (account_id from JWT).
-  rpc GetMerchantDashboard(GetMerchantDashboardRequest) returns (GetMerchantDashboardResponse);
+  rpc GetHoldings(GetHoldingsRequest) returns (GetHoldingsResponse);
+  rpc GetRealizedPnLHistory(GetRealizedPnLHistoryRequest) returns (GetRealizedPnLHistoryResponse);
+  rpc GetTradeActivity(GetTradeActivityRequest) returns (GetTradeActivityResponse);
+  rpc GetTradeStats(GetTradeStatsRequest) returns (GetTradeStatsResponse);
+  rpc GetPriceSnapshots(GetPriceSnapshotsRequest) returns (GetPriceSnapshotsResponse);
 }

@@ -55,6 +55,7 @@ type Query {
   listGradeTransactions(spiceGradeId: ID!, skip: Int, take: Int): [Transaction!]!
   listTransactions(skip: Int, take: Int): [Transaction!]!
   adminDashboard: AdminDashboard!
+  merchantDashboard(days: Int): MerchantDashboard!
 }
 
 type AdminDashboard {
@@ -69,6 +70,83 @@ type AdminDashboard {
 type TopProduct {
   name: String!
   volume: Float!
+}
+
+type MerchantDashboard {
+  summary: MerchantSummary!
+  holdings: [MerchantHolding!]!
+  portfolioMix: [PortfolioSlice!]!
+  pnlTrend: [PnLPoint!]!
+  activityTrend: [ActivityDay!]!
+  recentTransactions: [Transaction!]!
+  insights: [MerchantInsight!]!
+  movers: [PriceMover!]!
+}
+
+type MerchantSummary {
+  portfolioValue: Float!
+  totalCost: Float!
+  totalRealizedPnL: Float!
+  totalUnrealizedPnL: Float!
+  netPnL: Float!
+  openPositions: Int!
+  totalQuantityKg: Float!
+  tradesInPeriod: Int!
+  buyVolumeInPeriod: Float!
+  sellVolumeInPeriod: Float!
+}
+
+type MerchantHolding {
+  spiceGradeId: ID!
+  productName: String!
+  gradeName: String!
+  quantity: Float!
+  avgCost: Float!
+  todayPrice: Float!
+  marketValue: Float!
+  costBasis: Float!
+  unrealizedPnL: Float!
+  unrealizedPnLPercent: Float!
+  realizedPnL: Float!
+  weightPercent: Float!
+}
+
+type PortfolioSlice {
+  label: String!
+  value: Float!
+  quantity: Float!
+}
+
+type PnLPoint {
+  date: String!
+  dailyRealizedPnL: Float!
+  cumulativeRealizedPnL: Float!
+}
+
+type ActivityDay {
+  date: String!
+  buyQuantity: Float!
+  sellQuantity: Float!
+  buyCount: Int!
+  sellCount: Int!
+}
+
+type MerchantInsight {
+  kind: String!
+  title: String!
+  body: String!
+  spiceGradeId: ID
+  severity: String!
+}
+
+type PriceMover {
+  spiceGradeId: ID!
+  productName: String!
+  gradeName: String!
+  todayPrice: Float!
+  previousPrice: Float!
+  changePercent: Float!
+  direction: String!
 }
 
 type Mutation {

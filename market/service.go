@@ -366,7 +366,7 @@ func (s *MarketService) GetDailyRealizedPnLByUser(ctx context.Context, userID st
 		return nil, errors.New("user_id is required")
 	}
 
-	if days == 0 {
+	if days <= 0 {
 		days = DefaultDashboardDays
 	} else if days > MaxDashboardDays {
 		days = MaxDashboardDays
@@ -379,7 +379,7 @@ func (s *MarketService) GetDailyActivityByUser(ctx context.Context, userID strin
 	if userID == "" {
 		return nil, errors.New("user_id is required")
 	}
-	if days == 0 {
+	if days <= 0 {
 		days = DefaultDashboardDays
 	} else if days > MaxDashboardDays {
 		days = MaxDashboardDays
@@ -391,7 +391,7 @@ func (s *MarketService) GetPeriodTradeStats(ctx context.Context, userID string, 
 	if userID == "" {
 		return nil, errors.New("user_id is required")
 	}
-	if days == 0 {
+	if days <= 0 {
 		days = DefaultDashboardDays
 	} else if days > MaxDashboardDays {
 		days = MaxDashboardDays

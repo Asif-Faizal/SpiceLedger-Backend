@@ -7,6 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/pressly/goose/v3 v3.27.1
 	github.com/segmentio/ksuid v1.0.4
 	github.com/vektah/gqlparser/v2 v2.5.32
 	golang.org/x/crypto v0.50.0
@@ -24,7 +25,6 @@ require (
 	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/pressly/goose/v3 v3.27.1 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

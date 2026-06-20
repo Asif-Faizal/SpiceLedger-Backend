@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	pb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/internal/platform"
+	pb "github.com/Asif-Faizal/SpiceLedger-Backend/market/pb"
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
 )
 
@@ -228,14 +228,22 @@ func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.Lis
 
 func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsResponse, error) {
 	userID := req.UserId
+	listAll := false
+	if userID == "" {
+		if isAdmin, ok := ctx.Value(util.IsAdminKey).(bool); ok && isAdmin {
+			listAll = true
+		} else if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
 	var txns []*Transaction
 	var err error
-
-	if userID == "" {
-		// Admin view: list all transactions across all users
+	if listAll {
 		txns, err = server.marketService.ListAllTransactions(ctx, uint(req.Skip), uint(req.Take))
 	} else {
-		// User view: list only their own transactions
 		txns, err = server.marketService.ListTransactions(ctx, userID, uint(req.Skip), uint(req.Take))
 	}
 
@@ -260,4 +268,140 @@ func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTran
 	return &pb.ListTransactionsResponse{
 		Transactions: protoTxns,
 	}, nil
+}
+
+func (server *GrpcServer) GetHoldings(ctx context.Context, req *pb.GetHoldingsRequest) (*pb.GetHoldingsResponse, error) {
+	userID := req.GetUserId()
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
+	rows, err := server.marketService.GetEnrichedHoldings(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	holdings := make([]*pb.EnrichedHolding, len(rows))
+	for i, row := range rows {
+		holdings[i] = &pb.EnrichedHolding{
+			SpiceGradeId: row.SpiceGradeID,
+			ProductName:  row.ProductName,
+			GradeName:    row.GradeName,
+			Quantity:     row.TotalQty,
+			TotalCost:    row.TotalCost,
+			RealizedPnl:  row.RealizedPnL,
+			TodayPrice:   row.TodayPrice,
+		}
+	}
+
+	return &pb.GetHoldingsResponse{Holdings: holdings}, nil
+}
+
+func (server *GrpcServer) GetRealizedPnLHistory(ctx context.Context, req *pb.GetRealizedPnLHistoryRequest) (*pb.GetRealizedPnLHistoryResponse, error) {
+	userID := req.GetUserId()
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
+	rows, err := server.marketService.GetDailyRealizedPnLByUser(ctx, userID, uint(req.GetDays()))
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*pb.RealizedPnLRow, len(rows))
+	for i, row := range rows {
+		out[i] = &pb.RealizedPnLRow{
+			Date:   row.Date.Format("2006-01-02"),
+			Amount: row.DailyRealizedPnL,
+		}
+	}
+
+	return &pb.GetRealizedPnLHistoryResponse{Rows: out}, nil
+}
+
+func (server *GrpcServer) GetTradeActivity(ctx context.Context, req *pb.GetTradeActivityRequest) (*pb.GetTradeActivityResponse, error) {
+	userID := req.GetUserId()
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
+	rows, err := server.marketService.GetDailyActivityByUser(ctx, userID, uint(req.GetDays()))
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*pb.TradeActivityRow, len(rows))
+	for i, row := range rows {
+		out[i] = &pb.TradeActivityRow{
+			Date:     row.Date.Format("2006-01-02"),
+			Type:     row.Type,
+			Quantity: row.Quantity,
+			Count:    uint32(row.Count),
+		}
+	}
+
+	return &pb.GetTradeActivityResponse{Rows: out}, nil
+}
+
+func (server *GrpcServer) GetTradeStats(ctx context.Context, req *pb.GetTradeStatsRequest) (*pb.GetTradeStatsResponse, error) {
+	userID := req.GetUserId()
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
+	stats, err := server.marketService.GetPeriodTradeStats(ctx, userID, uint(req.GetDays()))
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetTradeStatsResponse{
+		TradesInPeriod:     uint32(stats.TradesInPeriod),
+		BuyVolumeInPeriod:  stats.BuyVolumeInPeriod,
+		SellVolumeInPeriod: stats.SellVolumeInPeriod,
+	}, nil
+}
+
+func (server *GrpcServer) GetPriceSnapshots(ctx context.Context, req *pb.GetPriceSnapshotsRequest) (*pb.GetPriceSnapshotsResponse, error) {
+	userID := req.GetUserId()
+	if userID == "" {
+		if id, ok := ctx.Value(util.AccountIDKey).(string); ok && id != "" {
+			userID = id
+		} else {
+			return nil, fmt.Errorf("user_id is required")
+		}
+	}
+
+	snapshots, err := server.marketService.GetPriceSnapshotsForHoldings(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]*pb.PriceSnapshot, len(snapshots))
+	for i, snap := range snapshots {
+		out[i] = &pb.PriceSnapshot{
+			SpiceGradeId:  snap.SpiceGradeID,
+			ProductName:   snap.ProductName,
+			GradeName:     snap.GradeName,
+			TodayPrice:    snap.TodayPrice,
+			PreviousPrice: snap.PreviousPrice,
+		}
+	}
+
+	return &pb.GetPriceSnapshotsResponse{Snapshots: out}, nil
 }

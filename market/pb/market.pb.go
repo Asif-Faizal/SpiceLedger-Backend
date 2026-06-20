@@ -967,6 +967,774 @@ func (x *GetMarketMetricsResponse) GetTopProducts() []*GetMarketMetricsResponse_
 	return nil
 }
 
+type EnrichedHolding struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SpiceGradeId  string                 `protobuf:"bytes,1,opt,name=spice_grade_id,json=spiceGradeId,proto3" json:"spice_grade_id,omitempty"`
+	ProductName   string                 `protobuf:"bytes,2,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	GradeName     string                 `protobuf:"bytes,3,opt,name=grade_name,json=gradeName,proto3" json:"grade_name,omitempty"`
+	Quantity      float64                `protobuf:"fixed64,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	TotalCost     float64                `protobuf:"fixed64,5,opt,name=total_cost,json=totalCost,proto3" json:"total_cost,omitempty"`
+	RealizedPnl   float64                `protobuf:"fixed64,6,opt,name=realized_pnl,json=realizedPnl,proto3" json:"realized_pnl,omitempty"`
+	TodayPrice    float64                `protobuf:"fixed64,7,opt,name=today_price,json=todayPrice,proto3" json:"today_price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EnrichedHolding) Reset() {
+	*x = EnrichedHolding{}
+	mi := &file_market_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnrichedHolding) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnrichedHolding) ProtoMessage() {}
+
+func (x *EnrichedHolding) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnrichedHolding.ProtoReflect.Descriptor instead.
+func (*EnrichedHolding) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *EnrichedHolding) GetSpiceGradeId() string {
+	if x != nil {
+		return x.SpiceGradeId
+	}
+	return ""
+}
+
+func (x *EnrichedHolding) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *EnrichedHolding) GetGradeName() string {
+	if x != nil {
+		return x.GradeName
+	}
+	return ""
+}
+
+func (x *EnrichedHolding) GetQuantity() float64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *EnrichedHolding) GetTotalCost() float64 {
+	if x != nil {
+		return x.TotalCost
+	}
+	return 0
+}
+
+func (x *EnrichedHolding) GetRealizedPnl() float64 {
+	if x != nil {
+		return x.RealizedPnl
+	}
+	return 0
+}
+
+func (x *EnrichedHolding) GetTodayPrice() float64 {
+	if x != nil {
+		return x.TodayPrice
+	}
+	return 0
+}
+
+type GetHoldingsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHoldingsRequest) Reset() {
+	*x = GetHoldingsRequest{}
+	mi := &file_market_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHoldingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHoldingsRequest) ProtoMessage() {}
+
+func (x *GetHoldingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHoldingsRequest.ProtoReflect.Descriptor instead.
+func (*GetHoldingsRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetHoldingsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetHoldingsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Holdings      []*EnrichedHolding     `protobuf:"bytes,1,rep,name=holdings,proto3" json:"holdings,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHoldingsResponse) Reset() {
+	*x = GetHoldingsResponse{}
+	mi := &file_market_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHoldingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHoldingsResponse) ProtoMessage() {}
+
+func (x *GetHoldingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHoldingsResponse.ProtoReflect.Descriptor instead.
+func (*GetHoldingsResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetHoldingsResponse) GetHoldings() []*EnrichedHolding {
+	if x != nil {
+		return x.Holdings
+	}
+	return nil
+}
+
+type RealizedPnLRow struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"` // YYYY-MM-DD
+	Amount        float64                `protobuf:"fixed64,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RealizedPnLRow) Reset() {
+	*x = RealizedPnLRow{}
+	mi := &file_market_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RealizedPnLRow) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RealizedPnLRow) ProtoMessage() {}
+
+func (x *RealizedPnLRow) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RealizedPnLRow.ProtoReflect.Descriptor instead.
+func (*RealizedPnLRow) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *RealizedPnLRow) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *RealizedPnLRow) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type GetRealizedPnLHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Days          uint32                 `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRealizedPnLHistoryRequest) Reset() {
+	*x = GetRealizedPnLHistoryRequest{}
+	mi := &file_market_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRealizedPnLHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRealizedPnLHistoryRequest) ProtoMessage() {}
+
+func (x *GetRealizedPnLHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRealizedPnLHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetRealizedPnLHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetRealizedPnLHistoryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetRealizedPnLHistoryRequest) GetDays() uint32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+type GetRealizedPnLHistoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rows          []*RealizedPnLRow      `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRealizedPnLHistoryResponse) Reset() {
+	*x = GetRealizedPnLHistoryResponse{}
+	mi := &file_market_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRealizedPnLHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRealizedPnLHistoryResponse) ProtoMessage() {}
+
+func (x *GetRealizedPnLHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRealizedPnLHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetRealizedPnLHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetRealizedPnLHistoryResponse) GetRows() []*RealizedPnLRow {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
+type TradeActivityRow struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"` // YYYY-MM-DD
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // BUY or SELL
+	Quantity      float64                `protobuf:"fixed64,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Count         uint32                 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TradeActivityRow) Reset() {
+	*x = TradeActivityRow{}
+	mi := &file_market_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TradeActivityRow) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TradeActivityRow) ProtoMessage() {}
+
+func (x *TradeActivityRow) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TradeActivityRow.ProtoReflect.Descriptor instead.
+func (*TradeActivityRow) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *TradeActivityRow) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *TradeActivityRow) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *TradeActivityRow) GetQuantity() float64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *TradeActivityRow) GetCount() uint32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetTradeActivityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Days          uint32                 `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradeActivityRequest) Reset() {
+	*x = GetTradeActivityRequest{}
+	mi := &file_market_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeActivityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeActivityRequest) ProtoMessage() {}
+
+func (x *GetTradeActivityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeActivityRequest.ProtoReflect.Descriptor instead.
+func (*GetTradeActivityRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetTradeActivityRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetTradeActivityRequest) GetDays() uint32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+type GetTradeActivityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rows          []*TradeActivityRow    `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradeActivityResponse) Reset() {
+	*x = GetTradeActivityResponse{}
+	mi := &file_market_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeActivityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeActivityResponse) ProtoMessage() {}
+
+func (x *GetTradeActivityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeActivityResponse.ProtoReflect.Descriptor instead.
+func (*GetTradeActivityResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetTradeActivityResponse) GetRows() []*TradeActivityRow {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
+type GetTradeStatsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Days          uint32                 `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradeStatsRequest) Reset() {
+	*x = GetTradeStatsRequest{}
+	mi := &file_market_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeStatsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeStatsRequest) ProtoMessage() {}
+
+func (x *GetTradeStatsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeStatsRequest.ProtoReflect.Descriptor instead.
+func (*GetTradeStatsRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetTradeStatsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetTradeStatsRequest) GetDays() uint32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+type GetTradeStatsResponse struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	TradesInPeriod     uint32                 `protobuf:"varint,1,opt,name=trades_in_period,json=tradesInPeriod,proto3" json:"trades_in_period,omitempty"`
+	BuyVolumeInPeriod  float64                `protobuf:"fixed64,2,opt,name=buy_volume_in_period,json=buyVolumeInPeriod,proto3" json:"buy_volume_in_period,omitempty"`
+	SellVolumeInPeriod float64                `protobuf:"fixed64,3,opt,name=sell_volume_in_period,json=sellVolumeInPeriod,proto3" json:"sell_volume_in_period,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *GetTradeStatsResponse) Reset() {
+	*x = GetTradeStatsResponse{}
+	mi := &file_market_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeStatsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeStatsResponse) ProtoMessage() {}
+
+func (x *GetTradeStatsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeStatsResponse.ProtoReflect.Descriptor instead.
+func (*GetTradeStatsResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetTradeStatsResponse) GetTradesInPeriod() uint32 {
+	if x != nil {
+		return x.TradesInPeriod
+	}
+	return 0
+}
+
+func (x *GetTradeStatsResponse) GetBuyVolumeInPeriod() float64 {
+	if x != nil {
+		return x.BuyVolumeInPeriod
+	}
+	return 0
+}
+
+func (x *GetTradeStatsResponse) GetSellVolumeInPeriod() float64 {
+	if x != nil {
+		return x.SellVolumeInPeriod
+	}
+	return 0
+}
+
+type PriceSnapshot struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SpiceGradeId  string                 `protobuf:"bytes,1,opt,name=spice_grade_id,json=spiceGradeId,proto3" json:"spice_grade_id,omitempty"`
+	ProductName   string                 `protobuf:"bytes,2,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	GradeName     string                 `protobuf:"bytes,3,opt,name=grade_name,json=gradeName,proto3" json:"grade_name,omitempty"`
+	TodayPrice    float64                `protobuf:"fixed64,4,opt,name=today_price,json=todayPrice,proto3" json:"today_price,omitempty"`
+	PreviousPrice float64                `protobuf:"fixed64,5,opt,name=previous_price,json=previousPrice,proto3" json:"previous_price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PriceSnapshot) Reset() {
+	*x = PriceSnapshot{}
+	mi := &file_market_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PriceSnapshot) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriceSnapshot) ProtoMessage() {}
+
+func (x *PriceSnapshot) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriceSnapshot.ProtoReflect.Descriptor instead.
+func (*PriceSnapshot) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *PriceSnapshot) GetSpiceGradeId() string {
+	if x != nil {
+		return x.SpiceGradeId
+	}
+	return ""
+}
+
+func (x *PriceSnapshot) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *PriceSnapshot) GetGradeName() string {
+	if x != nil {
+		return x.GradeName
+	}
+	return ""
+}
+
+func (x *PriceSnapshot) GetTodayPrice() float64 {
+	if x != nil {
+		return x.TodayPrice
+	}
+	return 0
+}
+
+func (x *PriceSnapshot) GetPreviousPrice() float64 {
+	if x != nil {
+		return x.PreviousPrice
+	}
+	return 0
+}
+
+type GetPriceSnapshotsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPriceSnapshotsRequest) Reset() {
+	*x = GetPriceSnapshotsRequest{}
+	mi := &file_market_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPriceSnapshotsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPriceSnapshotsRequest) ProtoMessage() {}
+
+func (x *GetPriceSnapshotsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPriceSnapshotsRequest.ProtoReflect.Descriptor instead.
+func (*GetPriceSnapshotsRequest) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetPriceSnapshotsRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetPriceSnapshotsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Snapshots     []*PriceSnapshot       `protobuf:"bytes,1,rep,name=snapshots,proto3" json:"snapshots,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPriceSnapshotsResponse) Reset() {
+	*x = GetPriceSnapshotsResponse{}
+	mi := &file_market_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPriceSnapshotsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPriceSnapshotsResponse) ProtoMessage() {}
+
+func (x *GetPriceSnapshotsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_market_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPriceSnapshotsResponse.ProtoReflect.Descriptor instead.
+func (*GetPriceSnapshotsResponse) Descriptor() ([]byte, []int) {
+	return file_market_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetPriceSnapshotsResponse) GetSnapshots() []*PriceSnapshot {
+	if x != nil {
+		return x.Snapshots
+	}
+	return nil
+}
+
 type GetMarketMetricsResponse_TopProduct struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductName   string                 `protobuf:"bytes,1,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
@@ -978,7 +1746,7 @@ type GetMarketMetricsResponse_TopProduct struct {
 
 func (x *GetMarketMetricsResponse_TopProduct) Reset() {
 	*x = GetMarketMetricsResponse_TopProduct{}
-	mi := &file_market_proto_msgTypes[16]
+	mi := &file_market_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -990,7 +1758,7 @@ func (x *GetMarketMetricsResponse_TopProduct) String() string {
 func (*GetMarketMetricsResponse_TopProduct) ProtoMessage() {}
 
 func (x *GetMarketMetricsResponse_TopProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_market_proto_msgTypes[16]
+	mi := &file_market_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1875,59 @@ const file_market_proto_rawDesc = "" +
 	"\fproduct_name\x18\x01 \x01(\tR\vproductName\x12\x1d\n" +
 	"\n" +
 	"grade_name\x18\x02 \x01(\tR\tgradeName\x12\x16\n" +
-	"\x06volume\x18\x03 \x01(\x01R\x06volume2\xf0\x03\n" +
+	"\x06volume\x18\x03 \x01(\x01R\x06volume\"\xf8\x01\n" +
+	"\x0fEnrichedHolding\x12$\n" +
+	"\x0espice_grade_id\x18\x01 \x01(\tR\fspiceGradeId\x12!\n" +
+	"\fproduct_name\x18\x02 \x01(\tR\vproductName\x12\x1d\n" +
+	"\n" +
+	"grade_name\x18\x03 \x01(\tR\tgradeName\x12\x1a\n" +
+	"\bquantity\x18\x04 \x01(\x01R\bquantity\x12\x1d\n" +
+	"\n" +
+	"total_cost\x18\x05 \x01(\x01R\ttotalCost\x12!\n" +
+	"\frealized_pnl\x18\x06 \x01(\x01R\vrealizedPnl\x12\x1f\n" +
+	"\vtoday_price\x18\a \x01(\x01R\n" +
+	"todayPrice\"-\n" +
+	"\x12GetHoldingsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"F\n" +
+	"\x13GetHoldingsResponse\x12/\n" +
+	"\bholdings\x18\x01 \x03(\v2\x13.pb.EnrichedHoldingR\bholdings\"<\n" +
+	"\x0eRealizedPnLRow\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x01R\x06amount\"K\n" +
+	"\x1cGetRealizedPnLHistoryRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\rR\x04days\"G\n" +
+	"\x1dGetRealizedPnLHistoryResponse\x12&\n" +
+	"\x04rows\x18\x01 \x03(\v2\x12.pb.RealizedPnLRowR\x04rows\"l\n" +
+	"\x10TradeActivityRow\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
+	"\bquantity\x18\x03 \x01(\x01R\bquantity\x12\x14\n" +
+	"\x05count\x18\x04 \x01(\rR\x05count\"F\n" +
+	"\x17GetTradeActivityRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\rR\x04days\"D\n" +
+	"\x18GetTradeActivityResponse\x12(\n" +
+	"\x04rows\x18\x01 \x03(\v2\x14.pb.TradeActivityRowR\x04rows\"C\n" +
+	"\x14GetTradeStatsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\rR\x04days\"\xa5\x01\n" +
+	"\x15GetTradeStatsResponse\x12(\n" +
+	"\x10trades_in_period\x18\x01 \x01(\rR\x0etradesInPeriod\x12/\n" +
+	"\x14buy_volume_in_period\x18\x02 \x01(\x01R\x11buyVolumeInPeriod\x121\n" +
+	"\x15sell_volume_in_period\x18\x03 \x01(\x01R\x12sellVolumeInPeriod\"\xbf\x01\n" +
+	"\rPriceSnapshot\x12$\n" +
+	"\x0espice_grade_id\x18\x01 \x01(\tR\fspiceGradeId\x12!\n" +
+	"\fproduct_name\x18\x02 \x01(\tR\vproductName\x12\x1d\n" +
+	"\n" +
+	"grade_name\x18\x03 \x01(\tR\tgradeName\x12\x1f\n" +
+	"\vtoday_price\x18\x04 \x01(\x01R\n" +
+	"todayPrice\x12%\n" +
+	"\x0eprevious_price\x18\x05 \x01(\x01R\rpreviousPrice\"3\n" +
+	"\x18GetPriceSnapshotsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"L\n" +
+	"\x19GetPriceSnapshotsResponse\x12/\n" +
+	"\tsnapshots\x18\x01 \x03(\v2\x11.pb.PriceSnapshotR\tsnapshots2\xf5\x06\n" +
 	"\rMarketService\x12&\n" +
 	"\x03Buy\x12\x0e.pb.BuyRequest\x1a\x0f.pb.BuyResponse\x12)\n" +
 	"\x04Sell\x12\x0f.pb.SellRequest\x1a\x10.pb.SellResponse\x12M\n" +
@@ -1115,7 +1935,12 @@ const file_market_proto_rawDesc = "" +
 	"\fGetPositions\x12\x17.pb.GetPositionsRequest\x1a\x18.pb.GetPositionsResponse\x12\\\n" +
 	"\x15ListGradeTransactions\x12 .pb.ListGradeTransactionsRequest\x1a!.pb.ListGradeTransactionsResponse\x12M\n" +
 	"\x10ListTransactions\x12\x1b.pb.ListTransactionsRequest\x1a\x1c.pb.ListTransactionsResponse\x12M\n" +
-	"\x10GetMarketMetrics\x12\x1b.pb.GetMarketMetricsRequest\x1a\x1c.pb.GetMarketMetricsResponseB\x06Z\x04./pbb\x06proto3"
+	"\x10GetMarketMetrics\x12\x1b.pb.GetMarketMetricsRequest\x1a\x1c.pb.GetMarketMetricsResponse\x12>\n" +
+	"\vGetHoldings\x12\x16.pb.GetHoldingsRequest\x1a\x17.pb.GetHoldingsResponse\x12\\\n" +
+	"\x15GetRealizedPnLHistory\x12 .pb.GetRealizedPnLHistoryRequest\x1a!.pb.GetRealizedPnLHistoryResponse\x12M\n" +
+	"\x10GetTradeActivity\x12\x1b.pb.GetTradeActivityRequest\x1a\x1c.pb.GetTradeActivityResponse\x12D\n" +
+	"\rGetTradeStats\x12\x18.pb.GetTradeStatsRequest\x1a\x19.pb.GetTradeStatsResponse\x12P\n" +
+	"\x11GetPriceSnapshots\x12\x1c.pb.GetPriceSnapshotsRequest\x1a\x1d.pb.GetPriceSnapshotsResponseB\x06Z\x04./pbb\x06proto3"
 
 var (
 	file_market_proto_rawDescOnce sync.Once
@@ -1129,7 +1954,7 @@ func file_market_proto_rawDescGZIP() []byte {
 	return file_market_proto_rawDescData
 }
 
-var file_market_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_market_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_market_proto_goTypes = []any{
 	(*Transaction)(nil),                         // 0: pb.Transaction
 	(*PositionView)(nil),                        // 1: pb.PositionView
@@ -1147,7 +1972,21 @@ var file_market_proto_goTypes = []any{
 	(*ListTransactionsResponse)(nil),            // 13: pb.ListTransactionsResponse
 	(*GetMarketMetricsRequest)(nil),             // 14: pb.GetMarketMetricsRequest
 	(*GetMarketMetricsResponse)(nil),            // 15: pb.GetMarketMetricsResponse
-	(*GetMarketMetricsResponse_TopProduct)(nil), // 16: pb.GetMarketMetricsResponse.TopProduct
+	(*EnrichedHolding)(nil),                     // 16: pb.EnrichedHolding
+	(*GetHoldingsRequest)(nil),                  // 17: pb.GetHoldingsRequest
+	(*GetHoldingsResponse)(nil),                 // 18: pb.GetHoldingsResponse
+	(*RealizedPnLRow)(nil),                      // 19: pb.RealizedPnLRow
+	(*GetRealizedPnLHistoryRequest)(nil),        // 20: pb.GetRealizedPnLHistoryRequest
+	(*GetRealizedPnLHistoryResponse)(nil),       // 21: pb.GetRealizedPnLHistoryResponse
+	(*TradeActivityRow)(nil),                    // 22: pb.TradeActivityRow
+	(*GetTradeActivityRequest)(nil),             // 23: pb.GetTradeActivityRequest
+	(*GetTradeActivityResponse)(nil),            // 24: pb.GetTradeActivityResponse
+	(*GetTradeStatsRequest)(nil),                // 25: pb.GetTradeStatsRequest
+	(*GetTradeStatsResponse)(nil),               // 26: pb.GetTradeStatsResponse
+	(*PriceSnapshot)(nil),                       // 27: pb.PriceSnapshot
+	(*GetPriceSnapshotsRequest)(nil),            // 28: pb.GetPriceSnapshotsRequest
+	(*GetPriceSnapshotsResponse)(nil),           // 29: pb.GetPriceSnapshotsResponse
+	(*GetMarketMetricsResponse_TopProduct)(nil), // 30: pb.GetMarketMetricsResponse.TopProduct
 }
 var file_market_proto_depIdxs = []int32{
 	0,  // 0: pb.BuyResponse.transaction:type_name -> pb.Transaction
@@ -1156,26 +1995,40 @@ var file_market_proto_depIdxs = []int32{
 	1,  // 3: pb.GetPositionsResponse.positions:type_name -> pb.PositionView
 	0,  // 4: pb.ListGradeTransactionsResponse.transactions:type_name -> pb.Transaction
 	0,  // 5: pb.ListTransactionsResponse.transactions:type_name -> pb.Transaction
-	16, // 6: pb.GetMarketMetricsResponse.top_products:type_name -> pb.GetMarketMetricsResponse.TopProduct
-	2,  // 7: pb.MarketService.Buy:input_type -> pb.BuyRequest
-	4,  // 8: pb.MarketService.Sell:input_type -> pb.SellRequest
-	6,  // 9: pb.MarketService.GetGradePosition:input_type -> pb.GetGradePositionRequest
-	8,  // 10: pb.MarketService.GetPositions:input_type -> pb.GetPositionsRequest
-	10, // 11: pb.MarketService.ListGradeTransactions:input_type -> pb.ListGradeTransactionsRequest
-	12, // 12: pb.MarketService.ListTransactions:input_type -> pb.ListTransactionsRequest
-	14, // 13: pb.MarketService.GetMarketMetrics:input_type -> pb.GetMarketMetricsRequest
-	3,  // 14: pb.MarketService.Buy:output_type -> pb.BuyResponse
-	5,  // 15: pb.MarketService.Sell:output_type -> pb.SellResponse
-	7,  // 16: pb.MarketService.GetGradePosition:output_type -> pb.GetGradePositionResponse
-	9,  // 17: pb.MarketService.GetPositions:output_type -> pb.GetPositionsResponse
-	11, // 18: pb.MarketService.ListGradeTransactions:output_type -> pb.ListGradeTransactionsResponse
-	13, // 19: pb.MarketService.ListTransactions:output_type -> pb.ListTransactionsResponse
-	15, // 20: pb.MarketService.GetMarketMetrics:output_type -> pb.GetMarketMetricsResponse
-	14, // [14:21] is the sub-list for method output_type
-	7,  // [7:14] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	30, // 6: pb.GetMarketMetricsResponse.top_products:type_name -> pb.GetMarketMetricsResponse.TopProduct
+	16, // 7: pb.GetHoldingsResponse.holdings:type_name -> pb.EnrichedHolding
+	19, // 8: pb.GetRealizedPnLHistoryResponse.rows:type_name -> pb.RealizedPnLRow
+	22, // 9: pb.GetTradeActivityResponse.rows:type_name -> pb.TradeActivityRow
+	27, // 10: pb.GetPriceSnapshotsResponse.snapshots:type_name -> pb.PriceSnapshot
+	2,  // 11: pb.MarketService.Buy:input_type -> pb.BuyRequest
+	4,  // 12: pb.MarketService.Sell:input_type -> pb.SellRequest
+	6,  // 13: pb.MarketService.GetGradePosition:input_type -> pb.GetGradePositionRequest
+	8,  // 14: pb.MarketService.GetPositions:input_type -> pb.GetPositionsRequest
+	10, // 15: pb.MarketService.ListGradeTransactions:input_type -> pb.ListGradeTransactionsRequest
+	12, // 16: pb.MarketService.ListTransactions:input_type -> pb.ListTransactionsRequest
+	14, // 17: pb.MarketService.GetMarketMetrics:input_type -> pb.GetMarketMetricsRequest
+	17, // 18: pb.MarketService.GetHoldings:input_type -> pb.GetHoldingsRequest
+	20, // 19: pb.MarketService.GetRealizedPnLHistory:input_type -> pb.GetRealizedPnLHistoryRequest
+	23, // 20: pb.MarketService.GetTradeActivity:input_type -> pb.GetTradeActivityRequest
+	25, // 21: pb.MarketService.GetTradeStats:input_type -> pb.GetTradeStatsRequest
+	28, // 22: pb.MarketService.GetPriceSnapshots:input_type -> pb.GetPriceSnapshotsRequest
+	3,  // 23: pb.MarketService.Buy:output_type -> pb.BuyResponse
+	5,  // 24: pb.MarketService.Sell:output_type -> pb.SellResponse
+	7,  // 25: pb.MarketService.GetGradePosition:output_type -> pb.GetGradePositionResponse
+	9,  // 26: pb.MarketService.GetPositions:output_type -> pb.GetPositionsResponse
+	11, // 27: pb.MarketService.ListGradeTransactions:output_type -> pb.ListGradeTransactionsResponse
+	13, // 28: pb.MarketService.ListTransactions:output_type -> pb.ListTransactionsResponse
+	15, // 29: pb.MarketService.GetMarketMetrics:output_type -> pb.GetMarketMetricsResponse
+	18, // 30: pb.MarketService.GetHoldings:output_type -> pb.GetHoldingsResponse
+	21, // 31: pb.MarketService.GetRealizedPnLHistory:output_type -> pb.GetRealizedPnLHistoryResponse
+	24, // 32: pb.MarketService.GetTradeActivity:output_type -> pb.GetTradeActivityResponse
+	26, // 33: pb.MarketService.GetTradeStats:output_type -> pb.GetTradeStatsResponse
+	29, // 34: pb.MarketService.GetPriceSnapshots:output_type -> pb.GetPriceSnapshotsResponse
+	23, // [23:35] is the sub-list for method output_type
+	11, // [11:23] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_market_proto_init() }
@@ -1189,7 +2042,7 @@ func file_market_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_market_proto_rawDesc), len(file_market_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

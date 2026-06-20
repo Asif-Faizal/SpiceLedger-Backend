@@ -3,6 +3,7 @@ package graphql
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/control/pb"
@@ -185,6 +186,277 @@ func (r *queryResolver) AdminDashboard(ctx context.Context) (*AdminDashboard, er
 		TotalVolume:        marketResp.TotalVolume,
 		RecentTransactions: recentTransactions,
 		TopProducts:        topProducts,
+	}, nil
+}
+
+// MerchantDashboard is the resolver for the merchantDashboard field.
+func (r *queryResolver) MerchantDashboard(ctx context.Context, days *int) (*MerchantDashboard, error) {
+	windowDays := uint32(7)
+	if days != nil && *days > 0 {
+		windowDays = uint32(*days)
+		if windowDays > 90 {
+			windowDays = 90
+		}
+	}
+
+	// 1. Get enriched holdings (JWT-scoped)
+	holdingsResp, err := r.server.marketClient.GetHoldings(ctx, &marketpb.GetHoldingsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Get trade stats for the period
+	statsResp, err := r.server.marketClient.GetTradeStats(ctx, &marketpb.GetTradeStatsRequest{Days: windowDays})
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. Get realized P&L history
+	pnlResp, err := r.server.marketClient.GetRealizedPnLHistory(ctx, &marketpb.GetRealizedPnLHistoryRequest{Days: windowDays})
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. Get trade activity
+	activityResp, err := r.server.marketClient.GetTradeActivity(ctx, &marketpb.GetTradeActivityRequest{Days: windowDays})
+	if err != nil {
+		return nil, err
+	}
+
+	// 5. Get price snapshots for held grades
+	snapshotsResp, err := r.server.marketClient.GetPriceSnapshots(ctx, &marketpb.GetPriceSnapshotsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// 6. Get recent transactions (last 5 for merchant)
+	txnsResp, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
+		Take: 5,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	holdings := make([]*MerchantHolding, 0, len(holdingsResp.Holdings))
+	var totalPortfolioValue float64
+	for _, row := range holdingsResp.Holdings {
+		h := &MerchantHolding{
+			SpiceGradeID: row.SpiceGradeId,
+			ProductName:  row.ProductName,
+			GradeName:    row.GradeName,
+			Quantity:     row.Quantity,
+			CostBasis:    row.TotalCost,
+			RealizedPnL:  row.RealizedPnl,
+			TodayPrice:   row.TodayPrice,
+		}
+		if row.Quantity > 0 {
+			h.AvgCost = row.TotalCost / row.Quantity
+		}
+		if row.TodayPrice > 0 {
+			h.MarketValue = row.Quantity * row.TodayPrice
+			h.UnrealizedPnL = (row.TodayPrice - h.AvgCost) * row.Quantity
+		} else {
+			h.MarketValue = row.TotalCost
+		}
+		if row.TotalCost > 0 {
+			h.UnrealizedPnLPercent = (h.UnrealizedPnL / row.TotalCost) * 100
+		}
+		totalPortfolioValue += h.MarketValue
+		holdings = append(holdings, h)
+	}
+	if totalPortfolioValue > 0 {
+		for _, h := range holdings {
+			h.WeightPercent = (h.MarketValue / totalPortfolioValue) * 100
+		}
+	}
+
+	portfolioMix := make([]*PortfolioSlice, len(holdings))
+	for i, h := range holdings {
+		portfolioMix[i] = &PortfolioSlice{
+			Label:    fmt.Sprintf("%s - %s", h.ProductName, h.GradeName),
+			Value:    h.MarketValue,
+			Quantity: h.Quantity,
+		}
+	}
+
+	summary := &MerchantSummary{
+		OpenPositions:      len(holdings),
+		TradesInPeriod:     int(statsResp.TradesInPeriod),
+		BuyVolumeInPeriod:  statsResp.BuyVolumeInPeriod,
+		SellVolumeInPeriod: statsResp.SellVolumeInPeriod,
+	}
+	for _, h := range holdings {
+		summary.TotalCost += h.CostBasis
+		summary.TotalRealizedPnL += h.RealizedPnL
+		summary.TotalUnrealizedPnL += h.UnrealizedPnL
+		summary.PortfolioValue += h.MarketValue
+		summary.TotalQuantityKg += h.Quantity
+	}
+	summary.NetPnL = summary.TotalRealizedPnL + summary.TotalUnrealizedPnL
+
+	pnlByDate := make(map[string]float64, len(pnlResp.Rows))
+	for _, row := range pnlResp.Rows {
+		pnlByDate[row.Date] += row.Amount
+	}
+	pnlTrend := make([]*PnLPoint, 0, windowDays+1)
+	var cumulativePnL float64
+	for i := int(windowDays); i >= 0; i-- {
+		key := time.Now().AddDate(0, 0, -i).Format("2006-01-02")
+		daily := pnlByDate[key]
+		cumulativePnL += daily
+		pnlTrend = append(pnlTrend, &PnLPoint{
+			Date:                  key,
+			DailyRealizedPnL:      daily,
+			CumulativeRealizedPnL: cumulativePnL,
+		})
+	}
+
+	activityByDate := make(map[string]*ActivityDay, len(activityResp.Rows))
+	for _, row := range activityResp.Rows {
+		day, ok := activityByDate[row.Date]
+		if !ok {
+			day = &ActivityDay{Date: row.Date}
+			activityByDate[row.Date] = day
+		}
+		switch row.Type {
+		case "BUY":
+			day.BuyQuantity += row.Quantity
+			day.BuyCount += int(row.Count)
+		case "SELL":
+			day.SellQuantity += row.Quantity
+			day.SellCount += int(row.Count)
+		}
+	}
+	activityTrend := make([]*ActivityDay, 0, windowDays+1)
+	for i := int(windowDays); i >= 0; i-- {
+		key := time.Now().AddDate(0, 0, -i).Format("2006-01-02")
+		if day, ok := activityByDate[key]; ok {
+			activityTrend = append(activityTrend, day)
+		} else {
+			activityTrend = append(activityTrend, &ActivityDay{Date: key})
+		}
+	}
+
+	recentTransactions := make([]*Transaction, len(txnsResp.Transactions))
+	for i, t := range txnsResp.Transactions {
+		recentTransactions[i] = &Transaction{
+			ID:           t.Id,
+			UserID:       t.UserId,
+			SpiceGradeID: t.SpiceGradeId,
+			Type:         t.Type,
+			Quantity:     t.Quantity,
+			Price:        t.Price,
+			TradeDate:    t.TradeDate,
+			CreatedAt:    t.CreatedAt,
+		}
+	}
+
+	var insights []*MerchantInsight
+	if len(holdings) == 0 {
+		insights = []*MerchantInsight{{
+			Kind:     "IDLE",
+			Title:    "Start your portfolio",
+			Body:     "You have no open positions yet. Buy your first spice grade to see holdings and P&L here.",
+			Severity: "info",
+		}}
+	} else {
+		if statsResp.TradesInPeriod == 0 {
+			insights = append(insights, &MerchantInsight{
+				Kind:     "IDLE",
+				Title:    "Quiet period",
+				Body:     "No trades in the selected window. Your portfolio snapshot still reflects current holdings.",
+				Severity: "info",
+			})
+		}
+		var best, worst *MerchantHolding
+		for _, h := range holdings {
+			if h.TodayPrice <= 0 {
+				continue
+			}
+			if best == nil || h.UnrealizedPnLPercent > best.UnrealizedPnLPercent {
+				best = h
+			}
+			if worst == nil || h.UnrealizedPnLPercent < worst.UnrealizedPnLPercent {
+				worst = h
+			}
+		}
+		if best != nil && best.UnrealizedPnLPercent > 0 {
+			id := best.SpiceGradeID
+			insights = append(insights, &MerchantInsight{
+				Kind:         "WINNER",
+				Title:        "Top performer",
+				Body:         fmt.Sprintf("%s - %s is up %.1f%% unrealized.", best.ProductName, best.GradeName, best.UnrealizedPnLPercent),
+				SpiceGradeID: &id,
+				Severity:     "success",
+			})
+		}
+		if worst != nil && worst.UnrealizedPnLPercent < 0 && (best == nil || worst.SpiceGradeID != best.SpiceGradeID) {
+			id := worst.SpiceGradeID
+			insights = append(insights, &MerchantInsight{
+				Kind:         "LOSER",
+				Title:        "Under pressure",
+				Body:         fmt.Sprintf("%s - %s is down %.1f%% vs cost basis.", worst.ProductName, worst.GradeName, math.Abs(worst.UnrealizedPnLPercent)),
+				SpiceGradeID: &id,
+				Severity:     "warning",
+			})
+		}
+		for _, h := range holdings {
+			if h.WeightPercent >= 70 {
+				id := h.SpiceGradeID
+				insights = append(insights, &MerchantInsight{
+					Kind:         "CONCENTRATION",
+					Title:        "Concentrated portfolio",
+					Body:         fmt.Sprintf("%.0f%% of portfolio value is in %s - %s.", h.WeightPercent, h.ProductName, h.GradeName),
+					SpiceGradeID: &id,
+					Severity:     "warning",
+				})
+				break
+			}
+		}
+		var periodRealized float64
+		for _, row := range pnlResp.Rows {
+			periodRealized += row.Amount
+		}
+		if periodRealized > 0 {
+			insights = append(insights, &MerchantInsight{
+				Kind:     "MILESTONE",
+				Title:    "Profitable period",
+				Body:     fmt.Sprintf("You locked in %.2f realized P&L in the selected window.", periodRealized),
+				Severity: "success",
+			})
+		}
+	}
+
+	movers := make([]*PriceMover, len(snapshotsResp.Snapshots))
+	for i, snap := range snapshotsResp.Snapshots {
+		m := &PriceMover{
+			SpiceGradeID:  snap.SpiceGradeId,
+			ProductName:   snap.ProductName,
+			GradeName:     snap.GradeName,
+			TodayPrice:    snap.TodayPrice,
+			PreviousPrice: snap.PreviousPrice,
+			Direction:     "FLAT",
+		}
+		if snap.PreviousPrice > 0 && snap.TodayPrice > 0 {
+			m.ChangePercent = ((snap.TodayPrice - snap.PreviousPrice) / snap.PreviousPrice) * 100
+			if m.ChangePercent > 0.01 {
+				m.Direction = "UP"
+			} else if m.ChangePercent < -0.01 {
+				m.Direction = "DOWN"
+			}
+		}
+		movers[i] = m
+	}
+
+	return &MerchantDashboard{
+		Summary:            summary,
+		Holdings:           holdings,
+		PortfolioMix:       portfolioMix,
+		PnlTrend:           pnlTrend,
+		ActivityTrend:      activityTrend,
+		RecentTransactions: recentTransactions,
+		Insights:           insights,
+		Movers:             movers,
 	}, nil
 }
 

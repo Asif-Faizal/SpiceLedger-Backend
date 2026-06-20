@@ -2,6 +2,14 @@
 
 package graphql
 
+type ActivityDay struct {
+	Date         string  `json:"date"`
+	BuyQuantity  float64 `json:"buyQuantity"`
+	SellQuantity float64 `json:"sellQuantity"`
+	BuyCount     int     `json:"buyCount"`
+	SellCount    int     `json:"sellCount"`
+}
+
 type AdminDashboard struct {
 	TotalUsers         int            `json:"totalUsers"`
 	TotalProducts      int            `json:"totalProducts"`
@@ -45,7 +53,76 @@ type DailyPrice struct {
 	Time      string  `json:"time"`
 }
 
+type MerchantDashboard struct {
+	Summary            *MerchantSummary   `json:"summary"`
+	Holdings           []*MerchantHolding `json:"holdings"`
+	PortfolioMix       []*PortfolioSlice  `json:"portfolioMix"`
+	PnlTrend           []*PnLPoint        `json:"pnlTrend"`
+	ActivityTrend      []*ActivityDay     `json:"activityTrend"`
+	RecentTransactions []*Transaction     `json:"recentTransactions"`
+	Insights           []*MerchantInsight `json:"insights"`
+	Movers             []*PriceMover      `json:"movers"`
+}
+
+type MerchantHolding struct {
+	SpiceGradeID         string  `json:"spiceGradeId"`
+	ProductName          string  `json:"productName"`
+	GradeName            string  `json:"gradeName"`
+	Quantity             float64 `json:"quantity"`
+	AvgCost              float64 `json:"avgCost"`
+	TodayPrice           float64 `json:"todayPrice"`
+	MarketValue          float64 `json:"marketValue"`
+	CostBasis            float64 `json:"costBasis"`
+	UnrealizedPnL        float64 `json:"unrealizedPnL"`
+	UnrealizedPnLPercent float64 `json:"unrealizedPnLPercent"`
+	RealizedPnL          float64 `json:"realizedPnL"`
+	WeightPercent        float64 `json:"weightPercent"`
+}
+
+type MerchantInsight struct {
+	Kind         string  `json:"kind"`
+	Title        string  `json:"title"`
+	Body         string  `json:"body"`
+	SpiceGradeID *string `json:"spiceGradeId,omitempty"`
+	Severity     string  `json:"severity"`
+}
+
+type MerchantSummary struct {
+	PortfolioValue     float64 `json:"portfolioValue"`
+	TotalCost          float64 `json:"totalCost"`
+	TotalRealizedPnL   float64 `json:"totalRealizedPnL"`
+	TotalUnrealizedPnL float64 `json:"totalUnrealizedPnL"`
+	NetPnL             float64 `json:"netPnL"`
+	OpenPositions      int     `json:"openPositions"`
+	TotalQuantityKg    float64 `json:"totalQuantityKg"`
+	TradesInPeriod     int     `json:"tradesInPeriod"`
+	BuyVolumeInPeriod  float64 `json:"buyVolumeInPeriod"`
+	SellVolumeInPeriod float64 `json:"sellVolumeInPeriod"`
+}
+
 type Mutation struct {
+}
+
+type PnLPoint struct {
+	Date                  string  `json:"date"`
+	DailyRealizedPnL      float64 `json:"dailyRealizedPnL"`
+	CumulativeRealizedPnL float64 `json:"cumulativeRealizedPnL"`
+}
+
+type PortfolioSlice struct {
+	Label    string  `json:"label"`
+	Value    float64 `json:"value"`
+	Quantity float64 `json:"quantity"`
+}
+
+type PriceMover struct {
+	SpiceGradeID  string  `json:"spiceGradeId"`
+	ProductName   string  `json:"productName"`
+	GradeName     string  `json:"gradeName"`
+	TodayPrice    float64 `json:"todayPrice"`
+	PreviousPrice float64 `json:"previousPrice"`
+	ChangePercent float64 `json:"changePercent"`
+	Direction     string  `json:"direction"`
 }
 
 type Query struct {
