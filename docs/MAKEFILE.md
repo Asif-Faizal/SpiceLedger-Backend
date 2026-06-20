@@ -54,10 +54,22 @@ See [MIGRATIONS.md](./MIGRATIONS.md) for how migrations work.
 | `make up-db` | Start MySQL + run migrations (`infra` profile) |
 | `make up-full` | Start DB, migrate, then all app services (`full` profile). **Does not rebuild images.** |
 | `make up-full-build` | **Rebuild all images**, then `up-full`. Use after code changes. |
+| `make build` | Build all images without starting or restarting |
+| `make build-<service>` | Build one image: `control`, `market`, `gateway`, `migrate`, `db` |
+| `make rebuild-<service>` | Build + restart one service: `control`, `market`, `gateway`; `rebuild-migrate` runs migrations |
 | `make up` | Alias for `up-full` |
 | `make down` | Stop all containers. Data persists in `spice_ledger_mysql_data` volume. |
 | `make down-volumes` | Stop containers **and delete** the MySQL volume |
-| `make build` | Build all Docker images without starting |
+| `make build` | Build all Docker images (no restart) |
+| `make build-control` | Build control image only |
+| `make build-market` | Build market image only |
+| `make build-gateway` | Build gateway image only |
+| `make build-migrate` | Build migrate image only |
+| `make build-db` | Build MySQL image only |
+| `make rebuild-control` | Build + restart control |
+| `make rebuild-market` | Build + restart market |
+| `make rebuild-gateway` | Build + restart gateway |
+| `make rebuild-migrate` | Build migrate image + run `migrate up` |
 | `make logs` | Tail logs for full-profile services |
 | `make ps` | List all compose containers |
 
@@ -66,9 +78,14 @@ See [MIGRATIONS.md](./MIGRATIONS.md) for how migrations work.
 | Situation | Command |
 |-----------|---------|
 | First time / fresh clone | `make setup-docker && make up-full-build` |
-| Code changed (Go, Dockerfiles) | `make up-full-build` or `docker compose --profile full build <service>` |
-| Only `.env` or migrations changed | `make up-full` or `make migrate-up` |
-| GraphQL/REST behavior not updating | Rebuild gateway — `make up-full` alone reuses old images |
+| All services changed | `make up-full-build` |
+| GraphQL / REST / gateway code | `make rebuild-gateway` |
+| Control service only | `make rebuild-control` |
+| Market / FIFO trading only | `make rebuild-market` |
+| New migration SQL files | `make rebuild-migrate` or `make migrate-up` |
+| Only `.env` changed | `make up-full` (no rebuild) |
+
+**Important:** `make up-full` and `make down && make up` reuse existing images. After Go code changes, use `make rebuild-<service>` or `make up-full-build`.
 
 ---
 

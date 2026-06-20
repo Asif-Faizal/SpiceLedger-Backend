@@ -1,7 +1,9 @@
-.PHONY: help setup setup-local setup-docker env-local env-docker db-init db-reset migrate-up migrate-status migrate-version migrate-down up up-db up-full down down-volumes logs ps build test lint clean install-docker
+.PHONY: help setup setup-local setup-docker env-local env-docker db-init db-reset migrate-up migrate-status migrate-version migrate-down up up-db up-full down down-volumes logs ps build test lint clean install-docker build-control build-market build-gateway build-migrate build-db rebuild-control rebuild-market rebuild-gateway rebuild-migrate
 
 COMPOSE := docker compose --profile full
 COMPOSE_INFRA := docker compose --profile infra
+DOCKER_BUILD := DOCKER_BUILDKIT=1 $(COMPOSE) build --pull=false
+DOCKER_BUILD_INFRA := DOCKER_BUILDKIT=1 $(COMPOSE_INFRA) build --pull=false
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -59,11 +61,41 @@ up-full: ## Start full stack (uses existing images; no registry pull)
 	$(COMPOSE) run --rm migrate up
 	$(COMPOSE) up -d control market gateway
 
-up-full-build: ## Rebuild images then start (use when code changed)
-	DOCKER_BUILDKIT=1 $(COMPOSE) build --pull=false
+up-full-build: ## Rebuild all images then start (use when code changed)
+	$(DOCKER_BUILD)
 	@$(MAKE) up-full
 
 up: up-full ## Alias for full stack
+
+build: ## Build all Docker images (no restart)
+	$(DOCKER_BUILD)
+
+build-control: ## Build control gRPC image only
+	$(DOCKER_BUILD) control
+
+build-market: ## Build market gRPC image only
+	$(DOCKER_BUILD) market
+
+build-gateway: ## Build gateway image only (REST + GraphQL)
+	$(DOCKER_BUILD) gateway
+
+build-migrate: ## Build migrate job image only
+	$(DOCKER_BUILD_INFRA) migrate
+
+build-db: ## Build MySQL image only
+	$(DOCKER_BUILD_INFRA) db
+
+rebuild-control: build-control ## Build and restart control
+	$(COMPOSE) up -d control
+
+rebuild-market: build-market ## Build and restart market
+	$(COMPOSE) up -d market
+
+rebuild-gateway: build-gateway ## Build and restart gateway
+	$(COMPOSE) up -d gateway
+
+rebuild-migrate: build-migrate ## Build migrate image and run pending migrations
+	$(COMPOSE_INFRA) run --rm migrate up
 
 down: ## Stop containers (data persists in spice_ledger_mysql_data volume)
 	docker compose --profile full --profile infra down
@@ -76,9 +108,6 @@ logs: ## Tail logs for all services
 
 ps: ## Show running containers
 	docker compose ps -a
-
-build: ## Build all Docker images
-	$(COMPOSE) build
 
 test: ## Run Go tests
 	go test ./...

@@ -148,9 +148,9 @@ func (r *queryResolver) AdminDashboard(ctx context.Context) (*AdminDashboard, er
 		return nil, err
 	}
 
-	// 3. Get recent transactions (last 10 across all users for admin)
+	// 3. Get recent transactions (last 5 across all users for admin)
 	txns, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
-		Take: 10,
+		Take: 5,
 	})
 	if err != nil {
 		return nil, err
