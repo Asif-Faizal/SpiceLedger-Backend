@@ -552,3 +552,167 @@ func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *i
 	}
 	return transactions, nil
 }
+
+func trendWindowDays(days *int) uint32 {
+	windowDays := uint32(7)
+	if days != nil && *days > 0 {
+		windowDays = uint32(*days)
+		if windowDays > 90 {
+			windowDays = 90
+		}
+	}
+	return windowDays
+}
+
+// MerchantPnlTrend is the resolver for the merchantPnlTrend field.
+func (r *queryResolver) MerchantPnlTrend(ctx context.Context, days *int) (*MerchantPnlTrend, error) {
+	windowDays := trendWindowDays(days)
+
+	pnlResp, err := r.server.marketClient.GetRealizedPnLHistory(ctx, &marketpb.GetRealizedPnLHistoryRequest{
+		Days: windowDays,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	type dayAgg struct {
+		total    float64
+		products map[string]*PnLProductDay
+	}
+	byDate := make(map[string]*dayAgg)
+	for _, row := range pnlResp.Rows {
+		agg, ok := byDate[row.Date]
+		if !ok {
+			agg = &dayAgg{products: map[string]*PnLProductDay{}}
+			byDate[row.Date] = agg
+		}
+		agg.total += row.Amount
+		key := row.SpiceGradeId
+		if key == "" {
+			key = row.ProductName + "|" + row.GradeName
+		}
+		prod, ok := agg.products[key]
+		if !ok {
+			prod = &PnLProductDay{
+				SpiceGradeID: row.SpiceGradeId,
+				ProductName:  row.ProductName,
+				GradeName:    row.GradeName,
+			}
+			agg.products[key] = prod
+		}
+		prod.RealizedPnL += row.Amount
+	}
+
+	points := make([]*PnLDayDetail, 0, windowDays+1)
+	var cumulative, period float64
+	for i := int(windowDays); i >= 0; i-- {
+		key := time.Now().AddDate(0, 0, -i).Format("2006-01-02")
+		agg := byDate[key]
+		daily := 0.0
+		products := []*PnLProductDay{}
+		if agg != nil {
+			daily = agg.total
+			products = make([]*PnLProductDay, 0, len(agg.products))
+			for _, p := range agg.products {
+				products = append(products, p)
+			}
+		}
+		cumulative += daily
+		period += daily
+		points = append(points, &PnLDayDetail{
+			Date:                  key,
+			DailyRealizedPnL:      daily,
+			CumulativeRealizedPnL: cumulative,
+			Products:              products,
+		})
+	}
+
+	return &MerchantPnlTrend{
+		Days:              int(windowDays),
+		PeriodRealizedPnL: period,
+		Points:            points,
+	}, nil
+}
+
+// MerchantActivityTrend is the resolver for the merchantActivityTrend field.
+func (r *queryResolver) MerchantActivityTrend(ctx context.Context, days *int) (*MerchantActivityTrend, error) {
+	windowDays := trendWindowDays(days)
+
+	activityResp, err := r.server.marketClient.GetTradeActivity(ctx, &marketpb.GetTradeActivityRequest{
+		Days: windowDays,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	type dayAgg struct {
+		buyQty, sellQty     float64
+		buyCount, sellCount int
+		products            map[string]*ActivityProductDay
+	}
+	byDate := make(map[string]*dayAgg)
+	for _, row := range activityResp.Rows {
+		agg, ok := byDate[row.Date]
+		if !ok {
+			agg = &dayAgg{products: map[string]*ActivityProductDay{}}
+			byDate[row.Date] = agg
+		}
+		key := row.SpiceGradeId
+		if key == "" {
+			key = row.ProductName + "|" + row.GradeName
+		}
+		prod, ok := agg.products[key]
+		if !ok {
+			prod = &ActivityProductDay{
+				SpiceGradeID: row.SpiceGradeId,
+				ProductName:  row.ProductName,
+				GradeName:    row.GradeName,
+			}
+			agg.products[key] = prod
+		}
+		switch row.Type {
+		case "BUY":
+			agg.buyQty += row.Quantity
+			agg.buyCount += int(row.Count)
+			prod.BuyQuantity += row.Quantity
+			prod.BuyCount += int(row.Count)
+		case "SELL":
+			agg.sellQty += row.Quantity
+			agg.sellCount += int(row.Count)
+			prod.SellQuantity += row.Quantity
+			prod.SellCount += int(row.Count)
+		}
+	}
+
+	points := make([]*ActivityDayDetail, 0, windowDays+1)
+	var totalBuy, totalSell float64
+	var totalTrades int
+	for i := int(windowDays); i >= 0; i-- {
+		key := time.Now().AddDate(0, 0, -i).Format("2006-01-02")
+		agg := byDate[key]
+		point := &ActivityDayDetail{Date: key, Products: []*ActivityProductDay{}}
+		if agg != nil {
+			point.BuyQuantity = agg.buyQty
+			point.SellQuantity = agg.sellQty
+			point.BuyCount = agg.buyCount
+			point.SellCount = agg.sellCount
+			products := make([]*ActivityProductDay, 0, len(agg.products))
+			for _, p := range agg.products {
+				products = append(products, p)
+			}
+			point.Products = products
+			totalBuy += agg.buyQty
+			totalSell += agg.sellQty
+			totalTrades += agg.buyCount + agg.sellCount
+		}
+		points = append(points, point)
+	}
+
+	return &MerchantActivityTrend{
+		Days:              int(windowDays),
+		TotalBuyQuantity:  totalBuy,
+		TotalSellQuantity: totalSell,
+		TotalTrades:       totalTrades,
+		Points:            points,
+	}, nil
+}

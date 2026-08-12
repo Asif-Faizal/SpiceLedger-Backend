@@ -10,6 +10,25 @@ type ActivityDay struct {
 	SellCount    int     `json:"sellCount"`
 }
 
+type ActivityDayDetail struct {
+	Date         string                `json:"date"`
+	BuyQuantity  float64               `json:"buyQuantity"`
+	SellQuantity float64               `json:"sellQuantity"`
+	BuyCount     int                   `json:"buyCount"`
+	SellCount    int                   `json:"sellCount"`
+	Products     []*ActivityProductDay `json:"products"`
+}
+
+type ActivityProductDay struct {
+	SpiceGradeID string  `json:"spiceGradeId"`
+	ProductName  string  `json:"productName"`
+	GradeName    string  `json:"gradeName"`
+	BuyQuantity  float64 `json:"buyQuantity"`
+	SellQuantity float64 `json:"sellQuantity"`
+	BuyCount     int     `json:"buyCount"`
+	SellCount    int     `json:"sellCount"`
+}
+
 type AdminDashboard struct {
 	TotalUsers         int            `json:"totalUsers"`
 	TotalProducts      int            `json:"totalProducts"`
@@ -53,6 +72,14 @@ type DailyPrice struct {
 	Time      string  `json:"time"`
 }
 
+type MerchantActivityTrend struct {
+	Days              int                  `json:"days"`
+	TotalBuyQuantity  float64              `json:"totalBuyQuantity"`
+	TotalSellQuantity float64              `json:"totalSellQuantity"`
+	TotalTrades       int                  `json:"totalTrades"`
+	Points            []*ActivityDayDetail `json:"points"`
+}
+
 type MerchantDashboard struct {
 	Summary            *MerchantSummary   `json:"summary"`
 	Holdings           []*MerchantHolding `json:"holdings"`
@@ -87,6 +114,12 @@ type MerchantInsight struct {
 	Severity     string  `json:"severity"`
 }
 
+type MerchantPnlTrend struct {
+	Days              int             `json:"days"`
+	PeriodRealizedPnL float64         `json:"periodRealizedPnL"`
+	Points            []*PnLDayDetail `json:"points"`
+}
+
 type MerchantSummary struct {
 	PortfolioValue     float64 `json:"portfolioValue"`
 	TotalCost          float64 `json:"totalCost"`
@@ -103,10 +136,24 @@ type MerchantSummary struct {
 type Mutation struct {
 }
 
+type PnLDayDetail struct {
+	Date                  string           `json:"date"`
+	DailyRealizedPnL      float64          `json:"dailyRealizedPnL"`
+	CumulativeRealizedPnL float64          `json:"cumulativeRealizedPnL"`
+	Products              []*PnLProductDay `json:"products"`
+}
+
 type PnLPoint struct {
 	Date                  string  `json:"date"`
 	DailyRealizedPnL      float64 `json:"dailyRealizedPnL"`
 	CumulativeRealizedPnL float64 `json:"cumulativeRealizedPnL"`
+}
+
+type PnLProductDay struct {
+	SpiceGradeID string  `json:"spiceGradeId"`
+	ProductName  string  `json:"productName"`
+	GradeName    string  `json:"gradeName"`
+	RealizedPnL  float64 `json:"realizedPnL"`
 }
 
 type PortfolioSlice struct {

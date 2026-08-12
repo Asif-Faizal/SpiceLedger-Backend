@@ -78,13 +78,19 @@ type EnrichedHoldingRow struct {
 type DailyRealizedPnLRow struct {
 	Date             time.Time
 	DailyRealizedPnL float64
+	SpiceGradeID     string
+	ProductName      string
+	GradeName        string
 }
 
 type DailyActivityRow struct {
-	Date     time.Time
-	Type     string // BUY or SELL
-	Quantity float64
-	Count    int
+	Date         time.Time
+	Type         string // BUY or SELL
+	Quantity     float64
+	Count        int
+	SpiceGradeID string
+	ProductName  string
+	GradeName    string
 }
 
 // PeriodTradeStats aggregates buy/sell volume and trade count over a date window.

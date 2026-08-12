@@ -347,8 +347,11 @@ func (server *GrpcServer) GetRealizedPnLHistory(ctx context.Context, req *pb.Get
 	out := make([]*pb.RealizedPnLRow, len(rows))
 	for i, row := range rows {
 		out[i] = &pb.RealizedPnLRow{
-			Date:   row.Date.Format("2006-01-02"),
-			Amount: row.DailyRealizedPnL,
+			Date:         row.Date.Format("2006-01-02"),
+			Amount:       row.DailyRealizedPnL,
+			SpiceGradeId: row.SpiceGradeID,
+			ProductName:  row.ProductName,
+			GradeName:    row.GradeName,
 		}
 	}
 
@@ -373,10 +376,13 @@ func (server *GrpcServer) GetTradeActivity(ctx context.Context, req *pb.GetTrade
 	out := make([]*pb.TradeActivityRow, len(rows))
 	for i, row := range rows {
 		out[i] = &pb.TradeActivityRow{
-			Date:     row.Date.Format("2006-01-02"),
-			Type:     row.Type,
-			Quantity: row.Quantity,
-			Count:    uint32(row.Count),
+			Date:         row.Date.Format("2006-01-02"),
+			Type:         row.Type,
+			Quantity:     row.Quantity,
+			Count:        uint32(row.Count),
+			SpiceGradeId: row.SpiceGradeID,
+			ProductName:  row.ProductName,
+			GradeName:    row.GradeName,
 		}
 	}
 

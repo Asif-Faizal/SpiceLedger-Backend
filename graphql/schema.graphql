@@ -56,6 +56,8 @@ type Query {
   listTransactions(skip: Int, take: Int, spiceGradeId: ID, productId: ID, sort: String, dateFrom: String, dateTo: String): [Transaction!]!
   adminDashboard: AdminDashboard!
   merchantDashboard(days: Int): MerchantDashboard!
+  merchantPnlTrend(days: Int): MerchantPnlTrend!
+  merchantActivityTrend(days: Int): MerchantActivityTrend!
 }
 
 type AdminDashboard {
@@ -129,6 +131,53 @@ type ActivityDay {
   sellQuantity: Float!
   buyCount: Int!
   sellCount: Int!
+}
+
+type PnLProductDay {
+  spiceGradeId: ID!
+  productName: String!
+  gradeName: String!
+  realizedPnL: Float!
+}
+
+type PnLDayDetail {
+  date: String!
+  dailyRealizedPnL: Float!
+  cumulativeRealizedPnL: Float!
+  products: [PnLProductDay!]!
+}
+
+type MerchantPnlTrend {
+  days: Int!
+  periodRealizedPnL: Float!
+  points: [PnLDayDetail!]!
+}
+
+type ActivityProductDay {
+  spiceGradeId: ID!
+  productName: String!
+  gradeName: String!
+  buyQuantity: Float!
+  sellQuantity: Float!
+  buyCount: Int!
+  sellCount: Int!
+}
+
+type ActivityDayDetail {
+  date: String!
+  buyQuantity: Float!
+  sellQuantity: Float!
+  buyCount: Int!
+  sellCount: Int!
+  products: [ActivityProductDay!]!
+}
+
+type MerchantActivityTrend {
+  days: Int!
+  totalBuyQuantity: Float!
+  totalSellQuantity: Float!
+  totalTrades: Int!
+  points: [ActivityDayDetail!]!
 }
 
 type MerchantInsight {

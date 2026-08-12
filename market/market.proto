@@ -134,6 +134,9 @@ message GetHoldingsResponse {
 message RealizedPnLRow {
   string date = 1; // YYYY-MM-DD
   double amount = 2;
+  string spice_grade_id = 3;
+  string product_name = 4;
+  string grade_name = 5;
 }
 
 message GetRealizedPnLHistoryRequest {
@@ -150,6 +153,9 @@ message TradeActivityRow {
   string type = 2; // BUY or SELL
   double quantity = 3;
   uint32 count = 4;
+  string spice_grade_id = 5;
+  string product_name = 6;
+  string grade_name = 7;
 }
 
 message GetTradeActivityRequest {

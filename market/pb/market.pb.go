@@ -1215,6 +1215,9 @@ type RealizedPnLRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"` // YYYY-MM-DD
 	Amount        float64                `protobuf:"fixed64,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	SpiceGradeId  string                 `protobuf:"bytes,3,opt,name=spice_grade_id,json=spiceGradeId,proto3" json:"spice_grade_id,omitempty"`
+	ProductName   string                 `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	GradeName     string                 `protobuf:"bytes,5,opt,name=grade_name,json=gradeName,proto3" json:"grade_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1261,6 +1264,27 @@ func (x *RealizedPnLRow) GetAmount() float64 {
 		return x.Amount
 	}
 	return 0
+}
+
+func (x *RealizedPnLRow) GetSpiceGradeId() string {
+	if x != nil {
+		return x.SpiceGradeId
+	}
+	return ""
+}
+
+func (x *RealizedPnLRow) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *RealizedPnLRow) GetGradeName() string {
+	if x != nil {
+		return x.GradeName
+	}
+	return ""
 }
 
 type GetRealizedPnLHistoryRequest struct {
@@ -1365,6 +1389,9 @@ type TradeActivityRow struct {
 	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"` // BUY or SELL
 	Quantity      float64                `protobuf:"fixed64,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	Count         uint32                 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	SpiceGradeId  string                 `protobuf:"bytes,5,opt,name=spice_grade_id,json=spiceGradeId,proto3" json:"spice_grade_id,omitempty"`
+	ProductName   string                 `protobuf:"bytes,6,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	GradeName     string                 `protobuf:"bytes,7,opt,name=grade_name,json=gradeName,proto3" json:"grade_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1425,6 +1452,27 @@ func (x *TradeActivityRow) GetCount() uint32 {
 		return x.Count
 	}
 	return 0
+}
+
+func (x *TradeActivityRow) GetSpiceGradeId() string {
+	if x != nil {
+		return x.SpiceGradeId
+	}
+	return ""
+}
+
+func (x *TradeActivityRow) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *TradeActivityRow) GetGradeName() string {
+	if x != nil {
+		return x.GradeName
+	}
+	return ""
 }
 
 type GetTradeActivityRequest struct {
@@ -1962,20 +2010,28 @@ const file_market_proto_rawDesc = "" +
 	"\x12GetHoldingsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"F\n" +
 	"\x13GetHoldingsResponse\x12/\n" +
-	"\bholdings\x18\x01 \x03(\v2\x13.pb.EnrichedHoldingR\bholdings\"<\n" +
+	"\bholdings\x18\x01 \x03(\v2\x13.pb.EnrichedHoldingR\bholdings\"\xa4\x01\n" +
 	"\x0eRealizedPnLRow\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\tR\x04date\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x01R\x06amount\"K\n" +
+	"\x06amount\x18\x02 \x01(\x01R\x06amount\x12$\n" +
+	"\x0espice_grade_id\x18\x03 \x01(\tR\fspiceGradeId\x12!\n" +
+	"\fproduct_name\x18\x04 \x01(\tR\vproductName\x12\x1d\n" +
+	"\n" +
+	"grade_name\x18\x05 \x01(\tR\tgradeName\"K\n" +
 	"\x1cGetRealizedPnLHistoryRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04days\x18\x02 \x01(\rR\x04days\"G\n" +
 	"\x1dGetRealizedPnLHistoryResponse\x12&\n" +
-	"\x04rows\x18\x01 \x03(\v2\x12.pb.RealizedPnLRowR\x04rows\"l\n" +
+	"\x04rows\x18\x01 \x03(\v2\x12.pb.RealizedPnLRowR\x04rows\"\xd4\x01\n" +
 	"\x10TradeActivityRow\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\tR\x04date\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12\x1a\n" +
 	"\bquantity\x18\x03 \x01(\x01R\bquantity\x12\x14\n" +
-	"\x05count\x18\x04 \x01(\rR\x05count\"F\n" +
+	"\x05count\x18\x04 \x01(\rR\x05count\x12$\n" +
+	"\x0espice_grade_id\x18\x05 \x01(\tR\fspiceGradeId\x12!\n" +
+	"\fproduct_name\x18\x06 \x01(\tR\vproductName\x12\x1d\n" +
+	"\n" +
+	"grade_name\x18\a \x01(\tR\tgradeName\"F\n" +
 	"\x17GetTradeActivityRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04days\x18\x02 \x01(\rR\x04days\"D\n" +

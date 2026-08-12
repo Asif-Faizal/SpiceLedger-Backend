@@ -688,15 +688,21 @@ func (r *MysqlRepository) GetEnrichedHoldings(ctx context.Context, userID string
 	return holdings, nil
 }
 
-// GetDailyRealizedPnLByUser returns realized P&L grouped by sell-allocation day for a merchant.
+// GetDailyRealizedPnLByUser returns realized P&L grouped by sell trade_date + grade.
 func (r *MysqlRepository) GetDailyRealizedPnLByUser(ctx context.Context, userID string, days uint) ([]DailyRealizedPnLRow, error) {
 	start := time.Now()
-	query := `SELECT DATE(sa.created_at) AS d, COALESCE(SUM(sa.realized_pnl), 0)
+	query := `SELECT t.trade_date AS d,
+	                 COALESCE(SUM(sa.realized_pnl), 0),
+	                 t.spice_grade_id,
+	                 COALESCE(p.name, ''),
+	                 COALESCE(g.name, '')
 	          FROM sell_allocations sa
 	          INNER JOIN transactions t ON t.id = sa.sell_transaction_id
+	          LEFT JOIN grade g ON g.id = t.spice_grade_id
+	          LEFT JOIN products p ON p.id = g.product_id
 	          WHERE t.user_id = ?
-	            AND DATE(sa.created_at) >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-	          GROUP BY DATE(sa.created_at)
+	            AND t.trade_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+	          GROUP BY t.trade_date, t.spice_grade_id, p.name, g.name
 	          ORDER BY d ASC`
 
 	rows, err := r.db.QueryContext(ctx, query, userID, days)
@@ -717,7 +723,13 @@ func (r *MysqlRepository) GetDailyRealizedPnLByUser(ctx context.Context, userID 
 	var result []DailyRealizedPnLRow
 	for rows.Next() {
 		var row DailyRealizedPnLRow
-		if err := rows.Scan(&row.Date, &row.DailyRealizedPnL); err != nil {
+		if err := rows.Scan(
+			&row.Date,
+			&row.DailyRealizedPnL,
+			&row.SpiceGradeID,
+			&row.ProductName,
+			&row.GradeName,
+		); err != nil {
 			return nil, err
 		}
 		result = append(result, row)
@@ -728,15 +740,18 @@ func (r *MysqlRepository) GetDailyRealizedPnLByUser(ctx context.Context, userID 
 	return result, nil
 }
 
-// GetDailyActivityByUser returns buy/sell quantity and counts grouped by trade date for a merchant.
+// GetDailyActivityByUser returns buy/sell quantity and counts grouped by trade date + grade.
 func (r *MysqlRepository) GetDailyActivityByUser(ctx context.Context, userID string, days uint) ([]DailyActivityRow, error) {
 	start := time.Now()
-	query := `SELECT trade_date, type, COALESCE(SUM(quantity), 0), COUNT(*)
-	          FROM transactions
-	          WHERE user_id = ?
-	            AND trade_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-	          GROUP BY trade_date, type
-	          ORDER BY trade_date ASC`
+	query := `SELECT t.trade_date, t.type, COALESCE(SUM(t.quantity), 0), COUNT(*),
+	                 t.spice_grade_id, COALESCE(p.name, ''), COALESCE(g.name, '')
+	          FROM transactions t
+	          LEFT JOIN grade g ON g.id = t.spice_grade_id
+	          LEFT JOIN products p ON p.id = g.product_id
+	          WHERE t.user_id = ?
+	            AND t.trade_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+	          GROUP BY t.trade_date, t.type, t.spice_grade_id, p.name, g.name
+	          ORDER BY t.trade_date ASC`
 
 	rows, err := r.db.QueryContext(ctx, query, userID, days)
 
@@ -756,7 +771,15 @@ func (r *MysqlRepository) GetDailyActivityByUser(ctx context.Context, userID str
 	var result []DailyActivityRow
 	for rows.Next() {
 		var row DailyActivityRow
-		if err := rows.Scan(&row.Date, &row.Type, &row.Quantity, &row.Count); err != nil {
+		if err := rows.Scan(
+			&row.Date,
+			&row.Type,
+			&row.Quantity,
+			&row.Count,
+			&row.SpiceGradeID,
+			&row.ProductName,
+			&row.GradeName,
+		); err != nil {
 			return nil, err
 		}
 		result = append(result, row)

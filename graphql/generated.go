@@ -56,6 +56,25 @@ type ComplexityRoot struct {
 		SellQuantity func(childComplexity int) int
 	}
 
+	ActivityDayDetail struct {
+		BuyCount     func(childComplexity int) int
+		BuyQuantity  func(childComplexity int) int
+		Date         func(childComplexity int) int
+		Products     func(childComplexity int) int
+		SellCount    func(childComplexity int) int
+		SellQuantity func(childComplexity int) int
+	}
+
+	ActivityProductDay struct {
+		BuyCount     func(childComplexity int) int
+		BuyQuantity  func(childComplexity int) int
+		GradeName    func(childComplexity int) int
+		ProductName  func(childComplexity int) int
+		SellCount    func(childComplexity int) int
+		SellQuantity func(childComplexity int) int
+		SpiceGradeID func(childComplexity int) int
+	}
+
 	AdminDashboard struct {
 		RecentTransactions func(childComplexity int) int
 		TopProducts        func(childComplexity int) int
@@ -81,6 +100,14 @@ type ComplexityRoot struct {
 		Price       func(childComplexity int) int
 		ProductID   func(childComplexity int) int
 		Status      func(childComplexity int) int
+	}
+
+	MerchantActivityTrend struct {
+		Days              func(childComplexity int) int
+		Points            func(childComplexity int) int
+		TotalBuyQuantity  func(childComplexity int) int
+		TotalSellQuantity func(childComplexity int) int
+		TotalTrades       func(childComplexity int) int
 	}
 
 	MerchantDashboard struct {
@@ -117,6 +144,12 @@ type ComplexityRoot struct {
 		Title        func(childComplexity int) int
 	}
 
+	MerchantPnlTrend struct {
+		Days              func(childComplexity int) int
+		PeriodRealizedPnL func(childComplexity int) int
+		Points            func(childComplexity int) int
+	}
+
 	MerchantSummary struct {
 		BuyVolumeInPeriod  func(childComplexity int) int
 		NetPnL             func(childComplexity int) int
@@ -138,10 +171,24 @@ type ComplexityRoot struct {
 		Sell             func(childComplexity int, spiceGradeID string, quantity float64, price float64, tradeDate *string) int
 	}
 
+	PnLDayDetail struct {
+		CumulativeRealizedPnL func(childComplexity int) int
+		DailyRealizedPnL      func(childComplexity int) int
+		Date                  func(childComplexity int) int
+		Products              func(childComplexity int) int
+	}
+
 	PnLPoint struct {
 		CumulativeRealizedPnL func(childComplexity int) int
 		DailyRealizedPnL      func(childComplexity int) int
 		Date                  func(childComplexity int) int
+	}
+
+	PnLProductDay struct {
+		GradeName    func(childComplexity int) int
+		ProductName  func(childComplexity int) int
+		RealizedPnL  func(childComplexity int) int
+		SpiceGradeID func(childComplexity int) int
 	}
 
 	PortfolioSlice struct {
@@ -187,7 +234,9 @@ type ComplexityRoot struct {
 		GetPositions          func(childComplexity int) int
 		ListGradeTransactions func(childComplexity int, spiceGradeID string, skip *int, take *int, sort *string, dateFrom *string, dateTo *string) int
 		ListTransactions      func(childComplexity int, skip *int, take *int, spiceGradeID *string, productID *string, sort *string, dateFrom *string, dateTo *string) int
+		MerchantActivityTrend func(childComplexity int, days *int) int
 		MerchantDashboard     func(childComplexity int, days *int) int
+		MerchantPnlTrend      func(childComplexity int, days *int) int
 		Products              func(childComplexity int, date *string, search *string) int
 	}
 
@@ -223,6 +272,8 @@ type QueryResolver interface {
 	ListTransactions(ctx context.Context, skip *int, take *int, spiceGradeID *string, productID *string, sort *string, dateFrom *string, dateTo *string) ([]*Transaction, error)
 	AdminDashboard(ctx context.Context) (*AdminDashboard, error)
 	MerchantDashboard(ctx context.Context, days *int) (*MerchantDashboard, error)
+	MerchantPnlTrend(ctx context.Context, days *int) (*MerchantPnlTrend, error)
+	MerchantActivityTrend(ctx context.Context, days *int) (*MerchantActivityTrend, error)
 }
 type __InputValueResolver interface {
 	IsDeprecated(ctx context.Context, obj *introspection.InputValue) (bool, error)
@@ -285,6 +336,97 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActivityDay.SellQuantity(childComplexity), true
+
+	case "ActivityDayDetail.buyCount":
+		if e.complexity.ActivityDayDetail.BuyCount == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.BuyCount(childComplexity), true
+
+	case "ActivityDayDetail.buyQuantity":
+		if e.complexity.ActivityDayDetail.BuyQuantity == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.BuyQuantity(childComplexity), true
+
+	case "ActivityDayDetail.date":
+		if e.complexity.ActivityDayDetail.Date == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.Date(childComplexity), true
+
+	case "ActivityDayDetail.products":
+		if e.complexity.ActivityDayDetail.Products == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.Products(childComplexity), true
+
+	case "ActivityDayDetail.sellCount":
+		if e.complexity.ActivityDayDetail.SellCount == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.SellCount(childComplexity), true
+
+	case "ActivityDayDetail.sellQuantity":
+		if e.complexity.ActivityDayDetail.SellQuantity == nil {
+			break
+		}
+
+		return e.complexity.ActivityDayDetail.SellQuantity(childComplexity), true
+
+	case "ActivityProductDay.buyCount":
+		if e.complexity.ActivityProductDay.BuyCount == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.BuyCount(childComplexity), true
+
+	case "ActivityProductDay.buyQuantity":
+		if e.complexity.ActivityProductDay.BuyQuantity == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.BuyQuantity(childComplexity), true
+
+	case "ActivityProductDay.gradeName":
+		if e.complexity.ActivityProductDay.GradeName == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.GradeName(childComplexity), true
+
+	case "ActivityProductDay.productName":
+		if e.complexity.ActivityProductDay.ProductName == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.ProductName(childComplexity), true
+
+	case "ActivityProductDay.sellCount":
+		if e.complexity.ActivityProductDay.SellCount == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.SellCount(childComplexity), true
+
+	case "ActivityProductDay.sellQuantity":
+		if e.complexity.ActivityProductDay.SellQuantity == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.SellQuantity(childComplexity), true
+
+	case "ActivityProductDay.spiceGradeId":
+		if e.complexity.ActivityProductDay.SpiceGradeID == nil {
+			break
+		}
+
+		return e.complexity.ActivityProductDay.SpiceGradeID(childComplexity), true
 
 	case "AdminDashboard.recentTransactions":
 		if e.complexity.AdminDashboard.RecentTransactions == nil {
@@ -411,6 +553,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Grade.Status(childComplexity), true
+
+	case "MerchantActivityTrend.days":
+		if e.complexity.MerchantActivityTrend.Days == nil {
+			break
+		}
+
+		return e.complexity.MerchantActivityTrend.Days(childComplexity), true
+
+	case "MerchantActivityTrend.points":
+		if e.complexity.MerchantActivityTrend.Points == nil {
+			break
+		}
+
+		return e.complexity.MerchantActivityTrend.Points(childComplexity), true
+
+	case "MerchantActivityTrend.totalBuyQuantity":
+		if e.complexity.MerchantActivityTrend.TotalBuyQuantity == nil {
+			break
+		}
+
+		return e.complexity.MerchantActivityTrend.TotalBuyQuantity(childComplexity), true
+
+	case "MerchantActivityTrend.totalSellQuantity":
+		if e.complexity.MerchantActivityTrend.TotalSellQuantity == nil {
+			break
+		}
+
+		return e.complexity.MerchantActivityTrend.TotalSellQuantity(childComplexity), true
+
+	case "MerchantActivityTrend.totalTrades":
+		if e.complexity.MerchantActivityTrend.TotalTrades == nil {
+			break
+		}
+
+		return e.complexity.MerchantActivityTrend.TotalTrades(childComplexity), true
 
 	case "MerchantDashboard.activityTrend":
 		if e.complexity.MerchantDashboard.ActivityTrend == nil {
@@ -587,6 +764,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MerchantInsight.Title(childComplexity), true
 
+	case "MerchantPnlTrend.days":
+		if e.complexity.MerchantPnlTrend.Days == nil {
+			break
+		}
+
+		return e.complexity.MerchantPnlTrend.Days(childComplexity), true
+
+	case "MerchantPnlTrend.periodRealizedPnL":
+		if e.complexity.MerchantPnlTrend.PeriodRealizedPnL == nil {
+			break
+		}
+
+		return e.complexity.MerchantPnlTrend.PeriodRealizedPnL(childComplexity), true
+
+	case "MerchantPnlTrend.points":
+		if e.complexity.MerchantPnlTrend.Points == nil {
+			break
+		}
+
+		return e.complexity.MerchantPnlTrend.Points(childComplexity), true
+
 	case "MerchantSummary.buyVolumeInPeriod":
 		if e.complexity.MerchantSummary.BuyVolumeInPeriod == nil {
 			break
@@ -717,6 +915,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Sell(childComplexity, args["spiceGradeId"].(string), args["quantity"].(float64), args["price"].(float64), args["tradeDate"].(*string)), true
 
+	case "PnLDayDetail.cumulativeRealizedPnL":
+		if e.complexity.PnLDayDetail.CumulativeRealizedPnL == nil {
+			break
+		}
+
+		return e.complexity.PnLDayDetail.CumulativeRealizedPnL(childComplexity), true
+
+	case "PnLDayDetail.dailyRealizedPnL":
+		if e.complexity.PnLDayDetail.DailyRealizedPnL == nil {
+			break
+		}
+
+		return e.complexity.PnLDayDetail.DailyRealizedPnL(childComplexity), true
+
+	case "PnLDayDetail.date":
+		if e.complexity.PnLDayDetail.Date == nil {
+			break
+		}
+
+		return e.complexity.PnLDayDetail.Date(childComplexity), true
+
+	case "PnLDayDetail.products":
+		if e.complexity.PnLDayDetail.Products == nil {
+			break
+		}
+
+		return e.complexity.PnLDayDetail.Products(childComplexity), true
+
 	case "PnLPoint.cumulativeRealizedPnL":
 		if e.complexity.PnLPoint.CumulativeRealizedPnL == nil {
 			break
@@ -737,6 +963,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PnLPoint.Date(childComplexity), true
+
+	case "PnLProductDay.gradeName":
+		if e.complexity.PnLProductDay.GradeName == nil {
+			break
+		}
+
+		return e.complexity.PnLProductDay.GradeName(childComplexity), true
+
+	case "PnLProductDay.productName":
+		if e.complexity.PnLProductDay.ProductName == nil {
+			break
+		}
+
+		return e.complexity.PnLProductDay.ProductName(childComplexity), true
+
+	case "PnLProductDay.realizedPnL":
+		if e.complexity.PnLProductDay.RealizedPnL == nil {
+			break
+		}
+
+		return e.complexity.PnLProductDay.RealizedPnL(childComplexity), true
+
+	case "PnLProductDay.spiceGradeId":
+		if e.complexity.PnLProductDay.SpiceGradeID == nil {
+			break
+		}
+
+		return e.complexity.PnLProductDay.SpiceGradeID(childComplexity), true
 
 	case "PortfolioSlice.label":
 		if e.complexity.PortfolioSlice.Label == nil {
@@ -963,6 +1217,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListTransactions(childComplexity, args["skip"].(*int), args["take"].(*int), args["spiceGradeId"].(*string), args["productId"].(*string), args["sort"].(*string), args["dateFrom"].(*string), args["dateTo"].(*string)), true
 
+	case "Query.merchantActivityTrend":
+		if e.complexity.Query.MerchantActivityTrend == nil {
+			break
+		}
+
+		args, err := ec.field_Query_merchantActivityTrend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.MerchantActivityTrend(childComplexity, args["days"].(*int)), true
+
 	case "Query.merchantDashboard":
 		if e.complexity.Query.MerchantDashboard == nil {
 			break
@@ -974,6 +1240,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.MerchantDashboard(childComplexity, args["days"].(*int)), true
+
+	case "Query.merchantPnlTrend":
+		if e.complexity.Query.MerchantPnlTrend == nil {
+			break
+		}
+
+		args, err := ec.field_Query_merchantPnlTrend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.MerchantPnlTrend(childComplexity, args["days"].(*int)), true
 
 	case "Query.products":
 		if e.complexity.Query.Products == nil {
@@ -1472,7 +1750,37 @@ func (ec *executionContext) field_Query_listTransactions_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_merchantActivityTrend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["days"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("days"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["days"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_merchantDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["days"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("days"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["days"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_merchantPnlTrend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *int
@@ -1789,6 +2097,594 @@ func (ec *executionContext) _ActivityDay_sellCount(ctx context.Context, field gr
 func (ec *executionContext) fieldContext_ActivityDay_sellCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ActivityDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_date(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_date(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_buyQuantity(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_buyQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BuyQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_buyQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_sellQuantity(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_sellQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SellQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_sellQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_buyCount(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_buyCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BuyCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_buyCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_sellCount(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_sellCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SellCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_sellCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityDayDetail_products(ctx context.Context, field graphql.CollectedField, obj *ActivityDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityDayDetail_products(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Products, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ActivityProductDay)
+	fc.Result = res
+	return ec.marshalNActivityProductDay2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityProductDayᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityDayDetail_products(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "spiceGradeId":
+				return ec.fieldContext_ActivityProductDay_spiceGradeId(ctx, field)
+			case "productName":
+				return ec.fieldContext_ActivityProductDay_productName(ctx, field)
+			case "gradeName":
+				return ec.fieldContext_ActivityProductDay_gradeName(ctx, field)
+			case "buyQuantity":
+				return ec.fieldContext_ActivityProductDay_buyQuantity(ctx, field)
+			case "sellQuantity":
+				return ec.fieldContext_ActivityProductDay_sellQuantity(ctx, field)
+			case "buyCount":
+				return ec.fieldContext_ActivityProductDay_buyCount(ctx, field)
+			case "sellCount":
+				return ec.fieldContext_ActivityProductDay_sellCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ActivityProductDay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_spiceGradeId(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_spiceGradeId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpiceGradeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_spiceGradeId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_productName(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_productName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_productName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_gradeName(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_gradeName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GradeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_gradeName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_buyQuantity(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_buyQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BuyQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_buyQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_sellQuantity(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_sellQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SellQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_sellQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_buyCount(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_buyCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BuyCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_buyCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ActivityProductDay_sellCount(ctx context.Context, field graphql.CollectedField, obj *ActivityProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ActivityProductDay_sellCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SellCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ActivityProductDay_sellCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ActivityProductDay",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -2610,6 +3506,240 @@ func (ec *executionContext) fieldContext_Grade_price(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantActivityTrend_days(ctx context.Context, field graphql.CollectedField, obj *MerchantActivityTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantActivityTrend_days(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Days, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantActivityTrend_days(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantActivityTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantActivityTrend_totalBuyQuantity(ctx context.Context, field graphql.CollectedField, obj *MerchantActivityTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantActivityTrend_totalBuyQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalBuyQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantActivityTrend_totalBuyQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantActivityTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantActivityTrend_totalSellQuantity(ctx context.Context, field graphql.CollectedField, obj *MerchantActivityTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantActivityTrend_totalSellQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalSellQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantActivityTrend_totalSellQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantActivityTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantActivityTrend_totalTrades(ctx context.Context, field graphql.CollectedField, obj *MerchantActivityTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantActivityTrend_totalTrades(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalTrades, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantActivityTrend_totalTrades(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantActivityTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantActivityTrend_points(ctx context.Context, field graphql.CollectedField, obj *MerchantActivityTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantActivityTrend_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ActivityDayDetail)
+	fc.Result = res
+	return ec.marshalNActivityDayDetail2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityDayDetailᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantActivityTrend_points(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantActivityTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "date":
+				return ec.fieldContext_ActivityDayDetail_date(ctx, field)
+			case "buyQuantity":
+				return ec.fieldContext_ActivityDayDetail_buyQuantity(ctx, field)
+			case "sellQuantity":
+				return ec.fieldContext_ActivityDayDetail_sellQuantity(ctx, field)
+			case "buyCount":
+				return ec.fieldContext_ActivityDayDetail_buyCount(ctx, field)
+			case "sellCount":
+				return ec.fieldContext_ActivityDayDetail_sellCount(ctx, field)
+			case "products":
+				return ec.fieldContext_ActivityDayDetail_products(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ActivityDayDetail", field.Name)
 		},
 	}
 	return fc, nil
@@ -3834,6 +4964,148 @@ func (ec *executionContext) fieldContext_MerchantInsight_severity(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _MerchantPnlTrend_days(ctx context.Context, field graphql.CollectedField, obj *MerchantPnlTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantPnlTrend_days(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Days, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantPnlTrend_days(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantPnlTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantPnlTrend_periodRealizedPnL(ctx context.Context, field graphql.CollectedField, obj *MerchantPnlTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantPnlTrend_periodRealizedPnL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PeriodRealizedPnL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantPnlTrend_periodRealizedPnL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantPnlTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MerchantPnlTrend_points(ctx context.Context, field graphql.CollectedField, obj *MerchantPnlTrend) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MerchantPnlTrend_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*PnLDayDetail)
+	fc.Result = res
+	return ec.marshalNPnLDayDetail2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLDayDetailᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MerchantPnlTrend_points(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MerchantPnlTrend",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "date":
+				return ec.fieldContext_PnLDayDetail_date(ctx, field)
+			case "dailyRealizedPnL":
+				return ec.fieldContext_PnLDayDetail_dailyRealizedPnL(ctx, field)
+			case "cumulativeRealizedPnL":
+				return ec.fieldContext_PnLDayDetail_cumulativeRealizedPnL(ctx, field)
+			case "products":
+				return ec.fieldContext_PnLDayDetail_products(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PnLDayDetail", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MerchantSummary_portfolioValue(ctx context.Context, field graphql.CollectedField, obj *MerchantSummary) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MerchantSummary_portfolioValue(ctx, field)
 	if err != nil {
@@ -4627,6 +5899,192 @@ func (ec *executionContext) fieldContext_Mutation_sell(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _PnLDayDetail_date(ctx context.Context, field graphql.CollectedField, obj *PnLDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLDayDetail_date(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Date, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLDayDetail_date(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLDayDetail_dailyRealizedPnL(ctx context.Context, field graphql.CollectedField, obj *PnLDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLDayDetail_dailyRealizedPnL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DailyRealizedPnL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLDayDetail_dailyRealizedPnL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLDayDetail_cumulativeRealizedPnL(ctx context.Context, field graphql.CollectedField, obj *PnLDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLDayDetail_cumulativeRealizedPnL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CumulativeRealizedPnL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLDayDetail_cumulativeRealizedPnL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLDayDetail_products(ctx context.Context, field graphql.CollectedField, obj *PnLDayDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLDayDetail_products(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Products, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*PnLProductDay)
+	fc.Result = res
+	return ec.marshalNPnLProductDay2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLProductDayᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLDayDetail_products(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLDayDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "spiceGradeId":
+				return ec.fieldContext_PnLProductDay_spiceGradeId(ctx, field)
+			case "productName":
+				return ec.fieldContext_PnLProductDay_productName(ctx, field)
+			case "gradeName":
+				return ec.fieldContext_PnLProductDay_gradeName(ctx, field)
+			case "realizedPnL":
+				return ec.fieldContext_PnLProductDay_realizedPnL(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PnLProductDay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PnLPoint_date(ctx context.Context, field graphql.CollectedField, obj *PnLPoint) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PnLPoint_date(ctx, field)
 	if err != nil {
@@ -4749,6 +6207,182 @@ func (ec *executionContext) _PnLPoint_cumulativeRealizedPnL(ctx context.Context,
 func (ec *executionContext) fieldContext_PnLPoint_cumulativeRealizedPnL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PnLPoint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLProductDay_spiceGradeId(ctx context.Context, field graphql.CollectedField, obj *PnLProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLProductDay_spiceGradeId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpiceGradeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLProductDay_spiceGradeId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLProductDay_productName(ctx context.Context, field graphql.CollectedField, obj *PnLProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLProductDay_productName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLProductDay_productName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLProductDay_gradeName(ctx context.Context, field graphql.CollectedField, obj *PnLProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLProductDay_gradeName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GradeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLProductDay_gradeName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLProductDay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PnLProductDay_realizedPnL(ctx context.Context, field graphql.CollectedField, obj *PnLProductDay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PnLProductDay_realizedPnL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RealizedPnL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PnLProductDay_realizedPnL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PnLProductDay",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -6352,6 +7986,136 @@ func (ec *executionContext) fieldContext_Query_merchantDashboard(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_merchantDashboard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_merchantPnlTrend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_merchantPnlTrend(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MerchantPnlTrend(rctx, fc.Args["days"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*MerchantPnlTrend)
+	fc.Result = res
+	return ec.marshalNMerchantPnlTrend2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantPnlTrend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_merchantPnlTrend(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "days":
+				return ec.fieldContext_MerchantPnlTrend_days(ctx, field)
+			case "periodRealizedPnL":
+				return ec.fieldContext_MerchantPnlTrend_periodRealizedPnL(ctx, field)
+			case "points":
+				return ec.fieldContext_MerchantPnlTrend_points(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MerchantPnlTrend", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_merchantPnlTrend_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_merchantActivityTrend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_merchantActivityTrend(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MerchantActivityTrend(rctx, fc.Args["days"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*MerchantActivityTrend)
+	fc.Result = res
+	return ec.marshalNMerchantActivityTrend2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantActivityTrend(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_merchantActivityTrend(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "days":
+				return ec.fieldContext_MerchantActivityTrend_days(ctx, field)
+			case "totalBuyQuantity":
+				return ec.fieldContext_MerchantActivityTrend_totalBuyQuantity(ctx, field)
+			case "totalSellQuantity":
+				return ec.fieldContext_MerchantActivityTrend_totalSellQuantity(ctx, field)
+			case "totalTrades":
+				return ec.fieldContext_MerchantActivityTrend_totalTrades(ctx, field)
+			case "points":
+				return ec.fieldContext_MerchantActivityTrend_points(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MerchantActivityTrend", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_merchantActivityTrend_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9119,6 +10883,139 @@ func (ec *executionContext) _ActivityDay(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var activityDayDetailImplementors = []string{"ActivityDayDetail"}
+
+func (ec *executionContext) _ActivityDayDetail(ctx context.Context, sel ast.SelectionSet, obj *ActivityDayDetail) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, activityDayDetailImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ActivityDayDetail")
+		case "date":
+			out.Values[i] = ec._ActivityDayDetail_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "buyQuantity":
+			out.Values[i] = ec._ActivityDayDetail_buyQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sellQuantity":
+			out.Values[i] = ec._ActivityDayDetail_sellQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "buyCount":
+			out.Values[i] = ec._ActivityDayDetail_buyCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sellCount":
+			out.Values[i] = ec._ActivityDayDetail_sellCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "products":
+			out.Values[i] = ec._ActivityDayDetail_products(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var activityProductDayImplementors = []string{"ActivityProductDay"}
+
+func (ec *executionContext) _ActivityProductDay(ctx context.Context, sel ast.SelectionSet, obj *ActivityProductDay) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, activityProductDayImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ActivityProductDay")
+		case "spiceGradeId":
+			out.Values[i] = ec._ActivityProductDay_spiceGradeId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "productName":
+			out.Values[i] = ec._ActivityProductDay_productName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "gradeName":
+			out.Values[i] = ec._ActivityProductDay_gradeName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "buyQuantity":
+			out.Values[i] = ec._ActivityProductDay_buyQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sellQuantity":
+			out.Values[i] = ec._ActivityProductDay_sellQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "buyCount":
+			out.Values[i] = ec._ActivityProductDay_buyCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sellCount":
+			out.Values[i] = ec._ActivityProductDay_sellCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var adminDashboardImplementors = []string{"AdminDashboard"}
 
 func (ec *executionContext) _AdminDashboard(ctx context.Context, sel ast.SelectionSet, obj *AdminDashboard) graphql.Marshaler {
@@ -9285,6 +11182,65 @@ func (ec *executionContext) _Grade(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "price":
 			out.Values[i] = ec._Grade_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var merchantActivityTrendImplementors = []string{"MerchantActivityTrend"}
+
+func (ec *executionContext) _MerchantActivityTrend(ctx context.Context, sel ast.SelectionSet, obj *MerchantActivityTrend) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, merchantActivityTrendImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MerchantActivityTrend")
+		case "days":
+			out.Values[i] = ec._MerchantActivityTrend_days(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalBuyQuantity":
+			out.Values[i] = ec._MerchantActivityTrend_totalBuyQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalSellQuantity":
+			out.Values[i] = ec._MerchantActivityTrend_totalSellQuantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalTrades":
+			out.Values[i] = ec._MerchantActivityTrend_totalTrades(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._MerchantActivityTrend_points(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -9535,6 +11491,55 @@ func (ec *executionContext) _MerchantInsight(ctx context.Context, sel ast.Select
 	return out
 }
 
+var merchantPnlTrendImplementors = []string{"MerchantPnlTrend"}
+
+func (ec *executionContext) _MerchantPnlTrend(ctx context.Context, sel ast.SelectionSet, obj *MerchantPnlTrend) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, merchantPnlTrendImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MerchantPnlTrend")
+		case "days":
+			out.Values[i] = ec._MerchantPnlTrend_days(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "periodRealizedPnL":
+			out.Values[i] = ec._MerchantPnlTrend_periodRealizedPnL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._MerchantPnlTrend_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var merchantSummaryImplementors = []string{"MerchantSummary"}
 
 func (ec *executionContext) _MerchantSummary(ctx context.Context, sel ast.SelectionSet, obj *MerchantSummary) graphql.Marshaler {
@@ -9696,6 +11701,60 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
+var pnLDayDetailImplementors = []string{"PnLDayDetail"}
+
+func (ec *executionContext) _PnLDayDetail(ctx context.Context, sel ast.SelectionSet, obj *PnLDayDetail) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pnLDayDetailImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PnLDayDetail")
+		case "date":
+			out.Values[i] = ec._PnLDayDetail_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "dailyRealizedPnL":
+			out.Values[i] = ec._PnLDayDetail_dailyRealizedPnL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "cumulativeRealizedPnL":
+			out.Values[i] = ec._PnLDayDetail_cumulativeRealizedPnL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "products":
+			out.Values[i] = ec._PnLDayDetail_products(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var pnLPointImplementors = []string{"PnLPoint"}
 
 func (ec *executionContext) _PnLPoint(ctx context.Context, sel ast.SelectionSet, obj *PnLPoint) graphql.Marshaler {
@@ -9719,6 +11778,60 @@ func (ec *executionContext) _PnLPoint(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "cumulativeRealizedPnL":
 			out.Values[i] = ec._PnLPoint_cumulativeRealizedPnL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var pnLProductDayImplementors = []string{"PnLProductDay"}
+
+func (ec *executionContext) _PnLProductDay(ctx context.Context, sel ast.SelectionSet, obj *PnLProductDay) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pnLProductDayImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PnLProductDay")
+		case "spiceGradeId":
+			out.Values[i] = ec._PnLProductDay_spiceGradeId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "productName":
+			out.Values[i] = ec._PnLProductDay_productName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "gradeName":
+			out.Values[i] = ec._PnLProductDay_gradeName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "realizedPnL":
+			out.Values[i] = ec._PnLProductDay_realizedPnL(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -10167,6 +12280,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_merchantDashboard(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "merchantPnlTrend":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_merchantPnlTrend(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "merchantActivityTrend":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_merchantActivityTrend(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10810,6 +12967,114 @@ func (ec *executionContext) marshalNActivityDay2ᚖgithubᚗcomᚋAsifᚑFaizal�
 	return ec._ActivityDay(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNActivityDayDetail2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityDayDetailᚄ(ctx context.Context, sel ast.SelectionSet, v []*ActivityDayDetail) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNActivityDayDetail2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityDayDetail(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNActivityDayDetail2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityDayDetail(ctx context.Context, sel ast.SelectionSet, v *ActivityDayDetail) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ActivityDayDetail(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNActivityProductDay2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityProductDayᚄ(ctx context.Context, sel ast.SelectionSet, v []*ActivityProductDay) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNActivityProductDay2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityProductDay(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNActivityProductDay2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐActivityProductDay(ctx context.Context, sel ast.SelectionSet, v *ActivityProductDay) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ActivityProductDay(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNAdminDashboard2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐAdminDashboard(ctx context.Context, sel ast.SelectionSet, v AdminDashboard) graphql.Marshaler {
 	return ec._AdminDashboard(ctx, sel, &v)
 }
@@ -10971,6 +13236,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNMerchantActivityTrend2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantActivityTrend(ctx context.Context, sel ast.SelectionSet, v MerchantActivityTrend) graphql.Marshaler {
+	return ec._MerchantActivityTrend(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMerchantActivityTrend2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantActivityTrend(ctx context.Context, sel ast.SelectionSet, v *MerchantActivityTrend) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MerchantActivityTrend(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNMerchantDashboard2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantDashboard(ctx context.Context, sel ast.SelectionSet, v MerchantDashboard) graphql.Marshaler {
 	return ec._MerchantDashboard(ctx, sel, &v)
 }
@@ -11093,6 +13372,20 @@ func (ec *executionContext) marshalNMerchantInsight2ᚖgithubᚗcomᚋAsifᚑFai
 	return ec._MerchantInsight(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMerchantPnlTrend2githubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantPnlTrend(ctx context.Context, sel ast.SelectionSet, v MerchantPnlTrend) graphql.Marshaler {
+	return ec._MerchantPnlTrend(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMerchantPnlTrend2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantPnlTrend(ctx context.Context, sel ast.SelectionSet, v *MerchantPnlTrend) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MerchantPnlTrend(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNMerchantSummary2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐMerchantSummary(ctx context.Context, sel ast.SelectionSet, v *MerchantSummary) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -11101,6 +13394,60 @@ func (ec *executionContext) marshalNMerchantSummary2ᚖgithubᚗcomᚋAsifᚑFai
 		return graphql.Null
 	}
 	return ec._MerchantSummary(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPnLDayDetail2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLDayDetailᚄ(ctx context.Context, sel ast.SelectionSet, v []*PnLDayDetail) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPnLDayDetail2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLDayDetail(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNPnLDayDetail2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLDayDetail(ctx context.Context, sel ast.SelectionSet, v *PnLDayDetail) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PnLDayDetail(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPnLPoint2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*PnLPoint) graphql.Marshaler {
@@ -11155,6 +13502,60 @@ func (ec *executionContext) marshalNPnLPoint2ᚖgithubᚗcomᚋAsifᚑFaizalᚋS
 		return graphql.Null
 	}
 	return ec._PnLPoint(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPnLProductDay2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLProductDayᚄ(ctx context.Context, sel ast.SelectionSet, v []*PnLProductDay) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPnLProductDay2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLProductDay(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNPnLProductDay2ᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPnLProductDay(ctx context.Context, sel ast.SelectionSet, v *PnLProductDay) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PnLProductDay(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPortfolioSlice2ᚕᚖgithubᚗcomᚋAsifᚑFaizalᚋSpiceLedgerᚑBackendᚋgraphqlᚐPortfolioSliceᚄ(ctx context.Context, sel ast.SelectionSet, v []*PortfolioSlice) graphql.Marshaler {
