@@ -3,6 +3,8 @@ package market
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Asif-Faizal/SpiceLedger-Backend/util"
@@ -14,8 +16,8 @@ type Repository interface {
 	// Transactions
 	InsertTransaction(ctx context.Context, tx *Transaction) (string, error)
 	GetTransactionByID(ctx context.Context, id string) (*Transaction, error)
-	ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error)
-	ListTransactionsByUser(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error)
+	ListGradeTransactionsByUser(ctx context.Context, userID, spiceGradeID string, skip, take uint, sort, dateFrom, dateTo string) ([]*Transaction, error)
+	ListTransactionsByUser(ctx context.Context, userID string, skip, take uint, spiceGradeID string, spiceGradeIDs []string, sort, dateFrom, dateTo string) ([]*Transaction, error)
 
 	// Buy Lots (inventory)
 	InsertBuyLot(ctx context.Context, lot *BuyLot) (string, error)
@@ -44,7 +46,7 @@ type Repository interface {
 		GradeName   string
 		Volume      float64
 	}, error)
-	ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error)
+	ListAllTransactions(ctx context.Context, skip, take uint, spiceGradeID string, spiceGradeIDs []string, sort, dateFrom, dateTo string) ([]*Transaction, error)
 
 	// Merchant dashboard (all queries scoped by userID from JWT)
 	GetEnrichedHoldings(ctx context.Context, userID string) ([]EnrichedHoldingRow, error)
@@ -78,14 +80,52 @@ func (r *MysqlRepository) Close() {
 	r.db.Close()
 }
 
-func (r *MysqlRepository) ListAllTransactions(ctx context.Context, skip, take uint) ([]*Transaction, error) {
+func (r *MysqlRepository) ListAllTransactions(ctx context.Context, skip, take uint, spiceGradeID string, spiceGradeIDs []string, sort, dateFrom, dateTo string) ([]*Transaction, error) {
 	start := time.Now()
-	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
-	          FROM transactions
-	          ORDER BY trade_date DESC, created_at DESC, id DESC
-	          LIMIT ? OFFSET ?`
+	if take == 0 || take > 100 {
+		take = 100
+	}
 
-	rows, err := r.db.QueryContext(ctx, query, take, skip)
+	where := "1=1"
+	args := []interface{}{}
+	if spiceGradeID != "" {
+		where += " AND spice_grade_id = ?"
+		args = append(args, spiceGradeID)
+	} else if len(spiceGradeIDs) > 0 {
+		placeholders := make([]string, len(spiceGradeIDs))
+		for i, id := range spiceGradeIDs {
+			placeholders[i] = "?"
+			args = append(args, id)
+		}
+		where += fmt.Sprintf(" AND spice_grade_id IN (%s)", strings.Join(placeholders, ","))
+	}
+	if dateFrom != "" {
+		if _, err := time.Parse("2006-01-02", dateFrom); err != nil {
+			return nil, fmt.Errorf("invalid date_from %q: use YYYY-MM-DD", dateFrom)
+		}
+		where += " AND trade_date >= ?"
+		args = append(args, dateFrom)
+	}
+	if dateTo != "" {
+		if _, err := time.Parse("2006-01-02", dateTo); err != nil {
+			return nil, fmt.Errorf("invalid date_to %q: use YYYY-MM-DD", dateTo)
+		}
+		where += " AND trade_date <= ?"
+		args = append(args, dateTo)
+	}
+	orderBy := "ORDER BY trade_date DESC, id DESC"
+	switch strings.ToUpper(strings.TrimSpace(sort)) {
+	case "ASC", "OLDEST", "OLDEST_FIRST":
+		orderBy = "ORDER BY trade_date ASC, id ASC"
+	}
+	query := fmt.Sprintf(`SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
+	          FROM transactions
+	          WHERE %s
+	          %s
+	          LIMIT ? OFFSET ?`, where, orderBy)
+	args = append(args, take, skip)
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
 
 	r.logger.Database().Debug().
 		Str("query", query).
@@ -230,22 +270,51 @@ func (r *MysqlRepository) GetTransactionByID(ctx context.Context, id string) (*T
 	return t, nil
 }
 
-// ListTransactionsByUser returns paginated transactions for a user + grade, newest first.
-func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userID string, spiceGradeID string, skip, take uint) ([]*Transaction, error) {
+// ListGradeTransactionsByUser returns paginated transactions for a user + grade.
+func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userID, spiceGradeID string, skip, take uint, sort, dateFrom, dateTo string) ([]*Transaction, error) {
 	start := time.Now()
-	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
-	          FROM transactions
-	          WHERE user_id = ? AND spice_grade_id = ?
-	          ORDER BY trade_date DESC, id DESC
-	          LIMIT ? OFFSET ?`
+	if spiceGradeID == "" {
+		return nil, fmt.Errorf("spice_grade_id is required")
+	}
+	if take == 0 || take > 100 {
+		take = 100
+	}
 
-	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID, spiceGradeID, take, skip)
+	where := "user_id = ? AND spice_grade_id = ?"
+	args := []interface{}{userID, spiceGradeID}
+	if dateFrom != "" {
+		if _, err := time.Parse("2006-01-02", dateFrom); err != nil {
+			return nil, fmt.Errorf("invalid date_from %q: use YYYY-MM-DD", dateFrom)
+		}
+		where += " AND trade_date >= ?"
+		args = append(args, dateFrom)
+	}
+	if dateTo != "" {
+		if _, err := time.Parse("2006-01-02", dateTo); err != nil {
+			return nil, fmt.Errorf("invalid date_to %q: use YYYY-MM-DD", dateTo)
+		}
+		where += " AND trade_date <= ?"
+		args = append(args, dateTo)
+	}
+	orderBy := "ORDER BY trade_date DESC, id DESC"
+	switch strings.ToUpper(strings.TrimSpace(sort)) {
+	case "ASC", "OLDEST", "OLDEST_FIRST":
+		orderBy = "ORDER BY trade_date ASC, id ASC"
+	}
+	query := fmt.Sprintf(`SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
+	          FROM transactions
+	          WHERE %s
+	          %s
+	          LIMIT ? OFFSET ?`, where, orderBy)
+	args = append(args, take, skip)
+
+	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, args...)
 
 	r.logger.Database().Debug().
 		Str("query", query).
 		Str("duration", time.Since(start).String()).
 		Bool("success", err == nil).
-		Msg("ListTransactionsByUser")
+		Msg("ListGradeTransactionsByUser")
 
 	if err != nil {
 		return nil, err
@@ -267,16 +336,53 @@ func (r *MysqlRepository) ListGradeTransactionsByUser(ctx context.Context, userI
 	return txns, nil
 }
 
-// ListTransactionsByUser returns paginated transactions for a user across all grades, newest first.
-func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID string, skip, take uint) ([]*Transaction, error) {
+// ListTransactionsByUser returns paginated transactions for a user across grades.
+func (r *MysqlRepository) ListTransactionsByUser(ctx context.Context, userID string, skip, take uint, spiceGradeID string, spiceGradeIDs []string, sort, dateFrom, dateTo string) ([]*Transaction, error) {
 	start := time.Now()
-	query := `SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
-	          FROM transactions
-	          WHERE user_id = ?
-	          ORDER BY trade_date DESC, id DESC
-	          LIMIT ? OFFSET ?`
+	if take == 0 || take > 100 {
+		take = 100
+	}
 
-	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, userID, take, skip)
+	where := "user_id = ?"
+	args := []interface{}{userID}
+	if spiceGradeID != "" {
+		where += " AND spice_grade_id = ?"
+		args = append(args, spiceGradeID)
+	} else if len(spiceGradeIDs) > 0 {
+		placeholders := make([]string, len(spiceGradeIDs))
+		for i, id := range spiceGradeIDs {
+			placeholders[i] = "?"
+			args = append(args, id)
+		}
+		where += fmt.Sprintf(" AND spice_grade_id IN (%s)", strings.Join(placeholders, ","))
+	}
+	if dateFrom != "" {
+		if _, err := time.Parse("2006-01-02", dateFrom); err != nil {
+			return nil, fmt.Errorf("invalid date_from %q: use YYYY-MM-DD", dateFrom)
+		}
+		where += " AND trade_date >= ?"
+		args = append(args, dateFrom)
+	}
+	if dateTo != "" {
+		if _, err := time.Parse("2006-01-02", dateTo); err != nil {
+			return nil, fmt.Errorf("invalid date_to %q: use YYYY-MM-DD", dateTo)
+		}
+		where += " AND trade_date <= ?"
+		args = append(args, dateTo)
+	}
+	orderBy := "ORDER BY trade_date DESC, id DESC"
+	switch strings.ToUpper(strings.TrimSpace(sort)) {
+	case "ASC", "OLDEST", "OLDEST_FIRST":
+		orderBy = "ORDER BY trade_date ASC, id ASC"
+	}
+	query := fmt.Sprintf(`SELECT id, user_id, spice_grade_id, type, quantity, price, trade_date, created_at
+	          FROM transactions
+	          WHERE %s
+	          %s
+	          LIMIT ? OFFSET ?`, where, orderBy)
+	args = append(args, take, skip)
+
+	rows, err := r.dbFromContext(ctx).QueryContext(ctx, query, args...)
 
 	r.logger.Database().Debug().
 		Str("query", query).

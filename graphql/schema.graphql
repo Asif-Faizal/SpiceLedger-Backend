@@ -52,8 +52,8 @@ type Query {
   products(date: String, search: String): [Product!]!
   getGradePosition(spiceGradeId: ID!): PositionView!
   getPositions: [PositionView!]!
-  listGradeTransactions(spiceGradeId: ID!, skip: Int, take: Int): [Transaction!]!
-  listTransactions(skip: Int, take: Int): [Transaction!]!
+  listGradeTransactions(spiceGradeId: ID!, skip: Int, take: Int, sort: String, dateFrom: String, dateTo: String): [Transaction!]!
+  listTransactions(skip: Int, take: Int, spiceGradeId: ID, productId: ID, sort: String, dateFrom: String, dateTo: String): [Transaction!]!
   adminDashboard: AdminDashboard!
   merchantDashboard(days: Int): MerchantDashboard!
 }

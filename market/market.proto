@@ -74,6 +74,9 @@ message ListGradeTransactionsRequest {
   string spice_grade_id = 2;
   uint32 skip = 3;
   uint32 take = 4;
+  string sort = 5; // ASC | DESC (default DESC)
+  string date_from = 6; // YYYY-MM-DD optional
+  string date_to = 7; // YYYY-MM-DD optional
 }
 
 message ListGradeTransactionsResponse {
@@ -84,6 +87,11 @@ message ListTransactionsRequest {
   string user_id = 1;
   uint32 skip = 2;
   uint32 take = 3;
+  string spice_grade_id = 4; // optional single grade
+  repeated string spice_grade_ids = 5; // optional product grade set
+  string sort = 6; // ASC | DESC (default DESC)
+  string date_from = 7; // YYYY-MM-DD optional
+  string date_to = 8; // YYYY-MM-DD optional
 }
 
 message ListTransactionsResponse {

@@ -185,8 +185,8 @@ type ComplexityRoot struct {
 		AdminDashboard        func(childComplexity int) int
 		GetGradePosition      func(childComplexity int, spiceGradeID string) int
 		GetPositions          func(childComplexity int) int
-		ListGradeTransactions func(childComplexity int, spiceGradeID string, skip *int, take *int) int
-		ListTransactions      func(childComplexity int, skip *int, take *int) int
+		ListGradeTransactions func(childComplexity int, spiceGradeID string, skip *int, take *int, sort *string, dateFrom *string, dateTo *string) int
+		ListTransactions      func(childComplexity int, skip *int, take *int, spiceGradeID *string, productID *string, sort *string, dateFrom *string, dateTo *string) int
 		MerchantDashboard     func(childComplexity int, days *int) int
 		Products              func(childComplexity int, date *string, search *string) int
 	}
@@ -219,8 +219,8 @@ type QueryResolver interface {
 	Products(ctx context.Context, date *string, search *string) ([]*ProductWithGradesAndPrice, error)
 	GetGradePosition(ctx context.Context, spiceGradeID string) (*PositionView, error)
 	GetPositions(ctx context.Context) ([]*PositionView, error)
-	ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int) ([]*Transaction, error)
-	ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error)
+	ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int, sort *string, dateFrom *string, dateTo *string) ([]*Transaction, error)
+	ListTransactions(ctx context.Context, skip *int, take *int, spiceGradeID *string, productID *string, sort *string, dateFrom *string, dateTo *string) ([]*Transaction, error)
 	AdminDashboard(ctx context.Context) (*AdminDashboard, error)
 	MerchantDashboard(ctx context.Context, days *int) (*MerchantDashboard, error)
 }
@@ -949,7 +949,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListGradeTransactions(childComplexity, args["spiceGradeId"].(string), args["skip"].(*int), args["take"].(*int)), true
+		return e.complexity.Query.ListGradeTransactions(childComplexity, args["spiceGradeId"].(string), args["skip"].(*int), args["take"].(*int), args["sort"].(*string), args["dateFrom"].(*string), args["dateTo"].(*string)), true
 
 	case "Query.listTransactions":
 		if e.complexity.Query.ListTransactions == nil {
@@ -961,7 +961,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ListTransactions(childComplexity, args["skip"].(*int), args["take"].(*int)), true
+		return e.complexity.Query.ListTransactions(childComplexity, args["skip"].(*int), args["take"].(*int), args["spiceGradeId"].(*string), args["productId"].(*string), args["sort"].(*string), args["dateFrom"].(*string), args["dateTo"].(*string)), true
 
 	case "Query.merchantDashboard":
 		if e.complexity.Query.MerchantDashboard == nil {
@@ -1373,6 +1373,33 @@ func (ec *executionContext) field_Query_listGradeTransactions_args(ctx context.C
 		}
 	}
 	args["take"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["sort"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sort"))
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["sort"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["dateFrom"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateFrom"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dateFrom"] = arg4
+	var arg5 *string
+	if tmp, ok := rawArgs["dateTo"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateTo"))
+		arg5, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dateTo"] = arg5
 	return args, nil
 }
 
@@ -1397,6 +1424,51 @@ func (ec *executionContext) field_Query_listTransactions_args(ctx context.Contex
 		}
 	}
 	args["take"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["spiceGradeId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spiceGradeId"))
+		arg2, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["spiceGradeId"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["productId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productId"))
+		arg3, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["productId"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["sort"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sort"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["sort"] = arg4
+	var arg5 *string
+	if tmp, ok := rawArgs["dateFrom"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateFrom"))
+		arg5, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dateFrom"] = arg5
+	var arg6 *string
+	if tmp, ok := rawArgs["dateTo"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateTo"))
+		arg6, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["dateTo"] = arg6
 	return args, nil
 }
 
@@ -6023,7 +6095,7 @@ func (ec *executionContext) _Query_listGradeTransactions(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListGradeTransactions(rctx, fc.Args["spiceGradeId"].(string), fc.Args["skip"].(*int), fc.Args["take"].(*int))
+		return ec.resolvers.Query().ListGradeTransactions(rctx, fc.Args["spiceGradeId"].(string), fc.Args["skip"].(*int), fc.Args["take"].(*int), fc.Args["sort"].(*string), fc.Args["dateFrom"].(*string), fc.Args["dateTo"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6096,7 +6168,7 @@ func (ec *executionContext) _Query_listTransactions(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ListTransactions(rctx, fc.Args["skip"].(*int), fc.Args["take"].(*int))
+		return ec.resolvers.Query().ListTransactions(rctx, fc.Args["skip"].(*int), fc.Args["take"].(*int), fc.Args["spiceGradeId"].(*string), fc.Args["productId"].(*string), fc.Args["sort"].(*string), fc.Args["dateFrom"].(*string), fc.Args["dateTo"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

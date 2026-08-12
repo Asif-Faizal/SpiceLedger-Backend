@@ -202,7 +202,16 @@ func (server *GrpcServer) ListGradeTransactions(ctx context.Context, req *pb.Lis
 		}
 	}
 
-	txns, err := server.marketService.ListGradeTransactions(ctx, userID, req.SpiceGradeId, uint(req.Skip), uint(req.Take))
+	txns, err := server.marketService.ListGradeTransactions(
+		ctx,
+		userID,
+		req.SpiceGradeId,
+		uint(req.Skip),
+		uint(req.Take),
+		req.Sort,
+		req.DateFrom,
+		req.DateTo,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -242,9 +251,28 @@ func (server *GrpcServer) ListTransactions(ctx context.Context, req *pb.ListTran
 	var txns []*Transaction
 	var err error
 	if listAll {
-		txns, err = server.marketService.ListAllTransactions(ctx, uint(req.Skip), uint(req.Take))
+		txns, err = server.marketService.ListAllTransactions(
+			ctx,
+			uint(req.Skip),
+			uint(req.Take),
+			req.SpiceGradeId,
+			req.SpiceGradeIds,
+			req.Sort,
+			req.DateFrom,
+			req.DateTo,
+		)
 	} else {
-		txns, err = server.marketService.ListTransactions(ctx, userID, uint(req.Skip), uint(req.Take))
+		txns, err = server.marketService.ListTransactions(
+			ctx,
+			userID,
+			uint(req.Skip),
+			uint(req.Take),
+			req.SpiceGradeId,
+			req.SpiceGradeIds,
+			req.Sort,
+			req.DateFrom,
+			req.DateTo,
+		)
 	}
 
 	if err != nil {

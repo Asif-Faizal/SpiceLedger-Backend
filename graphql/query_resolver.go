@@ -103,7 +103,7 @@ func (r *queryResolver) GetPositions(ctx context.Context) ([]*PositionView, erro
 }
 
 // ListGradeTransactions is the resolver for the listGradeTransactions field.
-func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int) ([]*Transaction, error) {
+func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID string, skip *int, take *int, sort *string, dateFrom *string, dateTo *string) ([]*Transaction, error) {
 	var skip32, take32 uint32
 	if skip != nil {
 		skip32 = uint32(*skip)
@@ -111,10 +111,23 @@ func (r *queryResolver) ListGradeTransactions(ctx context.Context, spiceGradeID 
 	if take != nil {
 		take32 = uint32(*take)
 	}
+	sortVal, dateFromVal, dateToVal := "", "", ""
+	if sort != nil {
+		sortVal = *sort
+	}
+	if dateFrom != nil {
+		dateFromVal = *dateFrom
+	}
+	if dateTo != nil {
+		dateToVal = *dateTo
+	}
 	resp, err := r.server.marketClient.ListGradeTransactions(ctx, &marketpb.ListGradeTransactionsRequest{
 		SpiceGradeId: spiceGradeID,
 		Skip:         skip32,
 		Take:         take32,
+		Sort:         sortVal,
+		DateFrom:     dateFromVal,
+		DateTo:       dateToVal,
 	})
 	if err != nil {
 		return nil, err
@@ -461,7 +474,7 @@ func (r *queryResolver) MerchantDashboard(ctx context.Context, days *int) (*Merc
 }
 
 // ListTransactions is the resolver for the listTransactions field.
-func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *int) ([]*Transaction, error) {
+func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *int, spiceGradeID *string, productID *string, sort *string, dateFrom *string, dateTo *string) ([]*Transaction, error) {
 	var skip32, take32 uint32
 	if skip != nil {
 		skip32 = uint32(*skip)
@@ -469,10 +482,58 @@ func (r *queryResolver) ListTransactions(ctx context.Context, skip *int, take *i
 	if take != nil {
 		take32 = uint32(*take)
 	}
-	resp, err := r.server.marketClient.ListTransactions(ctx, &marketpb.ListTransactionsRequest{
-		Skip: skip32,
-		Take: take32,
-	})
+
+	sortVal, dateFromVal, dateToVal := "", "", ""
+	if sort != nil {
+		sortVal = *sort
+	}
+	if dateFrom != nil {
+		dateFromVal = *dateFrom
+	}
+	if dateTo != nil {
+		dateToVal = *dateTo
+	}
+
+	req := &marketpb.ListTransactionsRequest{
+		Skip:     skip32,
+		Take:     take32,
+		Sort:     sortVal,
+		DateFrom: dateFromVal,
+		DateTo:   dateToVal,
+	}
+
+	if spiceGradeID != nil && *spiceGradeID != "" {
+		req.SpiceGradeId = *spiceGradeID
+	} else if productID != nil && *productID != "" {
+		productsResp, err := r.server.controlClient.GetProductsWithGradesAndPrices(ctx, &pb.GetProductsWithGradesAndPricesRequest{
+			Date: time.Now().Format("2006-01-02"),
+		})
+		if err != nil {
+			return nil, err
+		}
+		var gradeIDs []string
+		found := false
+		for _, p := range productsResp.Products {
+			if p.Id != *productID {
+				continue
+			}
+			found = true
+			gradeIDs = make([]string, 0, len(p.Grades))
+			for _, g := range p.Grades {
+				gradeIDs = append(gradeIDs, g.Id)
+			}
+			break
+		}
+		if !found {
+			return nil, fmt.Errorf("product not found: %s", *productID)
+		}
+		if len(gradeIDs) == 0 {
+			return []*Transaction{}, nil
+		}
+		req.SpiceGradeIds = gradeIDs
+	}
+
+	resp, err := r.server.marketClient.ListTransactions(ctx, req)
 	if err != nil {
 		return nil, err
 	}
